@@ -214,13 +214,8 @@
     <Compile Include="CmsHelper.cs" />
     <Compile Include="CmsRegistry.Register.cs" />
     <Compile Include="DataType\Archetype.cs" />
-    <Compile Include="DataType\CheckBoxTree.cs" />
-    <Compile Include="DataType\Damp.cs" />
     <Compile Include="DataType\ImageCropper.cs" />
     <Compile Include="DataType\Media.cs" />
-    <Compile Include="DataType\MultiNodePicker.cs" />
-    <Compile Include="DataType\SqlAutoComplete.cs" />
-    <Compile Include="DataType\TextstringArray.cs" />
     <Compile Include="DataType\UmbracoConstant.cs" />
     <Compile Include="ExamineVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

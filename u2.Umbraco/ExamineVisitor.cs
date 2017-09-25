@@ -7,16 +7,14 @@ namespace u2.Umbraco
     public class ExamineVisitor : ExpressionVisitor
     {
         private StringBuilder _builder;
-        //private string _parameter;
 
         public override Expression Visit(Expression node)
         {
             if (node != null && node.NodeType == ExpressionType.Lambda && Query == null)
             {
-                var lambda = (LambdaExpression) node;
+                var lambda = (LambdaExpression)node;
                 if (lambda.Parameters.Count == 1)
                 {
-                    //_parameter = lambda.Parameters[0].ToString();
                     _builder = new StringBuilder(lambda.Body.ToString());
                 }
             }
@@ -30,14 +28,28 @@ namespace u2.Umbraco
         protected override Expression VisitMember(MemberExpression node)
         {
             var literal = node.ToString();
-            
+            string result;
+
             var member = node.Member;
+            var expression = node.Expression as ConstantExpression;
             var property = member as PropertyInfo;
-            var result = string.Format(property != null && property.PropertyType == typeof(bool) ? "{0}:(1)" : "{0}", member.Name);
+
+            if (expression != null && member is FieldInfo)
+            {
+                var value = expression.Value;
+                var constant = ((FieldInfo)member).GetValue(value);
+                result = constant.ToString();
+            }
+            else
+            {
+                result = string.Format(property != null && property.PropertyType == typeof(bool) ? "{0}:(1)" : "{0}", member.Name);
+            }
+
             _builder.Replace(literal, result);
 
             return base.VisitMember(node);
         }
+
 
         protected override Expression VisitUnary(UnaryExpression node)
         {
@@ -72,7 +84,7 @@ namespace u2.Umbraco
             bool isLeft;
             if ((isLeft = left == strTrue) || right == strTrue)
                 format = isLeft ? "{1}" : "{0}";
-            
+
             if (!string.IsNullOrEmpty(format))
                 _builder.Replace(literal, string.Format(format, left, right));
             return base.VisitBinary(node);

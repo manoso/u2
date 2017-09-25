@@ -1,26 +1,23 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Linq.Expressions;
-//using System.Threading.Tasks;
-//using Cinema.Data.Cache;
-//using Cinema.Data.Cms.DataType;
-//using Cinema.Data.Cms.Helper;
-//using Cinema.Data.Cms.Mapping;
-//using Cinema.Data.Model.Cms.Section;
-//using Cinema.Infrastructure.Configuration;
-//using Cinema.Infrastructure.Ninject;
-//using Examine;
-//using Examine.SearchCriteria;
-//using Ninject;
-//using Cinema.Infrastructure.Log;
-
-//namespace Cinema.Data.Umbraco
+﻿//namespace Cinema.Data.Umbraco
 //{
-//    public interface IUmbracoProvider : IRequestScope
+//    using System;
+//    using System.Collections.Generic;
+//    using System.Linq;
+//    using System.Linq.Expressions;
+//    using System.Threading.Tasks;
+//    using Cms.DataType;
+//    using Cms.Mapping;
+//    using Examine;
+//    using Examine.SearchCriteria;
+//    using Infrastructure.Cache;
+//    using Infrastructure.Configuration;
+//    using Model.Cms;
+//    using Model.Cms.Section;
+//    using Ninject;
+
+//    public interface IUmbracoProvider : IContentProvider
 //    {
-//        Task<IEnumerable<T>> Get<T>(Expression<Func<T, bool>> condition = null) where T : class, new();
-//        Task<IEnumerable<KeyValuePair<string, Media>>> GetMedia();
+//        Task<IEnumerable<Media>> GetMedia();
 //        Task<Home> GetHome();
 //    }
 
@@ -31,25 +28,20 @@
 //        private const string ContentFormat = @"+__IndexType:content +__Path:\-1,{0}* +__NodeTypeAlias:{1}{2}";
 //        private const string MediaFormat = "+__IndexType:media";
 
-//        private const string MediaIdAlias = "id";
-//        private const string MediaUrlAlias = "umbracoFile";
-
 //        [Inject]
 //        public ICinemaConfiguration Config { get; set; }
 
 //        [Inject]
-//        public IUmbracoCache UmbracoCache { get; set; }
+//        public ICacheHandler Cache { get; set; }
 
-//        [Inject]
-//        public ICinemaLog CinemaLog { get; set; }
-
-//        public async Task<IEnumerable<KeyValuePair<string, Media>>> GetMedia()
+//        public async Task<IEnumerable<Media>> GetMedia()
 //        {
-//            var result = await ContentFor(MediaFormat);
-//            return result?.ToDictionary(x => x.Get<string>(MediaIdAlias), x => x.Get<string>(MediaUrlAlias)?.JsonTo<Media>());
+//            var contents = await Task.Run(() => ContentFor(MediaFormat));
+//            return contents.Solve<Media>().ToList();
 //        }
 
-//        public async Task<IEnumerable<T>> Get<T>(Expression<Func<T, bool>> condition = null) where T : class, new()
+//        public async Task<IEnumerable<T>> Get<T>(Expression<Func<T, bool>> condition = null)
+//            where T : class, ICmsModel, new()
 //        {
 //            string query = null;
 //            if (condition != null)
@@ -60,41 +52,45 @@
 //            }
 
 //            var home = typeof(T) == typeof(Home) ? null : await GetHome();
-//            var medias = await UmbracoCache.GetMedias();
+//            var media = await Cache.FetchAsync<IEnumerable<Media>>(UmbracoConstant.UmbracoMedia);
 //            var config = CmsRegistry.ConfigFor<T>();
+
 //            if (config == null)
-//                return null;
-
-//            var contents = await ContentFor(string.Format(ContentFormat, home?.CmsId.ToString() ?? string.Empty, config.Alias, query == null ? string.Empty : $" +({query})"));
-//            return contents.Solve<T>(MediaDefer<T>(config, home, medias)).ToList();
-//        }
-
-//        private static async Task<IEnumerable<IContent>> ContentFor(string query)
-//        {
-//            return await Task.Run(() =>
 //            {
-//                if (string.IsNullOrWhiteSpace(query))
-//                    return null;
+//                return null;
+//            }
 
-//                var searcher = ExamineManager.Instance.SearchProviderCollection[DataSearcher];
-//                var searchCriteria = searcher.CreateSearchCriteria(BooleanOperation.Or);
-//                searchCriteria.RawQuery(query);
-//                var results = searcher.Search(searchCriteria);
-//                return results.Select(x => new UmbracoContent(x.Fields)).ToList() as IEnumerable<IContent>;
-//            });
+//            var contents = ContentFor(string.Format(ContentFormat, home?.CmsId.ToString() ?? string.Empty, config.Alias, query == null ? string.Empty : $" +({query})"));
+
+//            return contents.Solve<T>(MediaDefer<T>(config, home, media)).ToList();
 //        }
 
-//        public string ToUrl(IDictionary<string, Media> medias, string mediaId)
+//        private static IEnumerable<IContent> ContentFor(string query)
 //        {
-//            Media media = null;
-//            medias?.TryGetValue(mediaId, out media);
-//            return media?.Url;
+//            if (string.IsNullOrWhiteSpace(query))
+//            {
+//                return null;
+//            }
+
+//            var searcher = ExamineManager.Instance.SearchProviderCollection[DataSearcher];
+//            var searchCriteria = searcher.CreateSearchCriteria(BooleanOperation.Or);
+//            searchCriteria.RawQuery(query);
+//            var results = searcher.Search(searchCriteria);
+//            return results.Select(x => new UmbracoContent(x.Fields)).ToList();
 //        }
 
-//        private MapDefer MediaDefer<T>(MapConfig config, Home home, IDictionary<string, Media> medias) where T: class, new()
+//        public string ToUrl(IEnumerable<Media> medias, string mediaKey)
+//        {
+//            var media = medias?.FirstOrDefault(x => x.Is(mediaKey));
+//            return media?.UmbracoFile.Url;
+//        }
+
+//        private MapDefer MediaDefer<T>(MapConfig config, Home home, IEnumerable<Media> medias) where T : class, new()
 //        {
 //            if (config.MediaMaps == null || config.MediaMaps.Count <= 0)
+//            {
 //                return null;
+//            }
 
 //            var defer = new MapDefer();
 //            var typeDefer = defer.For<T>();
@@ -105,21 +101,29 @@
 //                var alias = info.Name;
 //                typeDefer.Attach<string>(alias, (x, id) =>
 //                {
-//                    if (string.IsNullOrWhiteSpace(id)) return;
+//                    if (string.IsNullOrWhiteSpace(id))
+//                    {
+//                        return;
+//                    }
 
 //                    var url = ToUrl(medias, id);
-//                    if (url == null) return;
+
+//                    if (url == null)
+//                    {
+//                        return;
+//                    }
 
 //                    info.SetValue(x, imageBase + url);
 //                });
 //            }
+
 //            return defer;
 //        }
 
 //        public async Task<Home> GetHome()
 //        {
 //            var countryCode = Config.SiteSettings.CountryCode;
-//            var all = await UmbracoCache.GetHomes();
+//            var all = await Cache.FetchTypeAsync<Home>();
 
 //            return
 //                all?.FirstOrDefault(
