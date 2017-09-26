@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
@@ -84,6 +82,25 @@ namespace u2.Cache.Test
             await registryNz.Received(1).Reload();
         }
 
+        [Test]
+        public async Task Refresh_called_not_null()
+        {
+            var registryAu = Substitute.For<ICacheRegistry>();
+            var registryNz = Substitute.For<ICacheRegistry>();
+            var au = "au";
+            var nz = "nz";
+
+            var cache = new Cache
+            {
+                [au] = registryAu,
+                [nz] = registryNz
+            };
+
+            await cache.Refresh(au);
+
+            await registryAu.Received(1).Reload();
+            await registryNz.DidNotReceive().Reload();
+        }
     }
 
     public class CacheItem
