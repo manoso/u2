@@ -5,12 +5,19 @@ using System.Threading.Tasks;
 
 namespace u2.Cache
 {
-    public class CacheRegistry
+    public interface ICacheRegistry
     {
-        public static int DefaultCacheTimeInMin;
-        public static int ShortCacheTimeInMin;
-        private const int NoCache = 0;
+        void Add<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins);
+        void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params LookupParameter<T>[] lookups);
+        Task<IEnumerable<T>> FetchAsync<T>();
+        Task<T> FetchAsync<T>(string key);
+        Task<ILookup<string, T>> FetchLookupAsync<T>(LookupParameter<T> lookupParameter);
+        Task Reload<T>(string key = null);
+        Task Reload();
+    }
 
+    public class CacheRegistry : ICacheRegistry
+    {
         private readonly ISiteStore _store;
         private readonly IDictionary<string, CacheTask> _tasks = new Dictionary<string, CacheTask>();
 
@@ -19,19 +26,18 @@ namespace u2.Cache
             _store = store;
         }
 
-        public void Add<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins)
+        public void Add<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInSecs)
         {
             _tasks.Add(key,
                 new CacheTask<T>
                 {
                     TaskKey = key,
                     Task = func,
-                    CacheInMins = cacheInMins
+                    CacheInSecs = cacheInSecs
                 });
         }
 
-        public void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = NoCache,
-            params LookupParameter<T>[] lookups)
+        public void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs, params LookupParameter<T>[] lookups)
         {
             var taskKey = typeof(T).FullName;
             _tasks.Add(taskKey,
@@ -39,7 +45,7 @@ namespace u2.Cache
                 {
                     TaskKey = taskKey,
                     Task = func,
-                    CacheInMins = cacheInMins,
+                    CacheInSecs = cacheInSecs,
                     LookupParameters = lookups
                 });
         }

@@ -22,7 +22,7 @@ namespace u2.Cache
             {
                 taskCompletion = new TaskCompletionSource<bool>();
                 _task = taskCompletion.Task;
-                if (CacheInMins > NoCache)
+                if (CacheInSecs > 0)
                     Timestamp = DateTime.UtcNow;
             }
             _semaphore.Release();
@@ -54,15 +54,14 @@ namespace u2.Cache
 
     public abstract class CacheTask
     {
-        internal int CacheInMins { get; set; }
+        internal int CacheInSecs { get; set; }
         internal string TaskKey { get; set; }
         internal Delegate Task { get; set; }
 
         internal IDictionary<string, object> CacheItems = new Dictionary<string, object>();
 
-        internal bool IsExpired => CacheInMins <= NoCache || Timestamp.AddMinutes(CacheInMins) <= DateTime.UtcNow;
+        internal bool IsExpired => CacheInSecs <= 0 || Timestamp.AddSeconds(CacheInSecs) <= DateTime.UtcNow;
 
-        protected const int NoCache = 0;
         protected DateTime Timestamp;
 
         /// <summary>
@@ -70,7 +69,7 @@ namespace u2.Cache
         /// </summary>
         internal async Task Reload()
         {
-            Timestamp = DateTime.UtcNow.AddMinutes(-CacheInMins);
+            Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSecs);
             await Load();
         }
 

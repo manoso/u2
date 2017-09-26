@@ -10,47 +10,44 @@ namespace u2.Cache
     {
         void Register<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0);
         void Register<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins = 0);
-        void RegisterWithLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params LookupParameter<T>[] lookups);
+        void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params LookupParameter<T>[] lookups);
         Task Refresh(string site = null);
     }
 
     public class Cache : ICache
     {
-        public static int DefaultCacheTimeInMin = 10;
-        public static int ShortCacheTimeInMin = 5;
+        public static int DefaultCache = 300;
+        private const int UseDefault = 0;
 
-        private const int UseDefaultCache = 0;
+        private readonly IDictionary<string, ICacheRegistry> _registries = new Dictionary<string, ICacheRegistry>();
 
-        private readonly IDictionary<string, CacheRegistry> _registries = new Dictionary<string, CacheRegistry>();
-
-        public CacheRegistry this[string key]
+        public ICacheRegistry this[string key]
         {
             get => _registries[key];
             set => _registries[key] = value;
         }
 
-        public void Register<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0)
+        public void Register<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0)
         {
-            cacheInMins = cacheInMins == UseDefaultCache ? DefaultCacheTimeInMin : cacheInMins;
-
-            Register(typeof(T).FullName, func, cacheInMins);
+            cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
+            Register(typeof(T).FullName, func, cacheInSecs);
         }
 
-        public void Register<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins = 0)
+        public void Register<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0)
         {
-            cacheInMins = cacheInMins == UseDefaultCache ? DefaultCacheTimeInMin : cacheInMins;
-            foreach (var registry in _registries)
+            cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
+            foreach (var registry in _registries.Values)
             {
-                registry.Value.Add(key, func, cacheInMins);
+                registry.Add(key, func, cacheInSecs);
             }
         }
 
-        public void RegisterWithLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params LookupParameter<T>[] lookups)
+        public void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, params LookupParameter<T>[] lookups)
         {
-            cacheInMins = cacheInMins == UseDefaultCache ? DefaultCacheTimeInMin : cacheInMins;
-            foreach (var registry in _registries)
+            cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
+            foreach (var registry in _registries.Values)
             {
-                registry.Value.Add(func, cacheInMins, lookups);
+                registry.Add(func, cacheInSecs, lookups);
             }
         }
 
@@ -58,9 +55,9 @@ namespace u2.Cache
         {
             if (string.IsNullOrWhiteSpace(site))
             {
-                foreach (var registry in _registries)
+                foreach (var registry in _registries.Values)
                 {
-                    await registry.Value.Reload();
+                    await registry.Reload();
                 }
             }
             else
