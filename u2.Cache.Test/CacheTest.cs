@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
@@ -65,7 +66,7 @@ namespace u2.Cache.Test
         }
 
         [Test]
-        public async Task Refresh_called_null()
+        public async Task Refresh_with_null_success()
         {
             var registryAu = Substitute.For<ICacheRegistry>();
             var registryNz = Substitute.For<ICacheRegistry>();
@@ -83,7 +84,7 @@ namespace u2.Cache.Test
         }
 
         [Test]
-        public async Task Refresh_called_not_null()
+        public async Task Refresh_not_null_success()
         {
             var registryAu = Substitute.For<ICacheRegistry>();
             var registryNz = Substitute.For<ICacheRegistry>();
@@ -105,6 +106,8 @@ namespace u2.Cache.Test
 
     public class CacheItem
     {
+        public Guid Id { get; } = Guid.NewGuid();
         public int LookupKey { get; set; }
+        public string LookupKeyOther { get; set; }
     }
 }

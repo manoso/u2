@@ -48,7 +48,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheRegistryTest.cs" />
+    <Compile Include="CacheTaskTest.cs" />
     <Compile Include="CacheTest.cs" />
+    <Compile Include="LookupParameterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,30 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using u2.Core.Extensions;
 
 namespace u2.Cache
 {
     public class LookupParameter<T>
     {
-        public readonly IList<PropertyInfo> Groups = new List<PropertyInfo>();
+        private readonly IDictionary<string, Func<T, string>> _keys = new Dictionary<string, Func<T, string>>();
 
         public LookupParameter<T> Add<TP>(Expression<Func<T, TP>> expProp)
         {
-            Groups.Add(expProp.ToInfo());
+            var info = expProp.ToInfo();
+            var func = expProp.Compile();
+            string Final(T x) => func(x).ToString();
+            _keys.Add(info.Name, Final);
             return this;
         }
 
-        public string GetKey()
-        {
-            var suffix = string.Join("_", Groups.Select(x => x.Name));
-            return $"Lookup_{typeof(T).Name}_{suffix}";
-        }
+        public string CacheKey => $"Lookup_{typeof(T).Name}_{string.Join("_", _keys.Keys)}";
 
         public string GetLookupKey(T value)
         {
-            return string.Join(":", Groups.Select(i => i.GetValue(value)));
+            return string.Join("_", _keys.Values.Select(x => x(value)));
         }
     }
 }

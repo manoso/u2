@@ -6,15 +6,34 @@ using System.Threading.Tasks;
 
 namespace u2.Cache
 {
-    internal class CacheTask<T> : CacheTask
+    public interface ICacheTask
     {
-        internal LookupParameter<T>[] LookupParameters { get; set; }
+        int CacheInSecs { get; }
+        string TaskKey { get; }
+        Delegate Task { get; }
+
+        IDictionary<string, object> CacheItems { get; }
+
+        bool IsExpired { get; }
+
+        Task Run<TResult>();
+
+        /// <summary>
+        /// Updates cache tasks' timestamp to be expired. Next subsequent request will be re-evaluated and data refreshed
+        /// </summary>
+        Task Reload();
+    }
+
+
+    public class CacheTask<T> : CacheTask
+    {
+        public LookupParameter<T>[] LookupParameters { get; set; }
 
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         private Task<bool> _task;
 
-        internal override async Task Run<TResult>()
+        public override async Task Run<TResult>()
         {
             TaskCompletionSource<bool> taskCompletion = null;
             await _semaphore.WaitAsync();
@@ -38,57 +57,50 @@ namespace u2.Cache
 
         protected override async Task Load()
         {
-            var result = await LoadTask(TaskKey, Task as Func<Task<IEnumerable<T>>>);
-            var items = result?.ToList();
+            IList<T> items = null;
+            if (Task is Func<Task<IEnumerable<T>>> func)
+            {
+                var data = await func();
+
+                if (data != null)
+                {
+                    CacheItems[TaskKey] = data;
+                    items = data.ToList();
+                }
+            }
 
             if (LookupParameters != null && LookupParameters.Any() && items != null && items.Any())
             {
                 foreach (var lookup in LookupParameters)
                 {
                     var data = items.ToLookup(lookup.GetLookupKey);
-                    CacheItems.Add(lookup.GetKey(), data);
+                    CacheItems[lookup.CacheKey] = data;
                 }
             }
         }
     }
 
-    public abstract class CacheTask
+    public abstract class CacheTask : ICacheTask
     {
-        internal int CacheInSecs { get; set; }
-        internal string TaskKey { get; set; }
-        internal Delegate Task { get; set; }
+        public int CacheInSecs { get; set; }
+        public string TaskKey { get; set; }
+        public Delegate Task { get; set; }
 
-        internal IDictionary<string, object> CacheItems = new Dictionary<string, object>();
+        public IDictionary<string, object> CacheItems { get; } = new Dictionary<string, object>();
 
-        internal bool IsExpired => CacheInSecs <= 0 || Timestamp.AddSeconds(CacheInSecs) <= DateTime.UtcNow;
+        public bool IsExpired => CacheInSecs <= 0 || Timestamp.AddSeconds(CacheInSecs) <= DateTime.UtcNow;
 
         protected DateTime Timestamp;
+
+        public abstract Task Run<TResult>();
 
         /// <summary>
         /// Updates cache tasks' timestamp to be expired. Next subsequent request will be re-evaluated and data refreshed
         /// </summary>
-        internal async Task Reload()
+        public async Task Reload()
         {
             Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSecs);
             await Load();
-        }
-
-        internal abstract Task Run<TResult>();
-
-        protected async Task<T> LoadTask<T>(string key, Func<Task<T>> func) where T : class
-        {
-
-            if (func != null)
-            {
-                var data = await func();
-
-                if (data != null)
-                {
-                    CacheItems.Add(key, data);
-                }
-                return data;
-            }
-            return null;
         }
 
         protected abstract Task Load();

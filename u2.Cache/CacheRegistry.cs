@@ -19,7 +19,7 @@ namespace u2.Cache
     public class CacheRegistry : ICacheRegistry
     {
         private readonly ISiteStore _store;
-        private readonly IDictionary<string, CacheTask> _tasks = new Dictionary<string, CacheTask>();
+        private readonly IDictionary<string, ICacheTask> _tasks = new Dictionary<string, ICacheTask>();
 
         public CacheRegistry(ISiteStore store)
         {
@@ -53,7 +53,7 @@ namespace u2.Cache
 
         public async Task Reload<T>(string key = null)
         {
-            if (_tasks.TryGetValue(key ?? typeof(T).FullName, out CacheTask task))
+            if (_tasks.TryGetValue(key ?? typeof(T).FullName, out ICacheTask task))
                 await task.Reload();
         }
 
@@ -78,7 +78,7 @@ namespace u2.Cache
             if (lookupParameter == null)
                 return null;
 
-            return await FetchAsync<ILookup<string, T>, T>(lookupParameter.GetKey(), true);
+            return await FetchAsync<ILookup<string, T>, T>(lookupParameter.CacheKey, true);
         }
 
         private async Task<TResult> FetchAsync<TResult, T>(string key, bool isLookup = false)
@@ -86,12 +86,12 @@ namespace u2.Cache
             var type = typeof(T);
             var taskKey = isLookup ? type.FullName : key;
 
-            return _tasks.TryGetValue(taskKey, out CacheTask task)
+            return _tasks.TryGetValue(taskKey, out ICacheTask task)
                 ? await TaskFetch<TResult>(task, key)
                 : default(TResult);
         }
 
-        private async Task<T> TaskFetch<T>(CacheTask task, string cacheKey)
+        private async Task<T> TaskFetch<T>(ICacheTask task, string cacheKey)
         {
             if (!_store.Has(cacheKey) || task.IsExpired)
                 await task.Run<T>();
