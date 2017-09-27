@@ -40,14 +40,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contract\ICmsCache.cs" />
     <Compile Include="GroupAction.cs" />
+    <Compile Include="Contract\ICmsKey.cs" />
+    <Compile Include="Contract\IModelFactory.cs" />
     <Compile Include="ModelMap.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="FieldMap.cs" />
     <Compile Include="ContentType.cs" />
     <Compile Include="Extensions\ExpressionExtensions.cs" />
-    <Compile Include="IContent.cs" />
-    <Compile Include="IModel.cs" />
+    <Compile Include="Contract\IContent.cs" />
+    <Compile Include="Contract\ICmsModel.cs" />
     <Compile Include="PropertySetter.cs" />
     <Compile Include="TypeMap.cs" />
     <Compile Include="MapDefer.cs" />

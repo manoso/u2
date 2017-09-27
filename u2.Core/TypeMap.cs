@@ -9,7 +9,8 @@ namespace u2.Core
 {
     public class TypeMap
     {
-        public List<FieldMap> Maps = new List<FieldMap>();
+        public IList<FieldMap> Maps = new List<FieldMap>();
+        public IList<ModelMap> ModelMaps = new List<ModelMap>();
 
         public Type EntityType { get; }
         public virtual string Alias { get; set; }
@@ -320,6 +321,25 @@ namespace u2.Core
                         Maps.Remove(found);
                 }
             }
+
+            return this;
+        }
+        public TypeMap<T> Tie<TModel, TKey>(Action<T, IEnumerable<TModel>> actionModel, Func<TModel, TKey> funcKey, string alias = null)
+            where TModel : class, new()
+        {
+            var modelMap = new ModelMap<T, TModel, TKey>(alias, actionModel, funcKey) as ModelMap;
+
+            ModelMaps.Add(modelMap);
+
+            return this;
+        }
+
+        public TypeMap<T> Tie<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, string alias = null)
+            where TModel : class, new()
+        {
+            var action = expModel.ToSetter();
+            var modelMap = new ModelMap<T, TModel>(alias, action);
+            ModelMaps.Add(modelMap);
 
             return this;
         }

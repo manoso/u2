@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using u2.Core.Contract;
 
 namespace u2.Cache
 {
-
-    public interface ICache
+    public interface ICache : ICmsCache
     {
-        void Register<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0);
         void Register<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins = 0);
         void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params LookupParameter<T>[] lookups);
         Task Refresh(string site = null);
@@ -19,9 +18,9 @@ namespace u2.Cache
         public static int DefaultCache = 300;
         private const int UseDefault = 0;
 
-        private readonly IDictionary<string, ICacheRegistry> _registries = new Dictionary<string, ICacheRegistry>();
+        private readonly IDictionary<string, ICacheFetcher> _registries = new Dictionary<string, ICacheFetcher>();
 
-        public ICacheRegistry this[string key]
+        public ICacheFetcher this[string key]
         {
             get => _registries[key];
             set => _registries[key] = value;

@@ -6,14 +6,14 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using u2.Core.Contract;
 using u2.Core.Extensions;
 
 namespace u2.Core
 {
     public abstract class ModelMap
     {
-
-        public static Func<object, string> DefaultGetKey = x => ((IKey) x).GetKey();
+        public static Func<object, string> DefaultGetKey = x => ((ICmsKey) x).CmsKey;
 
         public Action<object, object> SetModel { get; set; }
         public Func<object, string> GetKey { get; set; }

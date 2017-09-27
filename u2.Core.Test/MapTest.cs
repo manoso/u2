@@ -8,17 +8,18 @@ namespace u2.Core.Test
     [TestFixture]
     public class MapTest
     {
-        private readonly IRegistry _rego = new Map();
+        private readonly ICmsRegistry _rego = new Map(null, null);
 
         private IMap Map => _rego as IMap;
 
         [OneTimeSetUp]
         public void Setup()
         {
+            _rego.Register<TestItem>();
             _rego.Register<TestEntity>()
                 .Map(x => x.Name, "contentName")
                 .Map(x => x.Infos, "list", x => x.Split<string>(new [] {','}))
-                .Map(x => x.Items, "items");
+                .Tie<TestItem, int>((x, y) => x.Items = y, x => x.ItemId, "items");
             _rego.Register<TestAction>()
                 .Act<int>((x, v) =>
                 {
@@ -379,7 +380,7 @@ namespace u2.Core.Test
         public int Id { get; set; }
         public string Name { get; set; }
         public IList<string> Infos { get; set; }
-        public IList<TestItem> Items { get; set; }
+        public IEnumerable<TestItem> Items { get; set; }
     }
 
     public class TestItem

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using u2.Core.Contract;
 using u2.Core.Extensions;
 
 namespace u2.Core
 {
-    public interface IRegistry
+    public interface ICmsRegistry
     {
-        TypeMap Register(Type type);
-        TypeMap<T> Register<T>() where T : class, new();
+        TypeMap<T> Register<T>(bool autoCache = true) where T : class, new();
     }
 
     public interface IMap
@@ -53,25 +53,28 @@ namespace u2.Core
         Type GetType(string contentType);
     }
 
-    public class Map : IRegistry, IMap
+    public class Map : ICmsRegistry, IMap
     {
         private readonly Dictionary<Type, TypeMap> _entries = new Dictionary<Type, TypeMap>();
+        private readonly IModelFactory _factory;
+        private readonly ICmsCache _cache;
 
-        public TypeMap<T> Register<T>()
+        public Map(IModelFactory factory, ICmsCache cache)
+        {
+            _factory = factory;
+            _cache = cache;
+        }
+
+        public TypeMap<T> Register<T>(bool autoCache = true)
             where T : class, new()
         {
             var map = new TypeMap<T>();
             map.All();
             _entries[typeof(T)] = map;
 
-            return map;
-        }
+            if (autoCache)
+                _cache?.Register(() => _factory.Get<T>());
 
-        public TypeMap Register(Type type)
-        {
-            var map = new TypeMap(type);
-            map.All();
-            _entries[type] = map;
             return map;
         }
 
@@ -118,16 +121,12 @@ namespace u2.Core
         public TypeMap<T> For<T>()
             where T : class, new()
         {
-            TypeMap typeMap;
-            if (!_entries.TryGetValue(typeof(T), out typeMap))
-                typeMap = Register<T>();
-            return typeMap as TypeMap<T>;
+            return _entries.TryGetValue(typeof(T), out TypeMap typeMap) ? typeMap as TypeMap<T> : null;
         }
 
         public TypeMap For(Type type)
         {
-            TypeMap typeMap;
-            return _entries.TryGetValue(type, out typeMap) ? typeMap : Register(type);
+            return _entries.TryGetValue(type, out TypeMap typeMap) ? typeMap : null;
         }
 
         public Type GetType(string contentType)

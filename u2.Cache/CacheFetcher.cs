@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace u2.Cache
 {
-    public interface ICacheRegistry
+    public interface ICacheFetcher
     {
         void Add<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins);
         void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params LookupParameter<T>[] lookups);
@@ -16,12 +16,12 @@ namespace u2.Cache
         Task Reload();
     }
 
-    public class CacheRegistry : ICacheRegistry
+    public class CacheFetcher : ICacheFetcher
     {
         private readonly ISiteStore _store;
         private readonly IDictionary<string, ICacheTask> _tasks = new Dictionary<string, ICacheTask>();
 
-        public CacheRegistry(ISiteStore store)
+        public CacheFetcher(ISiteStore store)
         {
             _store = store;
         }

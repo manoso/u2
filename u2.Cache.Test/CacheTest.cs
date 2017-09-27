@@ -12,7 +12,7 @@ namespace u2.Cache.Test
         [Test]
         public void Register_called_CacheRegistry_Add()
         {
-            var registryAu = Substitute.For<ICacheRegistry>();
+            var registryAu = Substitute.For<ICacheFetcher>();
 
             var cache = new Cache
             {
@@ -29,8 +29,8 @@ namespace u2.Cache.Test
         [Test]
         public void Register_2_called_CacheRegistry_Add()
         {
-            var registryAu = Substitute.For<ICacheRegistry>();
-            var registryNz = Substitute.For<ICacheRegistry>();
+            var registryAu = Substitute.For<ICacheFetcher>();
+            var registryNz = Substitute.For<ICacheFetcher>();
 
             var cache = new Cache
             {
@@ -50,7 +50,7 @@ namespace u2.Cache.Test
         [Test]
         public void RegisterLookup_called_CacheRegistry_Add()
         {
-            var registryAu = Substitute.For<ICacheRegistry>();
+            var registryAu = Substitute.For<ICacheFetcher>();
             var lookup = Substitute.For<LookupParameter<CacheItem>>();
 
             var cache = new Cache
@@ -68,8 +68,8 @@ namespace u2.Cache.Test
         [Test]
         public async Task Refresh_with_null_success()
         {
-            var registryAu = Substitute.For<ICacheRegistry>();
-            var registryNz = Substitute.For<ICacheRegistry>();
+            var registryAu = Substitute.For<ICacheFetcher>();
+            var registryNz = Substitute.For<ICacheFetcher>();
 
             var cache = new Cache
             {
@@ -86,8 +86,8 @@ namespace u2.Cache.Test
         [Test]
         public async Task Refresh_not_null_success()
         {
-            var registryAu = Substitute.For<ICacheRegistry>();
-            var registryNz = Substitute.For<ICacheRegistry>();
+            var registryAu = Substitute.For<ICacheFetcher>();
+            var registryNz = Substitute.For<ICacheFetcher>();
             var au = "au";
             var nz = "nz";
 

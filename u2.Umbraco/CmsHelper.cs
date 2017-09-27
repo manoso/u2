@@ -13,7 +13,6 @@ namespace u2.Umbraco
     using DataType;
     public static class CmsHelper
     {
- 
         public static IList<T> IdsToEntities<T, TId>(IList<TId> ids, IList<T> entities, Func<T, TId> getId, IList<T> empty = null)
         {
             if (entities == null || !entities.Any() || getId == null) return empty;
