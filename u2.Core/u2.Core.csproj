@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CmsKey.cs" />
     <Compile Include="Contract\ICmsCache.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GroupAction.cs" />
     <Compile Include="Contract\ICmsKey.cs" />
     <Compile Include="Contract\IModelFactory.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="Contract\IContent.cs" />
     <Compile Include="Contract\ICmsModel.cs" />
     <Compile Include="PropertySetter.cs" />
+    <Compile Include="SimpleMap.cs" />
     <Compile Include="TypeMap.cs" />
     <Compile Include="MapDefer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

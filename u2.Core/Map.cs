@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using u2.Core.Contract;
 using u2.Core.Extensions;
 
 namespace u2.Core
 {
     public interface ICmsRegistry
     {
-        TypeMap<T> Register<T>(bool autoCache = true) where T : class, new();
+        SimpleMap<T> Copy<T>() where T : class, new();
+        TypeMap<T> Register<T>() where T : class, new();
     }
 
     public interface IMap
@@ -55,25 +55,38 @@ namespace u2.Core
 
     public class Map : ICmsRegistry, IMap
     {
-        private readonly Dictionary<Type, TypeMap> _entries = new Dictionary<Type, TypeMap>();
-        private readonly IModelFactory _factory;
-        private readonly ICmsCache _cache;
+        private readonly IDictionary<Type, TypeMap> _entries = new Dictionary<Type, TypeMap>();
+        private readonly IDictionary<Type, SimpleMap> _copies = new Dictionary<Type, SimpleMap>();
 
-        public Map(IModelFactory factory, ICmsCache cache)
+        public SimpleMap<T> Copy<T>()
+            where T : class, new()
         {
-            _factory = factory;
-            _cache = cache;
+            var map = new SimpleMap<T>();
+            _copies[typeof(T)] = map;
+
+            return map;
         }
 
-        public TypeMap<T> Register<T>(bool autoCache = true)
+        public TypeMap<T> Register<T>()
             where T : class, new()
         {
             var map = new TypeMap<T>();
             map.All();
-            _entries[typeof(T)] = map;
 
-            if (autoCache)
-                _cache?.Register(() => _factory.Get<T>());
+            var type = typeof(T);
+            foreach (var key in _copies.Keys)
+            {
+                if (key.IsAssignableFrom(type))
+                {
+                    var copy = _copies[key];
+                    foreach (var fieldMap in copy.Maps)
+                    {
+                        map.AddMap(fieldMap);
+                    }
+                }
+            }
+
+            _entries[type] = map;
 
             return map;
         }

@@ -67,5 +67,4 @@ namespace u2.Core
             return _map.To(content, Ask(content), value) as T;
         }
     }
-
 }

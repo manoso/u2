@@ -13,7 +13,7 @@ namespace u2.Core
 {
     public abstract class ModelMap
     {
-        public static Func<object, string> DefaultGetKey = x => ((ICmsKey) x).CmsKey;
+        public static Func<object, string> DefaultGetKey = x => ((ICmsKey) x).Key;
 
         public Action<object, object> SetModel { get; set; }
         public Func<object, string> GetKey { get; set; }

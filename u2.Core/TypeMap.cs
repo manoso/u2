@@ -7,19 +7,17 @@ using u2.Core.Extensions;
 
 namespace u2.Core
 {
-    public class TypeMap
+    public class TypeMap : SimpleMap
     {
-        public IList<FieldMap> Maps = new List<FieldMap>();
-        public IList<ModelMap> ModelMaps = new List<ModelMap>();
+        public IList<ModelMap> ModelMaps { get; } = new List<ModelMap>();
 
-        public Type EntityType { get; }
-        public virtual string Alias { get; set; }
+        public bool IsCache { get; protected set; }
 
         public IDictionary<string, Type> CmsFields { get; } = new Dictionary<string, Type>();
 
-        public Action<IContent, object> Action { get; protected set; }
-
         public IList<GroupAction> GroupActions { get; protected set; } = new List<GroupAction>();
+
+        public Action<IContent, object> Action { get; protected set; }
 
         public TypeMap(Type type)
         {
@@ -47,15 +45,6 @@ namespace u2.Core
 
             return this;
         }
-
-        protected void AddMap(FieldMap map)
-        {
-            if (map == null)
-                return;
-
-            Maps.Add(map);
-        }
-
     }
 
     public class TypeMap<T> : TypeMap
@@ -119,7 +108,7 @@ namespace u2.Core
                 GroupActions.Add(new GroupAction
                 {
                     Aliases = new List<string> { alias },
-                    Action = (x, y) => action((T)x, (TP)y[0])
+                    Action = (x, y) => action((T)x, y[0].To<TP>())
                 });
             }
 
@@ -143,7 +132,7 @@ namespace u2.Core
                 GroupActions.Add(new GroupAction
                 {
                     Aliases = new List<string> { alias1, alias2 },
-                    Action = (x, y) => action((T)x, (TP1)y[0], (TP2)y[1])
+                    Action = (x, y) => action((T)x, y[0].To<TP1>(), y[1].To<TP2>())
                 });
             }
 
@@ -169,7 +158,7 @@ namespace u2.Core
                 GroupActions.Add(new GroupAction
                 {
                     Aliases = new List<string> { alias1, alias2, alias3 },
-                    Action = (x, y) => action((T)x, (TP1)y[0], (TP2)y[1], (TP3)y[2])
+                    Action = (x, y) => action((T)x, y[0].To<TP1>(), y[1].To<TP2>(), y[2].To<TP3>())
                 });
             }
 
@@ -197,7 +186,7 @@ namespace u2.Core
                 GroupActions.Add(new GroupAction
                 {
                     Aliases = new List<string> { alias1, alias2, alias3, alias4 },
-                    Action = (x, y) => action((T)x, (TP1)y[0], (TP2)y[1], (TP3)y[2], (TP4)y[3])
+                    Action = (x, y) => action((T)x, y[0].To<TP1>(), y[1].To<TP2>(), y[2].To<TP3>(), y[3].To<TP4>())
                 });
             }
 
@@ -231,7 +220,7 @@ namespace u2.Core
                 GroupActions.Add(new GroupAction
                 {
                     Aliases = new List<string> { alias1, alias2, alias3, alias4, alias5 },
-                    Action = (x, y) => action((T)x, (TP1)y[0], (TP2)y[1], (TP3)y[2], (TP4)y[3], (TP5)y[4])
+                    Action = (x, y) => action((T)x, y[0].To<TP1>(), y[1].To<TP2>(), y[2].To<TP3>(), y[3].To<TP4>(), y[4].To<TP5>())
                 });
             }
 
@@ -268,7 +257,7 @@ namespace u2.Core
                 GroupActions.Add(new GroupAction
                 {
                     Aliases = new List<string> { alias1, alias2, alias3, alias4, alias5, alias6 },
-                    Action = (x, y) => action((T)x, (TP1)y[0], (TP2)y[1], (TP3)y[2], (TP4)y[3], (TP5)y[4], (TP6)y[5])
+                    Action = (x, y) => action((T)x, y[0].To<TP1>(), y[1].To<TP2>(), y[2].To<TP3>(), y[3].To<TP4>(), y[4].To<TP5>(), y[5].To<TP6>())
                 });
             }
 
@@ -324,6 +313,27 @@ namespace u2.Core
 
             return this;
         }
+
+        public TypeMap<T> Tie<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, string alias = null)
+            where TModel : class, new()
+        {
+            var action = expModel.ToSetter();
+            var modelMap = new ModelMap<T, TModel>(alias, action);
+            ModelMaps.Add(modelMap);
+
+            return this;
+        }
+
+        public TypeMap<T> Tie<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias = null)
+            where TModel : class, new()
+        {
+            var modelMap = new ModelMap<T, TModel>(alias, actionModel) as ModelMap;
+
+            ModelMaps.Add(modelMap);
+
+            return this;
+        }
+
         public TypeMap<T> Tie<TModel, TKey>(Action<T, IEnumerable<TModel>> actionModel, Func<TModel, TKey> funcKey, string alias = null)
             where TModel : class, new()
         {
@@ -334,13 +344,9 @@ namespace u2.Core
             return this;
         }
 
-        public TypeMap<T> Tie<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, string alias = null)
-            where TModel : class, new()
+        public TypeMap<T> Cache()
         {
-            var action = expModel.ToSetter();
-            var modelMap = new ModelMap<T, TModel>(alias, action);
-            ModelMaps.Add(modelMap);
-
+            IsCache = true;
             return this;
         }
 

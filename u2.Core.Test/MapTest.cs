@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using u2.Core.Contract;
 using u2.Umbraco;
 
 namespace u2.Core.Test
@@ -8,18 +9,23 @@ namespace u2.Core.Test
     [TestFixture]
     public class MapTest
     {
-        private readonly ICmsRegistry _rego = new Map(null, null);
+        private readonly ICmsRegistry _rego = new Map();
 
         private IMap Map => _rego as IMap;
 
         [OneTimeSetUp]
         public void Setup()
         {
+            _rego.Copy<CmsKey>()
+                .Map(x => x.Key, "id");
+            _rego.Copy<Model>()
+                .Map(x => x.Name, "nodeName");
+
             _rego.Register<TestItem>();
             _rego.Register<TestEntity>()
                 .Map(x => x.Name, "contentName")
                 .Map(x => x.Infos, "list", x => x.Split<string>(new [] {','}))
-                .Tie<TestItem, int>((x, y) => x.Items = y, x => x.ItemId, "items");
+                .Tie(x => x.Items);
             _rego.Register<TestAction>()
                 .Act<int>((x, v) =>
                 {
@@ -47,7 +53,7 @@ namespace u2.Core.Test
                 }, "value1", "value2", "value3", "value4", "value5")
                 .Act<int, int, short, short, int, string>((x, v1, v2, v3, v4, v5, v6) =>
                 {
-                    x.Sum6 = v1 + v2 + v3 + v4 + v5 + int.Parse(v6);
+                    x.Sum6 = v1 + v2 + v3 + v4 + v5 + (string.IsNullOrWhiteSpace(v6) ? 0 : int.Parse(v6));
                 }, "value1", "value2", "value3", "value4", "value5", "value6")
                 .Act((c, x) =>
                 {
@@ -373,9 +379,37 @@ namespace u2.Core.Test
             Assert.That(result.ActionId, Is.EqualTo(1));
             Assert.That(result.Agregate, Is.EqualTo("123456"));
         }
+
+        [Test]
+        public void Copy_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"id", "cmskey" },
+                {"nodeName", "a name" }
+            };
+
+            var content = new UmbracoContent(fields);
+            var item = Map.To<TestItem>(content);
+            var action = Map.To<TestAction>(content);
+
+            Assert.IsNotNull(item);
+            Assert.That(item.Key, Is.EqualTo("cmskey"));
+            Assert.That(item.Name, Is.EqualTo("a name"));
+
+            Assert.IsNotNull(action);
+            Assert.That(action.Key, Is.EqualTo("cmskey"));
+            Assert.That(action.Name, Is.Null);
+        }
+
     }
 
-    public class TestEntity
+    public class Model : CmsKey
+    {
+        public string Name { get; set; }
+    }
+
+    public class TestEntity : CmsKey
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -383,15 +417,14 @@ namespace u2.Core.Test
         public IEnumerable<TestItem> Items { get; set; }
     }
 
-    public class TestItem
+    public class TestItem : Model
     {
         public int ItemId { get; set; }
         public double Price { get; set; }
         public bool OnSale { get; set; }
-        public string Name { get; set; }
     }
 
-    public class TestAction
+    public class TestAction : CmsKey
     {
         public int ActionId { get; set; }
         public string Name { get; set; }
