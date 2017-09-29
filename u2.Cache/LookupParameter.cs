@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using u2.Core.Contract;
 using u2.Core.Extensions;
 
 namespace u2.Cache
 {
-    public class LookupParameter<T>
+    public class LookupParameter<T> : ILookupParameter<T>
     {
         private readonly IDictionary<string, Func<T, string>> _keys = new Dictionary<string, Func<T, string>>();
 
-        public LookupParameter<T> Add<TP>(Expression<Func<T, TP>> expProp)
+        public ILookupParameter<T> Add<TP>(Expression<Func<T, TP>> expProp)
         {
             var info = expProp.ToInfo();
             var func = expProp.Compile();

@@ -3,31 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using u2.Core.Contract;
 
 namespace u2.Cache
 {
-    public interface ICacheTask
-    {
-        int CacheInSecs { get; }
-        string TaskKey { get; }
-        Delegate Task { get; }
-
-        IDictionary<string, object> CacheItems { get; }
-
-        bool IsExpired { get; }
-
-        Task Run<TResult>();
-
-        /// <summary>
-        /// Updates cache tasks' timestamp to be expired. Next subsequent request will be re-evaluated and data refreshed
-        /// </summary>
-        Task Reload();
-    }
-
-
     public class CacheTask<T> : CacheTask
     {
-        public LookupParameter<T>[] LookupParameters { get; set; }
+        public ILookupParameter<T>[] LookupParameters { get; set; }
 
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 

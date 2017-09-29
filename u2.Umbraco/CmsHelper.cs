@@ -1,12 +1,10 @@
 ﻿using Archetype.Models;
-using Cinema.Data.Cms.DataType;
-using u2.Core;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using u2.Umbraco.DataType;
+using u2.Core.Contract;
 
 namespace u2.Umbraco
 {

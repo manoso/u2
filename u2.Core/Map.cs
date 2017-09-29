@@ -1,113 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using u2.Core.Contract;
 using u2.Core.Extensions;
 
 namespace u2.Core
 {
-    public interface ICmsRegistry
+    public class Map : IMap
     {
-        SimpleMap<T> Copy<T>() where T : class, new();
-        TypeMap<T> Register<T>() where T : class, new();
-    }
+        private readonly IMapRegistry _registry;
 
-    public interface IMap
-    {
-        /// <summary>
-        /// Map the content to the given type.
-        /// </summary>
-        /// <param name="content">The content to be mapped from.</param>
-        /// <param name="type">The type to be mapped to.</param>
-        /// <param name="value">The target object to map to. If null, a new object will be created.</param>
-        /// <param name="defer">A MapDefer object define mapping actions available at runtime only.</param>
-        /// <returns>The solved object.</returns>
-        object To(IContent content, Type type, object value = null, MapDefer defer = null);
-
-        /// <summary>
-        /// Map the content to the given type.
-        /// </summary>
-        /// <typeparam name="T">The type to be mapped to.</typeparam>
-        /// <param name="content">The content to be mapped from.</param>
-        /// <param name="value">The target object to map to. If null, a new object will be created.</param>
-        /// <param name="defer">A MapDefer object define mapping actions available at runtime only.</param>
-        /// <returns>The solved object. If "value" is passed in, it is solved and returned.</returns>
-        T To<T>(IContent content, T value = null, MapDefer defer = null) where T : class, new();
-
-        /// <summary>
-        /// Map the contents to objects of the given type.
-        /// </summary>
-        /// <typeparam name="T">The type to be mapped to.</typeparam>
-        /// <typeparam name="TP"></typeparam>
-        /// <param name="contents">The contents to be mapped from.</param>
-        /// <param name="values">The target objects to map to. If null, new objects will be created.</param>
-        /// <param name="matchProp">Lambda function for the matching property.</param>
-        /// <param name="matchAlias">Content alias used for the matchingProperty.</param>
-        /// <param name="defer">Mapping that is deferred at run time.</param>
-        /// <returns></returns>
-        IEnumerable<T> To<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, MapDefer defer = null)
-            where T : class, new();
-
-        IEnumerable<T> To<T>(IEnumerable<IContent> contents, MapDefer defer = null)
-            where T : class, new();
-
-        Type GetType(string contentType);
-    }
-
-    public class Map : ICmsRegistry, IMap
-    {
-        private readonly IDictionary<Type, TypeMap> _entries = new Dictionary<Type, TypeMap>();
-        private readonly IDictionary<Type, SimpleMap> _copies = new Dictionary<Type, SimpleMap>();
-
-        public SimpleMap<T> Copy<T>()
-            where T : class, new()
+        public Map(IMapRegistry registry)
         {
-            var map = new SimpleMap<T>();
-            _copies[typeof(T)] = map;
-
-            return map;
-        }
-
-        public TypeMap<T> Register<T>()
-            where T : class, new()
-        {
-            var map = new TypeMap<T>();
-            map.All();
-
-            var type = typeof(T);
-            foreach (var key in _copies.Keys)
-            {
-                if (key.IsAssignableFrom(type))
-                {
-                    var copy = _copies[key];
-                    foreach (var fieldMap in copy.Maps)
-                    {
-                        map.AddMap(fieldMap);
-                    }
-                }
-            }
-
-            _entries[type] = map;
-
-            return map;
+            _registry = registry;
         }
 
         public object To(IContent content, Type type, object value = null, MapDefer defer = null)
         {
-            var map = For(type);
+            var map = _registry.For(type);
             return Load(map, content, value, defer);
         }
 
         public T To<T>(IContent content, T value = null, MapDefer defer = null)
             where T: class, new ()
         {
-            var map = For<T>();
+            var map = _registry.For<T>();
             return Load(map, content, value, defer) as T;
         }
 
         public IEnumerable<T> To<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, MapDefer defer = null)
             where T : class, new()
         {
-            var map = For<T>();
+            var map = _registry.For<T>();
             var list = values?.ToList();
 
             var needMatch = list != null && list.Any() && matchProp != null && !string.IsNullOrWhiteSpace(matchAlias);
@@ -129,23 +53,6 @@ namespace u2.Core
             where T : class, new()
         {
             return To<T, object>(contents, defer: defer);
-        }
-
-        public TypeMap<T> For<T>()
-            where T : class, new()
-        {
-            return _entries.TryGetValue(typeof(T), out TypeMap typeMap) ? typeMap as TypeMap<T> : null;
-        }
-
-        public TypeMap For(Type type)
-        {
-            return _entries.TryGetValue(type, out TypeMap typeMap) ? typeMap : null;
-        }
-
-        public Type GetType(string contentType)
-        {
-            var config = _entries.Values.FirstOrDefault(x => x.Alias == contentType);
-            return config?.EntityType;
         }
 
         private object Load(TypeMap typeMap, IContent content, object instance = null, MapDefer defer = null)
@@ -206,7 +113,7 @@ namespace u2.Core
             return result;
         }
 
-        public object GetContentField(FieldMap map, IContent content)
+        private object GetContentField(FieldMap map, IContent content)
         {
             var field = content.Get(map.ContentType, map.Alias);
             if (map.Setter != null)
@@ -225,8 +132,8 @@ namespace u2.Core
             {
                 if (map is FieldMapCopy)
                 {
-                    if (_entries.ContainsKey(map.ContentType))
-                        maps.AddRange(_entries[map.ContentType].Maps);
+                    if (_registry.Has(map.ContentType))
+                        maps.AddRange(_registry[map.ContentType].Maps);
                 }
                 else
                     maps.Add(map);

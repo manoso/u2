@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Cinema.Data.Cms.DataType
+namespace u2.Umbraco.DataType
 {
     public class Media
     {

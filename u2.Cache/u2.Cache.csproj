@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Cache.cs" />
     <Compile Include="CacheFetcher.cs" />
+    <Compile Include="CacheRegistry.cs" />
     <Compile Include="CacheTask.cs" />
     <Compile Include="SiteStore.cs" />
     <Compile Include="LookupParameter.cs" />

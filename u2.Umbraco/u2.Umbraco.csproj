@@ -139,6 +139,7 @@
       <HintPath>..\packages\UmbracoCms.Core.7.6.4\lib\net45\SQLCE4Umbraco.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.1, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Core.7.6.4\lib\net45\System.Data.SqlServerCe.dll</HintPath>
@@ -216,11 +217,10 @@
     <Compile Include="DataType\Archetype.cs" />
     <Compile Include="DataType\ImageCropper.cs" />
     <Compile Include="DataType\Media.cs" />
-    <Compile Include="DataType\UmbracoConstant.cs" />
     <Compile Include="ExamineVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UmbracoContent.cs" />
-    <Compile Include="UmbracoProvider.cs" />
+    <Compile Include="UmbracoFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">

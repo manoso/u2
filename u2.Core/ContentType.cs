@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using u2.Core.Contract;
 
 namespace u2.Core
 {

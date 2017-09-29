@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace u2.Core
+namespace u2.Core.Contract
 {
     public interface IContent
     {

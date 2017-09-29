@@ -1,66 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using u2.Core.Contract;
 
 namespace u2.Cache
 {
-    public interface ICacheFetcher
-    {
-        void Add<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins);
-        void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params LookupParameter<T>[] lookups);
-        Task<IEnumerable<T>> FetchAsync<T>();
-        Task<T> FetchAsync<T>(string key);
-        Task<ILookup<string, T>> FetchLookupAsync<T>(LookupParameter<T> lookupParameter);
-        Task Reload<T>(string key = null);
-        Task Reload();
-    }
-
     public class CacheFetcher : ICacheFetcher
     {
         private readonly ISiteStore _store;
-        private readonly IDictionary<string, ICacheTask> _tasks = new Dictionary<string, ICacheTask>();
+        private readonly ICacheRegistry _registry;
 
-        public CacheFetcher(ISiteStore store)
+        public CacheFetcher(ISiteStore store, ICacheRegistry registry)
         {
             _store = store;
-        }
-
-        public void Add<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInSecs)
-        {
-            _tasks.Add(key,
-                new CacheTask<T>
-                {
-                    TaskKey = key,
-                    Task = func,
-                    CacheInSecs = cacheInSecs
-                });
-        }
-
-        public void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs, params LookupParameter<T>[] lookups)
-        {
-            var taskKey = typeof(T).FullName;
-            _tasks.Add(taskKey,
-                new CacheTask<T>
-                {
-                    TaskKey = taskKey,
-                    Task = func,
-                    CacheInSecs = cacheInSecs,
-                    LookupParameters = lookups
-                });
-        }
-
-
-        public async Task Reload<T>(string key = null)
-        {
-            if (_tasks.TryGetValue(key ?? typeof(T).FullName, out ICacheTask task))
-                await task.Reload();
-        }
-
-        public async Task Reload()
-        {
-            foreach (var task in _tasks.Values)
-                await task.Reload();
+            _registry = registry;
         }
 
         public async Task<IEnumerable<T>> FetchAsync<T>()
@@ -73,7 +26,7 @@ namespace u2.Cache
             return await FetchAsync<T, T>(key);
         }
 
-        public async Task<ILookup<string, T>> FetchLookupAsync<T>(LookupParameter<T> lookupParameter)
+        public async Task<ILookup<string, T>> FetchLookupAsync<T>(ILookupParameter<T> lookupParameter)
         {
             if (lookupParameter == null)
                 return null;
@@ -86,7 +39,7 @@ namespace u2.Cache
             var type = typeof(T);
             var taskKey = isLookup ? type.FullName : key;
 
-            return _tasks.TryGetValue(taskKey, out ICacheTask task)
+            return _registry.TryGetTask(taskKey, out ICacheTask task)
                 ? await TaskFetch<TResult>(task, key)
                 : default(TResult);
         }

@@ -41,11 +41,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmsKey.cs" />
+    <Compile Include="Contract\ICacheFetcher.cs" />
+    <Compile Include="Contract\ICacheRegistry.cs" />
+    <Compile Include="Contract\ICacheTask.cs" />
     <Compile Include="Contract\ICmsCache.cs" />
+    <Compile Include="Contract\ILookupParameter.cs" />
+    <Compile Include="Contract\IRoot.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GroupAction.cs" />
     <Compile Include="Contract\ICmsKey.cs" />
     <Compile Include="Contract\IModelFactory.cs" />
+    <Compile Include="Contract\IMapRegistry.cs" />
+    <Compile Include="Contract\IMap.cs" />
+    <Compile Include="MapRegistry.cs" />
     <Compile Include="ModelMap.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="FieldMap.cs" />

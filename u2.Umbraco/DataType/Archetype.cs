@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Archetype.Models;
-using u2.Core;
+using u2.Core.Contract;
 
 namespace u2.Umbraco.DataType
 {
