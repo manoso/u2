@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using u2.Core.Contract;
 
@@ -18,9 +17,9 @@ namespace u2.Cache
         public static int DefaultCache = 300;
         private const int UseDefault = 0;
 
-        private readonly IDictionary<string, ICacheFetcher> _registries = new Dictionary<string, ICacheFetcher>();
+        private readonly IDictionary<string, ICacheRegistry> _registries = new Dictionary<string, ICacheRegistry>();
 
-        public ICacheFetcher this[string key]
+        public ICacheRegistry this[string key]
         {
             get => _registries[key];
             set => _registries[key] = value;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
+using u2.Core.Contract;
 
 namespace u2.Cache.Test
 {
@@ -12,7 +13,7 @@ namespace u2.Cache.Test
         [Test]
         public void Register_called_CacheRegistry_Add()
         {
-            var registryAu = Substitute.For<ICacheFetcher>();
+            var registryAu = Substitute.For<ICacheRegistry>();
 
             var cache = new Cache
             {
@@ -29,8 +30,8 @@ namespace u2.Cache.Test
         [Test]
         public void Register_2_called_CacheRegistry_Add()
         {
-            var registryAu = Substitute.For<ICacheFetcher>();
-            var registryNz = Substitute.For<ICacheFetcher>();
+            var registryAu = Substitute.For<ICacheRegistry>();
+            var registryNz = Substitute.For<ICacheRegistry>();
 
             var cache = new Cache
             {
@@ -50,7 +51,7 @@ namespace u2.Cache.Test
         [Test]
         public void RegisterLookup_called_CacheRegistry_Add()
         {
-            var registryAu = Substitute.For<ICacheFetcher>();
+            var registryAu = Substitute.For<ICacheRegistry>();
             var lookup = Substitute.For<LookupParameter<CacheItem>>();
 
             var cache = new Cache
@@ -68,8 +69,8 @@ namespace u2.Cache.Test
         [Test]
         public async Task Refresh_with_null_success()
         {
-            var registryAu = Substitute.For<ICacheFetcher>();
-            var registryNz = Substitute.For<ICacheFetcher>();
+            var registryAu = Substitute.For<ICacheRegistry>();
+            var registryNz = Substitute.For<ICacheRegistry>();
 
             var cache = new Cache
             {
@@ -86,8 +87,8 @@ namespace u2.Cache.Test
         [Test]
         public async Task Refresh_not_null_success()
         {
-            var registryAu = Substitute.For<ICacheFetcher>();
-            var registryNz = Substitute.For<ICacheFetcher>();
+            var registryAu = Substitute.For<ICacheRegistry>();
+            var registryNz = Substitute.For<ICacheRegistry>();
             var au = "au";
             var nz = "nz";
 

@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Runtime.Caching;
+using u2.Core.Contract;
 
 namespace u2.Cache
 {
-    public interface ISiteStore
-    {
-        object Get(string key);
-        void Save(string key, object item);
-        void Clear(string key);
-        bool Has(string key);
-    }
-
-    public class SiteStore : ISiteStore
+    public class CacheStore : ICacheStore
     {
         private static readonly MemoryCache Cache = MemoryCache.Default;
 

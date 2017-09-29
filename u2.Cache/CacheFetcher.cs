@@ -7,10 +7,10 @@ namespace u2.Cache
 {
     public class CacheFetcher : ICacheFetcher
     {
-        private readonly ISiteStore _store;
+        private readonly ICacheStore _store;
         private readonly ICacheRegistry _registry;
 
-        public CacheFetcher(ISiteStore store, ICacheRegistry registry)
+        public CacheFetcher(ICacheStore store, ICacheRegistry registry)
         {
             _store = store;
             _registry = registry;

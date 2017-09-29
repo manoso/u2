@@ -43,6 +43,7 @@
     <Compile Include="CmsKey.cs" />
     <Compile Include="Contract\ICacheFetcher.cs" />
     <Compile Include="Contract\ICacheRegistry.cs" />
+    <Compile Include="Contract\ICacheStore.cs" />
     <Compile Include="Contract\ICacheTask.cs" />
     <Compile Include="Contract\ICmsCache.cs" />
     <Compile Include="Contract\ILookupParameter.cs" />

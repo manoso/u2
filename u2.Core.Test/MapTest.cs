@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
 using u2.Umbraco;
@@ -15,7 +16,8 @@ namespace u2.Core.Test
         [OneTimeSetUp]
         public void Setup()
         {
-            _rego = new MapRegistry();
+            var root = Substitute.For<IRoot>();
+            _rego = new MapRegistry(root);
             _map = new Map(_rego);
 
             _rego.Copy<CmsKey>()

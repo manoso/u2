@@ -50,7 +50,7 @@ namespace u2.Umbraco
             var isMedia = typeof(T) == typeof(Media);
             var isRoot = typeof(IRoot).IsAssignableFrom(typeof(T));
             var root = isRoot ? null : _mapRegistry.Root;
-            var medias = isMedia || isRoot ? null : await GetModels<Media>();
+            //var medias = isMedia || isRoot ? null : await GetModels<Media>();
             var config = _mapRegistry.For<T>();
             if (config == null)
                 return null;
@@ -130,40 +130,14 @@ namespace u2.Umbraco
             {
                 var map = modelMap;
                 var alias = map.Alias;
-                var source = await UmbracoCache.GetModels(map.ModelType);
+                var source = await GetModels(map.ModelType);
                 typeDefer.Attach<string>(alias, (x, csv) =>
                 {
                     if (string.IsNullOrWhiteSpace(csv) || x == null) return;
-                    map.Match(x, csv, source);
+                    var ids = csv.Split(',');
+                    map.Match(x, ids, source);
                 });
             }
-        }
-
-        private async Task ModelDefer<T>(MapDefer defer, MapConfig config)
-            where T : class, ICmsModel, new()
-        {
-            var typeDefer = defer.For<T>();
-            foreach (var modelMap in config.ModelMaps)
-            {
-                var map = modelMap;
-                var alias = map.Alias;
-                var source = await UmbracoCache.GetModels(map.ModelType);
-                typeDefer.Attach<string>(alias, (x, csv) =>
-                {
-                    if (string.IsNullOrWhiteSpace(csv) || x == null) return;
-                    map.Match(x, csv, source);
-                });
-            }
-        }
-
-        public async Task<Home> GetHome()
-        {
-            var countryCode = Config.SiteSettings.CountryCode;
-            var all = await Cache.FetchTypeAsync<Home>();
-
-            return
-                all?.FirstOrDefault(
-                    x => string.Equals(x.CountryCode, countryCode, StringComparison.CurrentCultureIgnoreCase));
         }
 
         //private IEnumerable<UmbracoContent> ChildrenFor(IContent parent)
