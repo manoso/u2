@@ -79,7 +79,6 @@ namespace u2.Core
         /// <returns>This TypeMap object.</returns>
         public TypeMap<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP))
         {
-
             if (property != null)
             {
                 var map = new FieldMap<T, TP>(alias, property)

@@ -21,12 +21,14 @@ namespace u2.Umbraco
 
         private readonly IMap _map;
         private readonly IMapRegistry _mapRegistry;
+        private readonly ICacheRegistry _cacheRegistry;
         private readonly ICacheFetcher _fetcher;
 
-        public UmbracoFactory(IMap map, IMapRegistry mapRegistry, ICacheFetcher cacheFetcher)
+        public UmbracoFactory(IMap map, IMapRegistry mapRegistry, ICacheRegistry cacheRegistry, ICacheFetcher cacheFetcher)
         {
             _map = map;
             _mapRegistry = mapRegistry;
+            _cacheRegistry = cacheRegistry;
             _fetcher = cacheFetcher;
         }
 
@@ -39,6 +41,12 @@ namespace u2.Umbraco
         public async Task<IEnumerable<T>> Get<T>(Expression<Func<T, bool>> condition = null)
             where T : class, new()
         {
+            return await GetUmbraco(condition);
+        }
+
+        private async Task<IEnumerable<T>> GetUmbraco<T>(Expression<Func<T, bool>> condition = null)
+            where T : class, new()
+        { 
             string query = null;
             if (condition != null)
             {
