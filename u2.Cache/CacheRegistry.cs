@@ -33,6 +33,16 @@ namespace u2.Cache
                 });
         }
 
+        public bool Has<T>()
+        {
+            return Has(typeof(T).FullName);
+        }
+
+        public bool Has(string key)
+        {
+            return _tasks.Keys.Contains(key);
+        }
+
         public bool TryGetTask(string taskKey, out ICacheTask task)
         {
             return _tasks.TryGetValue(taskKey, out task);

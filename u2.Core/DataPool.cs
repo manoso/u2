@@ -1,35 +1,58 @@
-﻿using u2.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using u2.Core.Contract;
-using u2.Umbraco.DataType;
 
-namespace u2.Umbraco
+namespace u2.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
-    using Examine;
-    using Examine.SearchCriteria;
-
-    public class UmbracoFactory : IModelFactory
+    public class DataPool : IDataPool
     {
-        private const string DataSearcher = "DataSearcher";
-
-        private const string ContentFormat = @"+__IndexType:content +__Path:\-1,{0}* +__NodeTypeAlias:{1}{2}";
-        private const string MediaFormat = "+__IndexType:media";
-
         private readonly IMap _map;
         private readonly IMapRegistry _mapRegistry;
         private readonly ICacheRegistry _cacheRegistry;
-        private readonly ICacheFetcher _fetcher;
+        private readonly ICacheFetcher _cacheFetcher;
+        private readonly IQueryFactory _queryFactory;
+        private readonly ICmsFetcher _cmsFetcher;
 
-        public UmbracoFactory(IMap map, IMapRegistry mapRegistry, ICacheRegistry cacheRegistry, ICacheFetcher cacheFetcher)
+        public DataPool(IMap map, IMapRegistry mapRegistry, ICacheRegistry cacheRegistry, ICacheFetcher cacheFetcher, IQueryFactory queryFactory, ICmsFetcher cmsFetcher)
         {
             _map = map;
             _mapRegistry = mapRegistry;
             _cacheRegistry = cacheRegistry;
-            _fetcher = cacheFetcher;
+            _cacheFetcher = cacheFetcher;
+            _queryFactory = queryFactory;
+            _cmsFetcher = cmsFetcher;
+        }
+
+        public async Task<IEnumerable<T>> GetAsync<T>()
+            where T : class, new()
+        {
+            if (!_cacheRegistry.Has<T>())
+            {
+                var typeMap = _mapRegistry.For<T>();
+                var cmsQuery = _queryFactory.Create(typeMap);
+                _cacheRegistry.Add(async () =>
+                {
+                    var contents = await Task.Run(() => _cmsFetcher.Fetch(cmsQuery));
+                    var models = _map.To<T>(contents);
+                    return models;
+                });
+
+
+            }
+            return await _cacheFetcher.FetchAsync<T>();
+        }
+
+        public Task<T> GethAsync<T>(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ILookup<string, T>> GetLookupAsync<T>(ILookupParameter<T> lookupParameter)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<Media>> GetMedia()
@@ -46,7 +69,7 @@ namespace u2.Umbraco
 
         private async Task<IEnumerable<T>> GetUmbraco<T>(Expression<Func<T, bool>> condition = null)
             where T : class, new()
-        { 
+        {
             string query = null;
             if (condition != null)
             {
@@ -75,20 +98,6 @@ namespace u2.Umbraco
             //    MediaDefer<T>(defer, config, root, medias);
             //}
             return _map.To<T>(contents, defer).ToList();
-        }
-
-        private static IEnumerable<IContent> ContentFor(string query)
-        {
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                return null;
-            }
-
-            var searcher = ExamineManager.Instance.SearchProviderCollection[DataSearcher];
-            var searchCriteria = searcher.CreateSearchCriteria(BooleanOperation.Or);
-            searchCriteria.RawQuery(query);
-            var results = searcher.Search(searchCriteria);
-            return results.Select(x => new UmbracoContent(x.Fields)).ToList();
         }
 
         public async Task<IEnumerable<object>> GetModels(Type type)
@@ -147,15 +156,5 @@ namespace u2.Umbraco
                 });
             }
         }
-
-        //private IEnumerable<UmbracoContent> ChildrenFor(IContent parent)
-        //{
-        //    var searcher = ExamineManager.Instance.SearchProviderCollection["ExternalSearcher"];
-        //    var searchCriteria = searcher.CreateSearchCriteria(BooleanOperation.Or);
-        //    searchCriteria.RawQuery("__path:" + string.Format("{0}*", parent.Get<string>("__path")));
-        //    var results = searcher.Search(searchCriteria);
-
-        //    return results.Select(x => new UmbracoContent(x.Fields)).ToList();
-        //}
     }
 }

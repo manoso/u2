@@ -8,6 +8,8 @@ namespace u2.Core.Contract
     {
         void Add<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins);
         void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params ILookupParameter<T>[] lookups);
+        bool Has<T>();
+        bool Has(string key);
         bool TryGetTask(string taskKey, out ICacheTask task);
         Task Reload<T>(string key = null);
         Task Reload();
