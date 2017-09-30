@@ -48,8 +48,6 @@ namespace u2.Core
             ToList = x => x.OfType<TModel>().ToList();
             GetKey = DefaultGetKey;
         }
-
-
     }
 
     public class ModelMap<T, TModel, TKey> : ModelMap<T, TModel>

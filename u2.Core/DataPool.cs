@@ -30,84 +30,68 @@ namespace u2.Core
             where T : class, new()
         {
             if (!_cacheRegistry.Has<T>())
-            {
-                var typeMap = _mapRegistry.For<T>();
-                var cmsQuery = _queryFactory.Create(typeMap);
-                _cacheRegistry.Add(async () =>
-                {
-                    var contents = await Task.Run(() => _cmsFetcher.Fetch(cmsQuery));
-                    var models = _map.To<T>(contents);
-                    return models;
-                });
+                await Register<T>();
 
-
-            }
             return await _cacheFetcher.FetchAsync<T>();
         }
 
-        public Task<T> GethAsync<T>(string key)
+        public Task<T> GetAsync<T>(string key)
         {
-            throw new NotImplementedException();
+            return _cacheRegistry.Has(key) ? _cacheFetcher.FetchAsync<T>(key) : null;
         }
 
         public Task<ILookup<string, T>> GetLookupAsync<T>(ILookupParameter<T> lookupParameter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<Media>> GetMedia()
-        {
-            var contents = await Task.Run(() => ContentFor(MediaFormat));
-            return _map.To<Media>(contents).ToList();
-        }
-
-        public async Task<IEnumerable<T>> Get<T>(Expression<Func<T, bool>> condition = null)
             where T : class, new()
         {
-            return await GetUmbraco(condition);
+            return _cacheFetcher.FetchLookupAsync(lookupParameter);
         }
 
-        private async Task<IEnumerable<T>> GetUmbraco<T>(Expression<Func<T, bool>> condition = null)
-            where T : class, new()
+        private async Task Register<T>(string key = null) where T : class, new()
         {
-            string query = null;
-            if (condition != null)
-            {
-                var visitor = new ExamineVisitor();
-                visitor.Visit(condition);
-                query = visitor.Query;
-            }
+            var typeMap = _mapRegistry.For<T>();
+            var cmsQuery = _queryFactory.Create(typeMap);
 
-            var isMedia = typeof(T) == typeof(Media);
-            var isRoot = typeof(IRoot).IsAssignableFrom(typeof(T));
-            var root = isRoot ? null : _mapRegistry.Root;
-            //var medias = isMedia || isRoot ? null : await GetModels<Media>();
-            var config = _mapRegistry.For<T>();
-            if (config == null)
-                return null;
-
-            var queryFinal = isMedia
-                ? MediaFormat
-                : string.Format(ContentFormat, root?.Id.ToString() ?? string.Empty, config.Alias,
-                    query == null ? string.Empty : $" +({query})");
-            var contents = await Task.Run(() => ContentFor(queryFinal));
             var defer = new MapDefer();
-            await ModelDefer<T>(defer, config);
+            await ModelDefer<T>(defer, typeMap);
             //if (!isMedia && !isRoot)
             //{
-            //    MediaDefer<T>(defer, config, root, medias);
+            //    MediaDefer<T>(defer, typeMap, root, medias);
             //}
-            return _map.To<T>(contents, defer).ToList();
+
+            _cacheRegistry.Add(async () =>
+            {
+                var contents = await Task.Run(() => _cmsFetcher.Fetch(cmsQuery));
+                var models = _map.To<T>(contents, defer);
+                return models;
+            },  key: key);
         }
 
         public async Task<IEnumerable<object>> GetModels(Type type)
         {
-            return await _fetcher.FetchAsync<IEnumerable<object>>(type.FullName);
+            return await _cacheFetcher.FetchAsync<IEnumerable<object>>(type.FullName);
         }
 
         public async Task<IEnumerable<T>> GetModels<T>()
         {
-            return await _fetcher.FetchAsync<T>();
+            return await _cacheFetcher.FetchAsync<T>();
+        }
+
+        private async Task ModelDefer<T>(MapDefer defer, TypeMap typeMap)
+            where T : class, new()
+        {
+            var typeDefer = defer.For<T>();
+            foreach (var modelMap in typeMap.ModelMaps)
+            {
+                var map = modelMap;
+                var alias = map.Alias;
+                var source = await GetModels(map.ModelType);
+                typeDefer.Attach<string>(alias, (x, csv) =>
+                {
+                    if (string.IsNullOrWhiteSpace(csv) || x == null) return;
+                    var ids = csv.Split(',');
+                    map.Match(x, ids, source);
+                });
+            }
         }
 
         //public string ToUrl(IEnumerable<Media> medias, string mediaKey)
@@ -139,22 +123,37 @@ namespace u2.Core
         //    }
         //}
 
-        private async Task ModelDefer<T>(MapDefer defer, TypeMap config)
-            where T : class, new()
-        {
-            var typeDefer = defer.For<T>();
-            foreach (var modelMap in config.ModelMaps)
-            {
-                var map = modelMap;
-                var alias = map.Alias;
-                var source = await GetModels(map.ModelType);
-                typeDefer.Attach<string>(alias, (x, csv) =>
-                {
-                    if (string.IsNullOrWhiteSpace(csv) || x == null) return;
-                    var ids = csv.Split(',');
-                    map.Match(x, ids, source);
-                });
-            }
-        }
+        //private async Task<IEnumerable<T>> GetUmbraco<T>(Expression<Func<T, bool>> condition = null)
+        //    where T : class, new()
+        //{
+        //    string query = null;
+        //    if (condition != null)
+        //    {
+        //        var visitor = new ExamineVisitor();
+        //        visitor.Visit(condition);
+        //        query = visitor.Query;
+        //    }
+
+        //    var isMedia = typeof(T) == typeof(Media);
+        //    var isRoot = typeof(IRoot).IsAssignableFrom(typeof(T));
+        //    var root = isRoot ? null : _mapRegistry.Root;
+        //    //var medias = isMedia || isRoot ? null : await GetModels<Media>();
+        //    var config = _mapRegistry.For<T>();
+        //    if (config == null)
+        //        return null;
+
+        //    var queryFinal = isMedia
+        //        ? MediaFormat
+        //        : string.Format(ContentFormat, root?.Id.ToString() ?? string.Empty, config.Alias,
+        //            query == null ? string.Empty : $" +({query})");
+        //    var contents = await Task.Run(() => ContentFor(queryFinal));
+        //    var defer = new MapDefer();
+        //    await ModelDefer<T>(defer, config);
+        //    if (!isMedia && !isRoot)
+        //    {
+        //        MediaDefer<T>(defer, typeMap, root, medias);
+        //    }
+        //    return _map.To<T>(contents, defer).ToList();
+        //}
     }
 }

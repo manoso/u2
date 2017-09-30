@@ -8,7 +8,7 @@ namespace u2.Cache
     public interface ICache : ICmsCache
     {
         void Register<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins = 0);
-        void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params LookupParameter<T>[] lookups);
+        void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params ILookupParameter<T>[] lookups);
         Task Refresh(string site = null);
     }
 
@@ -36,16 +36,16 @@ namespace u2.Cache
             cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
             foreach (var registry in _registries.Values)
             {
-                registry.Add(key, func, cacheInSecs);
+                registry.Add(func, cacheInSecs, key);
             }
         }
 
-        public void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, params LookupParameter<T>[] lookups)
+        public void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, params ILookupParameter<T>[] lookups)
         {
             cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
             foreach (var registry in _registries.Values)
             {
-                registry.Add(func, cacheInSecs, lookups);
+                registry.Add(func, cacheInSecs, lookups: lookups);
             }
         }
 

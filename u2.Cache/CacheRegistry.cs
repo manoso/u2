@@ -9,24 +9,15 @@ namespace u2.Cache
     {
         private readonly IDictionary<string, ICacheTask> _tasks = new Dictionary<string, ICacheTask>();
 
-        public void Add<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInSecs)
+        public void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, string key = null, params ILookupParameter<T>[] lookups)
         {
+            if (string.IsNullOrWhiteSpace(key))
+                key = typeof(T).FullName;
+
             _tasks.Add(key,
                 new CacheTask<T>
                 {
                     TaskKey = key,
-                    Task = func,
-                    CacheInSecs = cacheInSecs
-                });
-        }
-
-        public void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs, params ILookupParameter<T>[] lookups)
-        {
-            var taskKey = typeof(T).FullName;
-            _tasks.Add(taskKey,
-                new CacheTask<T>
-                {
-                    TaskKey = taskKey,
                     Task = func,
                     CacheInSecs = cacheInSecs,
                     LookupParameters = lookups

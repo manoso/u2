@@ -12,8 +12,6 @@ namespace u2.Core
     {
         public IList<ModelMap> ModelMaps { get; } = new List<ModelMap>();
 
-        public bool IsCache { get; protected set; }
-
         public IDictionary<string, Type> CmsFields { get; } = new Dictionary<string, Type>();
 
         public IList<GroupAction> GroupActions { get; protected set; } = new List<GroupAction>();
@@ -341,12 +339,6 @@ namespace u2.Core
 
             ModelMaps.Add(modelMap);
 
-            return this;
-        }
-
-        public TypeMap<T> Cache()
-        {
-            IsCache = true;
             return this;
         }
 
