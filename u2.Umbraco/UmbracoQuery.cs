@@ -4,29 +4,31 @@ using u2.Core.Contract;
 
 namespace u2.Umbraco
 {
-    public abstract class UmbracoQuery<T> : ICmsQuery<T>
-        where T : class, new()
+    public abstract class UmbracoQuery : ICmsQuery
     {
-
         public IRoot Root { get; set; }
         public string Alias { get; set; }
 
+        public abstract string Query { get; }
+    }
+
+    public abstract class UmbracoQuery<T> : UmbracoQuery, ICmsQuery<T>
+        where T : class, new()
+    {
+
         public Expression<Func<T, bool>> Condition { get; set; }
 
-        public abstract string Query { get; }
-
-        protected string RawQuery
+        protected virtual string RawQuery
         {
             get
             {
-                string query = null;
                 if (Condition != null)
                 {
                     var visitor = new ExamineVisitor();
                     visitor.Visit(Condition);
-                    query = visitor.Query;
+                    return  visitor.Query;
                 }
-                return query;
+                return null;
             }
         }
     }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using u2.Core.Contract;
+using u2.Core.Extensions;
 
 namespace u2.Core
 {
@@ -30,7 +30,7 @@ namespace u2.Core
             where T : class, new()
         {
             if (!_cacheRegistry.Has<T>())
-                await Register<T>();
+                await Register(typeof(T));
 
             return await _cacheFetcher.FetchAsync<T>();
         }
@@ -46,46 +46,46 @@ namespace u2.Core
             return _cacheFetcher.FetchLookupAsync(lookupParameter);
         }
 
-        private async Task Register<T>(string key = null) where T : class, new()
+        private async Task Register(Type type, string key = null)
         {
-            var typeMap = _mapRegistry.For<T>();
+            var typeMap = _mapRegistry.For(type);
             var cmsQuery = _queryFactory.Create(typeMap);
 
             var defer = new MapDefer();
-            await ModelDefer<T>(defer, typeMap);
+            await ModelDefer(defer, typeMap);
             //if (!isMedia && !isRoot)
             //{
             //    MediaDefer<T>(defer, typeMap, root, medias);
             //}
+            if (string.IsNullOrWhiteSpace(key))
+                key = type.FullName;
 
             _cacheRegistry.Add(async () =>
             {
                 var contents = await Task.Run(() => _cmsFetcher.Fetch(cmsQuery));
-                var models = _map.To<T>(contents, defer);
+                var models = _map.To(type, contents, defer).AsList();
                 return models;
             },  key: key);
         }
 
-        public async Task<IEnumerable<object>> GetModels(Type type)
+        private async Task<IEnumerable<object>> GetModels(Type type)
         {
-            return await _cacheFetcher.FetchAsync<IEnumerable<object>>(type.FullName);
+            var key = type.FullName;
+            if (!_cacheRegistry.Has(key))
+                await Register(type);
+
+            return await _cacheFetcher.FetchAsync<IEnumerable<object>>(key);
         }
 
-        public async Task<IEnumerable<T>> GetModels<T>()
+        private async Task ModelDefer(MapDefer defer, TypeMap typeMap)
         {
-            return await _cacheFetcher.FetchAsync<T>();
-        }
-
-        private async Task ModelDefer<T>(MapDefer defer, TypeMap typeMap)
-            where T : class, new()
-        {
-            var typeDefer = defer.For<T>();
+            var typeDefer = defer.For(typeMap.EntityType);
             foreach (var modelMap in typeMap.ModelMaps)
             {
                 var map = modelMap;
                 var alias = map.Alias;
                 var source = await GetModels(map.ModelType);
-                typeDefer.Attach<string>(alias, (x, csv) =>
+                typeDefer.Attach(alias, (x, csv) =>
                 {
                     if (string.IsNullOrWhiteSpace(csv) || x == null) return;
                     var ids = csv.Split(',');

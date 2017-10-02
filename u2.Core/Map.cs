@@ -55,6 +55,17 @@ namespace u2.Core
             return To<T, object>(contents, defer: defer);
         }
 
+        public IEnumerable<object> To(Type type, IEnumerable<IContent> contents, MapDefer defer = null)
+        {
+            var map = _registry.For(type);
+
+            foreach (var content in contents)
+            {
+                var result = To(content, type, null, defer);
+                yield return result;
+            }
+        }
+
         private object Load(TypeMap typeMap, IContent content, object instance = null, MapDefer defer = null)
         {
             if (typeMap == null || content == null) return null;

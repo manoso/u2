@@ -41,5 +41,7 @@ namespace u2.Core.Contract
 
         IEnumerable<T> To<T>(IEnumerable<IContent> contents, MapDefer defer = null)
             where T : class, new();
+
+        IEnumerable<object> To(Type type, IEnumerable<IContent> contents, MapDefer defer = null);
     }
 }

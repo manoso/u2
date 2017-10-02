@@ -18,7 +18,7 @@ namespace u2.Cache
 
         public async Task<IEnumerable<T>> FetchAsync<T>()
         {
-            return await FetchAsync<IEnumerable<T>>(typeof(T).FullName);
+            return await FetchAsync<IEnumerable<T>, T>(typeof(T).FullName);
         }
 
         public async Task<T> FetchAsync<T>(string key)
@@ -47,7 +47,11 @@ namespace u2.Cache
         private async Task<T> TaskFetch<T>(ICacheTask task, string cacheKey)
         {
             if (!_store.Has(cacheKey) || task.IsExpired)
+            {
                 await task.Run<T>();
+                foreach (var cacheItem in task.CacheItems)
+                    _store.Save(cacheItem.Key, cacheItem.Value);
+            }
 
             return (T)_store.Get(cacheKey);
         }

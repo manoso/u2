@@ -9,6 +9,6 @@ namespace u2.Core.Contract
 {
     public interface ICmsFetcher
     {
-        IEnumerable<IContent> Fetch<T>(ICmsQuery<T> cmsQuery) where T : class, new();
+        IEnumerable<IContent> Fetch(ICmsQuery cmsQuery);
     }
 }

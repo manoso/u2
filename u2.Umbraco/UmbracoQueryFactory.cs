@@ -28,5 +28,17 @@ namespace u2.Umbraco
                     Root = typeof(IRoot).IsAssignableFrom(typeof(T)) ? null : _root
                 } as ICmsQuery<T>;
         }
+
+        public ICmsQuery Create(TypeMap typeMap)
+        {
+            var isMedia = typeof(IMedia).IsAssignableFrom(typeMap.EntityType);
+            return isMedia
+                ? new MediaQuery()
+                : new ContentQuery
+                {
+                    Alias = typeMap.Alias,
+                    Root = typeof(IRoot).IsAssignableFrom(typeMap.EntityType) ? null : _root
+                } as ICmsQuery;
+        }
     }
 }

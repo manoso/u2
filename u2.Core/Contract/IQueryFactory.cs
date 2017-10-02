@@ -9,6 +9,7 @@ namespace u2.Core.Contract
 {
     public interface IQueryFactory
     {
+        ICmsQuery Create(TypeMap typeMap);
         ICmsQuery<T> Create<T>(TypeMap<T> typeMap) where T : class, new();
     }
 }

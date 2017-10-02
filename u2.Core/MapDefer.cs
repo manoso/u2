@@ -6,6 +6,15 @@ namespace u2.Core
     public class TypeDefer
     {
         public Dictionary<string, FieldMap> Maps = new Dictionary<string, FieldMap>();
+
+        public TypeDefer Attach(string alias, Action<object, string> action)
+        {
+            Maps.Add(alias, new FieldMap<object, string>(alias)
+            {
+                ActDefer = action
+            });
+            return this;
+        }
     }
 
     public class TypeDefer<T> : TypeDefer
@@ -30,6 +39,14 @@ namespace u2.Core
         {
             var defer = new TypeDefer<T>();
             Defers.Add(typeof(T), defer);
+
+            return defer;
+        }
+
+        public TypeDefer For(Type type)
+        {
+            var defer = new TypeDefer();
+            Defers.Add(type, defer);
 
             return defer;
         }

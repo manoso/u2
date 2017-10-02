@@ -11,8 +11,7 @@ namespace u2.Umbraco
     {
         private const string DataSearcher = "DataSearcher";
 
-        public IEnumerable<IContent> Fetch<T>(ICmsQuery<T> cmsQuery)
-            where T : class, new()
+        public IEnumerable<IContent> Fetch(ICmsQuery cmsQuery)
         {
             var query = cmsQuery.Query;
 
