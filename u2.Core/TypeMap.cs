@@ -316,13 +316,14 @@ namespace u2.Core
             where TModel : class, new()
         {
             var action = expModel.ToSetter();
+            alias = string.IsNullOrWhiteSpace(alias) ? expModel.ToInfo().Name : alias;
             var modelMap = new ModelMap<T, TModel>(alias, action);
             ModelMaps.Add(modelMap);
 
             return this;
         }
 
-        public TypeMap<T> Tie<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias = null)
+        public TypeMap<T> Tie<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias)
             where TModel : class, new()
         {
             var modelMap = new ModelMap<T, TModel>(alias, actionModel) as ModelMap;
@@ -332,7 +333,7 @@ namespace u2.Core
             return this;
         }
 
-        public TypeMap<T> Tie<TModel, TKey>(Action<T, IEnumerable<TModel>> actionModel, Func<TModel, TKey> funcKey, string alias = null)
+        public TypeMap<T> Tie<TModel, TKey>(Action<T, IEnumerable<TModel>> actionModel, Func<TModel, TKey> funcKey, string alias)
             where TModel : class, new()
         {
             var modelMap = new ModelMap<T, TModel, TKey>(alias, actionModel, funcKey) as ModelMap;

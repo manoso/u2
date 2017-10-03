@@ -15,7 +15,7 @@ namespace u2.Cache
 
         private Task<bool> _task;
 
-        public override async Task Run<TResult>()
+        public override async Task Run()
         {
             TaskCompletionSource<bool> taskCompletion = null;
             await _semaphore.WaitAsync();
@@ -74,7 +74,7 @@ namespace u2.Cache
 
         protected DateTime Timestamp;
 
-        public abstract Task Run<TResult>();
+        public abstract Task Run();
 
         /// <summary>
         /// Updates cache tasks' timestamp to be expired. Next subsequent request will be re-evaluated and data refreshed

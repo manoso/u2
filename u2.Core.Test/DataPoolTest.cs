@@ -36,7 +36,8 @@ namespace u2.Core.Test
             _mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "nodeName");
 
-            _mapRegistry.Register<TestItem>();
+            _mapRegistry.Register<TestItem>()
+                .Map(x => x.Key, "itemId");
             _mapRegistry.Register<TestEntity>()
                 .Map(x => x.Name, "contentName")
                 .Map(x => x.Infos, "list", x => x.Split<string>(new[] { ',' }))
@@ -98,6 +99,10 @@ namespace u2.Core.Test
 
             var entities = await pool.GetAsync<TestEntity>();
             Assert.That(entities, Is.Not.Null);
+            Assert.That(entities.Count(), Is.EqualTo(1));
+            var entity = entities.First();
+            Assert.That(entity.Items, Is.Not.Null);
+            Assert.That(entity.Items.Count, Is.EqualTo(2));
         }
     }
 }

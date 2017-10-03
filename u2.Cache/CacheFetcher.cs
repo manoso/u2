@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using u2.Core.Contract;
+using u2.Core.Extensions;
 
 namespace u2.Cache
 {
@@ -16,44 +17,41 @@ namespace u2.Cache
             _registry = registry;
         }
 
-        public async Task<IEnumerable<T>> FetchAsync<T>()
+        public async Task<IEnumerable<T>> FetchAsync<T>(string key = null)
         {
-            return await FetchAsync<IEnumerable<T>, T>(typeof(T).FullName);
+            var result = await FetchAsync<IEnumerable<T>, T>(string.IsNullOrWhiteSpace(key) ? typeof(T).FullName : key);
+            return result.OfType<T>().AsList();
         }
 
-        public async Task<T> FetchAsync<T>(string key)
-        {
-            return await FetchAsync<T, T>(key);
-        }
+        //public async Task<ILookup<string, T>> FetchLookupAsync<T>(ILookupParameter<T> lookupParameter)
+        //{
+        //    if (lookupParameter == null)
+        //        return null;
 
-        public async Task<ILookup<string, T>> FetchLookupAsync<T>(ILookupParameter<T> lookupParameter)
-        {
-            if (lookupParameter == null)
-                return null;
+        //    var result = await FetchAsync<ILookup<string, T>, T>(lookupParameter.CacheKey, true);
+        //    return result.OfType<ILookup<string, T>>()
+        //}
 
-            return await FetchAsync<ILookup<string, T>, T>(lookupParameter.CacheKey, true);
-        }
-
-        private async Task<TResult> FetchAsync<TResult, T>(string key, bool isLookup = false)
+        private async Task<IEnumerable<object>> FetchAsync<TResult, T>(string key, bool isLookup = false)
         {
             var type = typeof(T);
             var taskKey = isLookup ? type.FullName : key;
 
             return _registry.TryGetTask(taskKey, out ICacheTask task)
                 ? await TaskFetch<TResult>(task, key)
-                : default(TResult);
+                : null;
         }
 
-        private async Task<T> TaskFetch<T>(ICacheTask task, string cacheKey)
+        private async Task<IEnumerable<object>> TaskFetch<T>(ICacheTask task, string cacheKey)
         {
             if (!_store.Has(cacheKey) || task.IsExpired)
             {
-                await task.Run<T>();
+                await task.Run();
                 foreach (var cacheItem in task.CacheItems)
                     _store.Save(cacheItem.Key, cacheItem.Value);
             }
 
-            return (T)_store.Get(cacheKey);
+            return (IEnumerable<object>)_store.Get(cacheKey);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace u2.Core.Contract
 
         bool IsExpired { get; }
 
-        Task Run<TResult>();
+        Task Run();
 
         /// <summary>
         /// Updates cache tasks' timestamp to be expired. Next subsequent request will be re-evaluated and data refreshed

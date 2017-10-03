@@ -26,25 +26,20 @@ namespace u2.Core
             _cmsFetcher = cmsFetcher;
         }
 
-        public async Task<IEnumerable<T>> GetAsync<T>()
+        public async Task<IEnumerable<T>> GetAsync<T>(string key = null)
             where T : class, new()
         {
             if (!_cacheRegistry.Has<T>())
                 await Register(typeof(T));
 
-            return await _cacheFetcher.FetchAsync<T>();
+            return await _cacheFetcher.FetchAsync<T>(key);
         }
 
-        public Task<T> GetAsync<T>(string key)
-        {
-            return _cacheRegistry.Has(key) ? _cacheFetcher.FetchAsync<T>(key) : null;
-        }
-
-        public Task<ILookup<string, T>> GetLookupAsync<T>(ILookupParameter<T> lookupParameter)
-            where T : class, new()
-        {
-            return _cacheFetcher.FetchLookupAsync(lookupParameter);
-        }
+        //public Task<ILookup<string, T>> GetLookupAsync<T>(ILookupParameter<T> lookupParameter)
+        //    where T : class, new()
+        //{
+        //    return _cacheFetcher.FetchLookupAsync(lookupParameter);
+        //}
 
         private async Task Register(Type type, string key = null)
         {
@@ -74,7 +69,8 @@ namespace u2.Core
             if (!_cacheRegistry.Has(key))
                 await Register(type);
 
-            return await _cacheFetcher.FetchAsync<IEnumerable<object>>(key);
+            var result = await _cacheFetcher.FetchAsync<object>(key);
+            return result;
         }
 
         private async Task ModelDefer(MapDefer defer, TypeMap typeMap)

@@ -55,7 +55,7 @@ namespace u2.Cache.Test
                 LookupParameters = new [] { loopupParam }
             };
 
-            await task.Run<CacheItem>();
+            await task.Run();
             var items = task.CacheItems;
             var lookups = items["Lookup_CacheItem_LookupKey"] as ILookup<string, CacheItem>;
             var all = items[taskKey] as IEnumerable<CacheItem>;
@@ -85,7 +85,7 @@ namespace u2.Cache.Test
                 CacheInSecs = cacheTime,
             };
 
-            await task.Run<CacheItem>();
+            await task.Run();
             var before = GetFirst(task);
             await task.Reload();
             var after = GetFirst(task);
@@ -96,7 +96,7 @@ namespace u2.Cache.Test
 
         private async Task<T> GetFirstAsync<T>(CacheTask<T> task) where T: class
         {
-            await task.Run<T>();
+            await task.Run();
             return ((IEnumerable<T>)task.CacheItems.First().Value).First();
         }
         private T GetFirst<T>(CacheTask<T> task) where T : class

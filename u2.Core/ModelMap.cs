@@ -43,7 +43,7 @@ namespace u2.Core
         public ModelMap(string alias, Action<T, IEnumerable<TModel>> actionModel)
         {
             SetModel = (x, y) => actionModel((T) x, (IEnumerable<TModel>) y);
-            Alias = (alias ?? typeof(TModel).Name).ToLowerInvariant();
+            Alias = alias.ToLowerInvariant();
             ModelType = typeof(TModel);
             ToList = x => x.OfType<TModel>().ToList();
             GetKey = DefaultGetKey;

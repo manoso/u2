@@ -58,9 +58,9 @@ namespace u2.Core
             if (property != null)
             {
                 Setter = new PropertySetter<T, TP>(property);
-                ContentType = typeof(TP);
             }
 
+            ContentType = typeof(TP);
             Alias = (string.IsNullOrWhiteSpace(alias) ? Setter?.Name : alias)?.ToLowerInvariant();
         }
 
