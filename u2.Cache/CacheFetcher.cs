@@ -19,7 +19,7 @@ namespace u2.Cache
 
         public async Task<IEnumerable<T>> FetchAsync<T>(string key = null)
         {
-            var result = await FetchAsync<IEnumerable<T>, T>(string.IsNullOrWhiteSpace(key) ? typeof(T).FullName : key);
+            var result = await DoFetch<T>(string.IsNullOrWhiteSpace(key) ? typeof(T).FullName : key);
             return result.OfType<T>().AsList();
         }
 
@@ -32,17 +32,17 @@ namespace u2.Cache
         //    return result.OfType<ILookup<string, T>>()
         //}
 
-        private async Task<IEnumerable<object>> FetchAsync<TResult, T>(string key, bool isLookup = false)
+        private async Task<IEnumerable<object>> DoFetch<T>(string key, bool isLookup = false)
         {
             var type = typeof(T);
             var taskKey = isLookup ? type.FullName : key;
 
             return _registry.TryGetTask(taskKey, out ICacheTask task)
-                ? await TaskFetch<TResult>(task, key)
+                ? await TaskFetch(task, key)
                 : null;
         }
 
-        private async Task<IEnumerable<object>> TaskFetch<T>(ICacheTask task, string cacheKey)
+        private async Task<IEnumerable<object>> TaskFetch(ICacheTask task, string cacheKey)
         {
             if (!_store.Has(cacheKey) || task.IsExpired)
             {

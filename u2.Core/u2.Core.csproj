@@ -41,23 +41,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmsKey.cs" />
+    <Compile Include="Contract\ICache.cs" />
     <Compile Include="Contract\ICacheFetcher.cs" />
     <Compile Include="Contract\ICacheRegistry.cs" />
     <Compile Include="Contract\ICacheStore.cs" />
     <Compile Include="Contract\ICacheTask.cs" />
-    <Compile Include="Contract\ICmsCache.cs" />
     <Compile Include="Contract\ICmsFetcher.cs" />
     <Compile Include="Contract\ICmsQuery.cs" />
     <Compile Include="Contract\ILookupParameter.cs" />
+    <Compile Include="Contract\IMap.cs" />
     <Compile Include="Contract\IMedia.cs" />
     <Compile Include="Contract\IQueryFactory.cs" />
     <Compile Include="Contract\IRoot.cs" />
+    <Compile Include="Contract\ISiteCaches.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GroupAction.cs" />
     <Compile Include="Contract\ICmsKey.cs" />
     <Compile Include="Contract\IDataPool.cs" />
     <Compile Include="Contract\IMapRegistry.cs" />
-    <Compile Include="Contract\IMap.cs" />
+    <Compile Include="Contract\IMapper.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="MapRegistry.cs" />
     <Compile Include="DataPool.cs" />
     <Compile Include="ModelMap.cs" />
@@ -72,7 +75,7 @@
     <Compile Include="TypeMap.cs" />
     <Compile Include="MapDefer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Map.cs" />
+    <Compile Include="Mapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

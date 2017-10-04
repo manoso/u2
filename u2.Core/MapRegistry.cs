@@ -57,10 +57,10 @@ namespace u2.Core
             return map;
         }
 
-        public TypeMap<T> For<T>()
+        public TypeMap For<T>()
             where T : class, new()
         {
-            return _entries.TryGetValue(typeof(T), out TypeMap typeMap) ? typeMap as TypeMap<T> : null;
+            return For(typeof(T));
         }
 
         public TypeMap For(Type type)

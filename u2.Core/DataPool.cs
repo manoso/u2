@@ -10,18 +10,14 @@ namespace u2.Core
     public class DataPool : IDataPool
     {
         private readonly IMap _map;
-        private readonly IMapRegistry _mapRegistry;
-        private readonly ICacheRegistry _cacheRegistry;
-        private readonly ICacheFetcher _cacheFetcher;
+        private readonly ICache _cache;
         private readonly IQueryFactory _queryFactory;
         private readonly ICmsFetcher _cmsFetcher;
 
-        public DataPool(IMap map, IMapRegistry mapRegistry, ICacheRegistry cacheRegistry, ICacheFetcher cacheFetcher, IQueryFactory queryFactory, ICmsFetcher cmsFetcher)
+        public DataPool(IMap map, ICache cache, IQueryFactory queryFactory, ICmsFetcher cmsFetcher)
         {
             _map = map;
-            _mapRegistry = mapRegistry;
-            _cacheRegistry = cacheRegistry;
-            _cacheFetcher = cacheFetcher;
+            _cache = cache;
             _queryFactory = queryFactory;
             _cmsFetcher = cmsFetcher;
         }
@@ -29,10 +25,8 @@ namespace u2.Core
         public async Task<IEnumerable<T>> GetAsync<T>(string key = null)
             where T : class, new()
         {
-            if (!_cacheRegistry.Has<T>())
-                await Register(typeof(T));
-
-            return await _cacheFetcher.FetchAsync<T>(key);
+            var result = await DoGet(typeof(T), key);
+            return result.OfType<T>().AsList();
         }
 
         //public Task<ILookup<string, T>> GetLookupAsync<T>(ILookupParameter<T> lookupParameter)
@@ -43,7 +37,7 @@ namespace u2.Core
 
         private async Task Register(Type type, string key = null)
         {
-            var typeMap = _mapRegistry.For(type);
+            var typeMap = _map.For(type);
             var cmsQuery = _queryFactory.Create(typeMap);
 
             var defer = new MapDefer();
@@ -55,7 +49,7 @@ namespace u2.Core
             if (string.IsNullOrWhiteSpace(key))
                 key = type.FullName;
 
-            _cacheRegistry.Add(async () =>
+            _cache.Add(async () =>
             {
                 var contents = await Task.Run(() => _cmsFetcher.Fetch(cmsQuery));
                 var models = _map.To(type, contents, defer).AsList();
@@ -63,14 +57,13 @@ namespace u2.Core
             },  key: key);
         }
 
-        private async Task<IEnumerable<object>> GetModels(Type type)
+        private async Task<IEnumerable<object>> DoGet(Type type, string key = null)
         {
-            var key = type.FullName;
-            if (!_cacheRegistry.Has(key))
+            key = string.IsNullOrWhiteSpace(key) ? type.FullName : key;
+            if (!_cache.Has(key))
                 await Register(type);
 
-            var result = await _cacheFetcher.FetchAsync<object>(key);
-            return result;
+            return await _cache.FetchAsync<object>(key);
         }
 
         private async Task ModelDefer(MapDefer defer, TypeMap typeMap)
@@ -80,7 +73,7 @@ namespace u2.Core
             {
                 var map = modelMap;
                 var alias = map.Alias;
-                var source = await GetModels(map.ModelType);
+                var source = await DoGet(map.ModelType);
                 typeDefer.Attach(alias, (x, csv) =>
                 {
                     if (string.IsNullOrWhiteSpace(csv) || x == null) return;
@@ -133,7 +126,7 @@ namespace u2.Core
         //    var isMedia = typeof(T) == typeof(Media);
         //    var isRoot = typeof(IRoot).IsAssignableFrom(typeof(T));
         //    var root = isRoot ? null : _mapRegistry.Root;
-        //    //var medias = isMedia || isRoot ? null : await GetModels<Media>();
+        //    //var medias = isMedia || isRoot ? null : await Get<Media>();
         //    var config = _mapRegistry.For<T>();
         //    if (config == null)
         //        return null;

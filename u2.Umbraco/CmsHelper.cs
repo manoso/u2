@@ -36,7 +36,7 @@ namespace u2.Umbraco
                 .ToList();
         }
 
-        public static IList<T> Archetype<T>(this string source, IMap map, IList<T> empty = null) where T : class, new()
+        public static IList<T> Archetype<T>(this string source, IMapper mapper, IList<T> empty = null) where T : class, new()
         {
             if (string.IsNullOrEmpty(source))
                 return empty;
@@ -44,7 +44,7 @@ namespace u2.Umbraco
             var model = JsonConvert.DeserializeObject<ArchetypeModel>(source);
 
             return model.Fieldsets.Any() 
-                ? model.Fieldsets.Select(x => map.To<T>(new Archetype(x))).ToList()
+                ? model.Fieldsets.Select(x => mapper.To<T>(new Archetype(x))).ToList()
                 : empty;
         }
 

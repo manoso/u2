@@ -5,62 +5,50 @@ using u2.Core.Contract;
 
 namespace u2.Cache
 {
-    public interface ICache : ICmsCache
-    {
-        void Register<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInMins = 0);
-        void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInMins = 0, params ILookupParameter<T>[] lookups);
-        Task Refresh(string site = null);
-    }
-
     public class Cache : ICache
     {
-        public static int DefaultCache = 300;
-        private const int UseDefault = 0;
+        private readonly ICacheRegistry _registry;
+        private readonly ICacheFetcher _fetcher;
 
-        private readonly IDictionary<string, ICacheRegistry> _registries = new Dictionary<string, ICacheRegistry>();
-
-        public ICacheRegistry this[string key]
+        public Cache(ICacheRegistry registry, ICacheFetcher fetcher)
         {
-            get => _registries[key];
-            set => _registries[key] = value;
+            _registry = registry;
+            _fetcher = fetcher;
         }
 
-        public void Register<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0)
+        public void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, string key = null, params ILookupParameter<T>[] lookups)
         {
-            cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
-            Register(typeof(T).FullName, func, cacheInSecs);
+            _registry.Add(func, cacheInSecs, key, lookups);
         }
 
-        public void Register<T>(string key, Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0)
+        public bool Has<T>()
         {
-            cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
-            foreach (var registry in _registries.Values)
-            {
-                registry.Add(func, cacheInSecs, key);
-            }
+            return _registry.Has<T>();
         }
 
-        public void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, params ILookupParameter<T>[] lookups)
+        public bool Has(string key)
         {
-            cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
-            foreach (var registry in _registries.Values)
-            {
-                registry.Add(func, cacheInSecs, lookups: lookups);
-            }
+            return _registry.Has(key);
         }
 
-        public async Task Refresh(string site = null)
+        public bool TryGetTask(string taskKey, out ICacheTask task)
         {
-            if (string.IsNullOrWhiteSpace(site))
-            {
-                foreach (var registry in _registries.Values)
-                {
-                    await registry.Reload();
-                }
-            }
-            else
-                await _registries[site].Reload();
+            return _registry.TryGetTask(taskKey, out task);
+        }
+
+        public async Task Reload<T>(string key = null)
+        {
+            await _registry.Reload<T>(key);
+        }
+
+        public async Task Reload()
+        {
+            await _registry.Reload();
+        }
+
+        public async Task<IEnumerable<T>> FetchAsync<T>(string key = null)
+        {
+            return await _fetcher.FetchAsync<T>(key);
         }
     }
 }
-

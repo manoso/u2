@@ -11,14 +11,14 @@ namespace u2.Core.Test
     public class MapTest
     {
         private IMapRegistry _rego;
-        private IMap _map;
+        private IMapper _mapper;
 
         [OneTimeSetUp]
         public void Setup()
         {
             var root = Substitute.For<IRoot>();
             _rego = new MapRegistry(root);
-            _map = new Map(_rego);
+            _mapper = new Mapper(_rego);
 
             _rego.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
@@ -83,7 +83,7 @@ namespace u2.Core.Test
                 {"items", "1,3"}
             };
             var content = new UmbracoContent(fields);
-            var result = _map.To<TestEntity>(content);
+            var result = _mapper.To<TestEntity>(content);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Id, Is.EqualTo(1000));
@@ -103,7 +103,7 @@ namespace u2.Core.Test
             };
             var content = new UmbracoContent(fields);
             var result = new TestEntity {Name = "name"};
-            _map.To(content, result);
+            _mapper.To(content, result);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Id, Is.EqualTo(1000));
@@ -143,7 +143,7 @@ namespace u2.Core.Test
 
             var itemContents = new IContent[] {content1, content2, content3};
 
-            var items = _map.To<TestItem>(itemContents).ToList();
+            var items = _mapper.To<TestItem>(itemContents).ToList();
 
             Assert.That(items, Is.Not.Null);
             Assert.That(items.Count, Is.EqualTo(3));
@@ -192,7 +192,7 @@ namespace u2.Core.Test
                 new TestItem {ItemId = 3, Name = "three"},
             };
 
-            _map.To(itemContents, items, x => x.ItemId, "itemId").ToList();
+            _mapper.To(itemContents, items, x => x.ItemId, "itemId").ToList();
 
             Assert.That(items, Is.Not.Null);
             Assert.That(items.Count, Is.EqualTo(3));
@@ -221,7 +221,7 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = _map.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -243,7 +243,7 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = _map.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -265,7 +265,7 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = _map.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -287,7 +287,7 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = _map.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -309,7 +309,7 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = _map.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -332,7 +332,7 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = _map.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -354,7 +354,7 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = _map.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -377,7 +377,7 @@ namespace u2.Core.Test
             };
 
             var content = new UmbracoContent(fields);
-            var result = _map.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -394,8 +394,8 @@ namespace u2.Core.Test
             };
 
             var content = new UmbracoContent(fields);
-            var item = _map.To<TestItem>(content);
-            var action = _map.To<TestAction>(content);
+            var item = _mapper.To<TestItem>(content);
+            var action = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(item);
             Assert.That(item.Key, Is.EqualTo("cmskey"));

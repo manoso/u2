@@ -15,7 +15,7 @@ namespace u2.Cache.Test
         {
             var registryAu = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache
+            var cache = new SiteCaches
             {
                 ["au"] = registryAu,
             };
@@ -24,7 +24,7 @@ namespace u2.Cache.Test
 
             cache.Register(Func);
 
-            registryAu.Received(1).Add(Func, Cache.DefaultCache, typeof(CacheItem).FullName);
+            registryAu.Received(1).Add(Func, SiteCaches.DefaultCache, typeof(CacheItem).FullName);
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace u2.Cache.Test
             var registryAu = Substitute.For<ICacheRegistry>();
             var registryNz = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache
+            var cache = new SiteCaches
             {
                 ["au"] = registryAu,
                 ["nz"] = registryNz
@@ -44,8 +44,8 @@ namespace u2.Cache.Test
             var cacheKey = "key";
             cache.Register(cacheKey, Func);
 
-            registryAu.Received(1).Add(Func, Cache.DefaultCache, cacheKey);
-            registryNz.Received(1).Add(Func, Cache.DefaultCache, cacheKey);
+            registryAu.Received(1).Add(Func, SiteCaches.DefaultCache, cacheKey);
+            registryNz.Received(1).Add(Func, SiteCaches.DefaultCache, cacheKey);
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace u2.Cache.Test
             var registryAu = Substitute.For<ICacheRegistry>();
             var lookup = Substitute.For<ILookupParameter<CacheItem>>();
 
-            var cache = new Cache
+            var cache = new SiteCaches
             {
                 ["au"] = registryAu,
             };
@@ -63,7 +63,7 @@ namespace u2.Cache.Test
 
             cache.RegisterLookup(Func, 0, lookup);
 
-            registryAu.Received(1).Add(Func, Cache.DefaultCache, lookups: lookup);
+            registryAu.Received(1).Add(Func, SiteCaches.DefaultCache, lookups: lookup);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace u2.Cache.Test
             var registryAu = Substitute.For<ICacheRegistry>();
             var registryNz = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache
+            var cache = new SiteCaches
             {
                 ["au"] = registryAu,
                 ["nz"] = registryNz
@@ -92,7 +92,7 @@ namespace u2.Cache.Test
             var au = "au";
             var nz = "nz";
 
-            var cache = new Cache
+            var cache = new SiteCaches
             {
                 [au] = registryAu,
                 [nz] = registryNz

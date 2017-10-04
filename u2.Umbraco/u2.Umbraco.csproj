@@ -217,7 +217,6 @@
     <Compile Include="ContentQuery.cs" />
     <Compile Include="MediaQuery.cs" />
     <Compile Include="UmbracoQuery.cs" />
-    <Compile Include="CmsRegistry.Register.cs" />
     <Compile Include="DataType\Archetype.cs" />
     <Compile Include="DataType\ImageCropper.cs" />
     <Compile Include="DataType\Media.cs" />

@@ -7,10 +7,10 @@ namespace u2.Core
 {
     public class ContentType
     {
-        public static ContentType<T> For<T>(IMapRegistry registry, IMap map)
+        public static ContentType<T> For<T>(IMapRegistry registry, IMapper mapper)
             where T : class, new()
         {
-            return new ContentType<T>(registry, map);
+            return new ContentType<T>(registry, mapper);
         }
     }
 
@@ -24,14 +24,14 @@ namespace u2.Core
         }
 
         private readonly IMapRegistry _registry;
-        private readonly IMap _map;
+        private readonly IMapper _mapper;
         private readonly List<Case> _cases = new List<Case>();
         private bool _useDefault;
 
-        public ContentType(IMapRegistry registry, IMap map)
+        public ContentType(IMapRegistry registry, IMapper mapper)
         {
             _registry = registry;
-            _map = map;
+            _mapper = mapper;
         }
         public ContentType<T> AddCase<TC>(Func<IContent, bool> when)
             where TC : T
@@ -67,7 +67,7 @@ namespace u2.Core
 
         public T Apply(IContent content, T value = null)
         {
-            return _map.To(content, Ask(content), value) as T;
+            return _mapper.To(content, Ask(content), value) as T;
         }
     }
 }
