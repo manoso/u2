@@ -12,8 +12,7 @@ namespace u2.Core.Test
     [TestFixture]
     public class DataPoolTest
     {
-        private IMapper _mapper;
-        private IMapRegistry _mapRegistry;
+        private IMap _map;
         private ICache _cache;
         private IQueryFactory _queryFactory;
         private ICmsFetcher _cmsFetcher;
@@ -22,8 +21,9 @@ namespace u2.Core.Test
         public void Setup()
         {
             var root = Substitute.For<IRoot>();
-            _mapRegistry = new MapRegistry(root);
-            _mapper = new Mapper(_mapRegistry);
+            var mapRegistry = new MapRegistry(root);
+            var mapper = new Mapper(mapRegistry);
+            _map = new Map(mapRegistry, mapper);
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
             var cacheFetcher = new CacheFetcher(cacheStore, cacheRegistry);
@@ -31,14 +31,14 @@ namespace u2.Core.Test
             _queryFactory = Substitute.For<IQueryFactory>();
             _cmsFetcher = Substitute.For<ICmsFetcher>();
 
-            _mapRegistry.Copy<CmsKey>()
+            mapRegistry.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
-            _mapRegistry.Copy<Model>()
+            mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "alias");
 
-            _mapRegistry.Register<TestItem>()
+            mapRegistry.Register<TestItem>()
                 .Map(x => x.Key, "itemId");
-            _mapRegistry.Register<TestEntity>()
+            mapRegistry.Register<TestEntity>()
                 .Map(x => x.Infos, "list", x => x.Split<string>(new[] { ',' }))
                 .Tie(x => x.Items);
         }
@@ -82,8 +82,8 @@ namespace u2.Core.Test
             };
             var content3 = new UmbracoContent(item3);
 
-            var mapItem = _mapRegistry.For<TestItem>();
-            var mapEntity = _mapRegistry.For<TestEntity>();
+            var mapItem = _map.For<TestItem>();
+            var mapEntity = _map.For<TestEntity>();
             var queryItem = Substitute.For<ICmsQuery>();
             var queryEntity = Substitute.For<ICmsQuery>();
             _queryFactory.Create(mapItem).Returns(queryItem);
@@ -95,7 +95,7 @@ namespace u2.Core.Test
             _cmsFetcher.Fetch(queryItem).Returns(itemContents);
             _cmsFetcher.Fetch(queryEntity).Returns(entityContents);
 
-            var pool = new DataPool(_mapper, _mapRegistry, _cache, _queryFactory, _cmsFetcher);
+            var pool = new DataPool(_map, _cache, _queryFactory, _cmsFetcher);
 
             var entities = await pool.GetAsync<TestEntity>();
             Assert.That(entities, Is.Not.Null);
