@@ -9,15 +9,19 @@ namespace u2.Core
 {
     public class DataPool : IDataPool
     {
-        private readonly IMap _map;
-        private readonly ICache _cache;
+        private readonly IMapRegistry _mapRegistry;
+        private readonly IMapper _mapper;
+        private readonly ICacheRegistry _cacheRegistry;
+        private readonly ICacheFetcher _cacheFetcher;
         private readonly IQueryFactory _queryFactory;
         private readonly ICmsFetcher _cmsFetcher;
 
-        public DataPool(IMap map, ICache cache, IQueryFactory queryFactory, ICmsFetcher cmsFetcher)
+        public DataPool(IMapRegistry mapRegistry, IMapper mapper, ICacheRegistry cacheRegistry, ICacheFetcher cacheFetcher, IQueryFactory queryFactory, ICmsFetcher cmsFetcher)
         {
-            _map = map;
-            _cache = cache;
+            _mapRegistry = mapRegistry;
+            _mapper = mapper;
+            _cacheRegistry = cacheRegistry;
+            _cacheFetcher = cacheFetcher;
             _queryFactory = queryFactory;
             _cmsFetcher = cmsFetcher;
         }
@@ -37,7 +41,7 @@ namespace u2.Core
 
         private async Task Register(Type type, string key = null)
         {
-            var typeMap = _map.For(type);
+            var typeMap = _mapRegistry.For(type);
             var cmsQuery = _queryFactory.Create(typeMap);
 
             var defer = new MapDefer();
@@ -49,10 +53,10 @@ namespace u2.Core
             if (string.IsNullOrWhiteSpace(key))
                 key = type.FullName;
 
-            _cache.Add(async () =>
+            _cacheRegistry.Add(async () =>
             {
                 var contents = await Task.Run(() => _cmsFetcher.Fetch(cmsQuery));
-                var models = _map.To(type, contents, defer).AsList();
+                var models = _mapper.To(type, contents, defer).AsList();
                 return models;
             },  key: key);
         }
@@ -60,10 +64,10 @@ namespace u2.Core
         private async Task<IEnumerable<object>> DoGet(Type type, string key = null)
         {
             key = string.IsNullOrWhiteSpace(key) ? type.FullName : key;
-            if (!_cache.Has(key))
+            if (!_cacheRegistry.Has(key))
                 await Register(type);
 
-            return await _cache.FetchAsync<object>(key);
+            return await _cacheFetcher.FetchAsync<object>(key);
         }
 
         private async Task ModelDefer(MapDefer defer, TypeMap typeMap)

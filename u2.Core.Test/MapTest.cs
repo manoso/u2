@@ -3,6 +3,7 @@ using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
+using u2.Test;
 using u2.Umbraco;
 
 namespace u2.Core.Test
@@ -408,37 +409,4 @@ namespace u2.Core.Test
 
     }
 
-    public class Model : CmsKey
-    {
-        public string Name { get; set; }
-    }
-
-    public class TestEntity : CmsKey
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public IList<string> Infos { get; set; }
-        public IEnumerable<TestItem> Items { get; set; }
-    }
-
-    public class TestItem : Model
-    {
-        public int ItemId { get; set; }
-        public double Price { get; set; }
-        public bool OnSale { get; set; }
-    }
-
-    public class TestAction : CmsKey
-    {
-        public int ActionId { get; set; }
-        public string Name { get; set; }
-        public int Sum { get; set; }
-        public int Sum2 { get; set; }
-        public int Sum3 { get; set; }
-        public int Sum4 { get; set; }
-        public int Sum5 { get; set; }
-        public int Sum6 { get; set; }
-        public int Mix { get; set; }
-        public string Agregate { get; set; }
-    }
 }

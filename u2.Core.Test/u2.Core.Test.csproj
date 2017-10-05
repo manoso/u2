@@ -66,6 +66,10 @@
       <Project>{BDB61368-E0C4-46CC-B47C-F275CFF7F339}</Project>
       <Name>u2.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\u2.Test\u2.Test.csproj">
+      <Project>{e2b6276a-21c6-4d40-ab7e-fa480511d915}</Project>
+      <Name>u2.Test</Name>
+    </ProjectReference>
     <ProjectReference Include="..\u2.Umbraco\u2.Umbraco.csproj">
       <Project>{c4a0e78c-6801-446c-aacc-c1e6d6f22be1}</Project>
       <Name>u2.Umbraco</Name>

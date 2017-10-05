@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
+using u2.Test;
 
 namespace u2.Cache.Test
 {
     [TestFixture]
-    public class CacheTest
+    public class SiteCachesTest
     {
         [Test]
         public void Register_called_CacheRegistry_Add()
@@ -103,12 +103,5 @@ namespace u2.Cache.Test
             await registryAu.Received(1).Reload();
             await registryNz.DidNotReceive().Reload();
         }
-    }
-
-    public class CacheItem
-    {
-        public Guid Id { get; } = Guid.NewGuid();
-        public int LookupKey { get; set; }
-        public string LookupKeyOther { get; set; }
     }
 }

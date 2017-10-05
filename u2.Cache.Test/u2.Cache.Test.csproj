@@ -48,9 +48,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheFetcherTest.cs" />
     <Compile Include="CacheRegistryTest.cs" />
     <Compile Include="CacheTaskTest.cs" />
-    <Compile Include="CacheTest.cs" />
+    <Compile Include="SiteCachesTest.cs" />
     <Compile Include="LookupParameterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -65,6 +66,10 @@
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">
       <Project>{bdb61368-e0c4-46cc-b47c-f275cff7f339}</Project>
       <Name>u2.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\u2.Test\u2.Test.csproj">
+      <Project>{E2B6276A-21C6-4D40-AB7E-FA480511D915}</Project>
+      <Name>u2.Test</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5C409114-17E3-45BF-BF3B-82801598D953}</ProjectGuid>
+    <ProjectGuid>{E2B6276A-21C6-4D40-AB7E-FA480511D915}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>u2.Cache</RootNamespace>
-    <AssemblyName>u2.Cache</AssemblyName>
+    <RootNamespace>u2.Test</RootNamespace>
+    <AssemblyName>u2.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,7 +32,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,13 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SiteCaches.cs" />
-    <Compile Include="CacheFetcher.cs" />
-    <Compile Include="CacheRegistry.cs" />
-    <Compile Include="CacheTask.cs" />
-    <Compile Include="CacheStore.cs" />
-    <Compile Include="LookupParameter.cs" />
+    <Compile Include="CacheItem.cs" />
+    <Compile Include="TestAction.cs" />
+    <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestEntity.cs" />
+    <Compile Include="TestItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">

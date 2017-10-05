@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Core", "u2.Core\u2.Core.csproj", "{BDB61368-E0C4-46CC-B47C-F275CFF7F339}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Cache.Test", "u2.Cache.Test\u2.Cache.Test.csproj", "{FD608BE9-CFE7-4EBF-BEC5-A7B0D8E84BEF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Umbraco.Test", "u2.Umbraco.Test\u2.Umbraco.Test.csproj", "{6C63194B-342A-4212-A403-AE59832867B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Test", "u2.Test\u2.Test.csproj", "{E2B6276A-21C6-4D40-AB7E-FA480511D915}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{6C63194B-342A-4212-A403-AE59832867B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C63194B-342A-4212-A403-AE59832867B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C63194B-342A-4212-A403-AE59832867B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2B6276A-21C6-4D40-AB7E-FA480511D915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2B6276A-21C6-4D40-AB7E-FA480511D915}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2B6276A-21C6-4D40-AB7E-FA480511D915}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2B6276A-21C6-4D40-AB7E-FA480511D915}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,5 +61,6 @@ Global
 		{AD679768-EF24-4072-B5F3-9D932D4C4993} = {983A63FA-43B2-4E1E-B65E-5A33BB699BD6}
 		{FD608BE9-CFE7-4EBF-BEC5-A7B0D8E84BEF} = {983A63FA-43B2-4E1E-B65E-5A33BB699BD6}
 		{6C63194B-342A-4212-A403-AE59832867B6} = {983A63FA-43B2-4E1E-B65E-5A33BB699BD6}
+		{E2B6276A-21C6-4D40-AB7E-FA480511D915} = {983A63FA-43B2-4E1E-B65E-5A33BB699BD6}
 	EndGlobalSection
 EndGlobal
