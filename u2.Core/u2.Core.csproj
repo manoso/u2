@@ -58,6 +58,8 @@
     <Compile Include="Contract\IDataPool.cs" />
     <Compile Include="Contract\IMapRegistry.cs" />
     <Compile Include="Contract\IMapper.cs" />
+    <Compile Include="Contract\ISimpleMap.cs" />
+    <Compile Include="Contract\ITypeMap.cs" />
     <Compile Include="MapRegistry.cs" />
     <Compile Include="DataPool.cs" />
     <Compile Include="ModelMap.cs" />

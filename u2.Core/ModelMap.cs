@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using u2.Core.Contract;
-using u2.Core.Extensions;
 
 namespace u2.Core
 {
@@ -20,19 +14,30 @@ namespace u2.Core
 
         public string Alias { get; protected set; }
         public Type ModelType { get; protected set; }
+        public bool IsMany { get; protected set; }
 
         protected Func<IEnumerable<object>, object> ToList { get; set; }
 
         public void Match(object target, IEnumerable<string> keys, IEnumerable<object> source)
         {
-            var models = ToList(ToModels(keys, source, GetKey));
+            var models = ToList(ToModels(keys, source));
             SetModel(target, models);
         }
-
-        private static IEnumerable<object> ToModels(IEnumerable<string> keys, IEnumerable<object> source, Func<object, string> getKey, IEnumerable<object> empty = null)
+        public void Match(object target, string key, IEnumerable<object> source)
         {
-            if (keys == null || source == null || getKey == null) return empty;
-            return keys.Select(x => source.FirstOrDefault(m => getKey(m).Equals(x)));
+            var model = Find(key, source);
+            SetModel(target, model);
+        }
+
+        private IEnumerable<object> ToModels(IEnumerable<string> keys, IEnumerable<object> source, IEnumerable<object> empty = null)
+        {
+            if (keys == null || source == null || GetKey == null) return empty;
+            return keys.Select(x => Find(x, source));
+        }
+
+        private object Find(string key, IEnumerable<object> source)
+        {
+            return source.FirstOrDefault(m => GetKey(m).Equals(key));
         }
     }
 
@@ -40,24 +45,27 @@ namespace u2.Core
         where T : class, new()
         where TModel : class, new()
     {
-        public ModelMap(string alias, Action<T, IEnumerable<TModel>> actionModel)
+        public ModelMap(string alias, Action<T, IEnumerable<TModel>> actionModel, Func<TModel, string> funcKey = null)
         {
-            SetModel = (x, y) => actionModel((T) x, (IEnumerable<TModel>) y);
+            SetModel = (x, y) => actionModel((T)x, (IEnumerable<TModel>)y);
             Alias = alias.ToLowerInvariant();
             ModelType = typeof(TModel);
+            IsMany = true;
             ToList = x => x.OfType<TModel>().ToList();
-            GetKey = DefaultGetKey;
+            GetKey = funcKey == null
+                ? DefaultGetKey
+                : x => funcKey((TModel)x);
+        }
+
+        public ModelMap(string alias, Action<T, TModel> actionModel, Func<TModel, string> funcKey = null)
+        {
+            SetModel = (x, y) => actionModel((T)x, (TModel)y);
+            Alias = alias.ToLowerInvariant();
+            ModelType = typeof(TModel);
+            GetKey = funcKey == null
+                ? DefaultGetKey
+                : x => funcKey((TModel)x);
         }
     }
 
-    public class ModelMap<T, TModel, TKey> : ModelMap<T, TModel>
-        where T : class, new()
-        where TModel : class, new()
-    {
-        public ModelMap(string alias, Action<T, IEnumerable<TModel>> actionModel, Func<TModel, TKey> funcKey)
-            : base(alias, actionModel)
-        {
-            GetKey = x => funcKey((TModel)x).ToString();
-        }
-    }
 }

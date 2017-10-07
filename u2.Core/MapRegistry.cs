@@ -7,8 +7,8 @@ namespace u2.Core
 {
     public class MapRegistry : IMapRegistry
     {
-        private readonly IDictionary<Type, TypeMap> _entries = new Dictionary<Type, TypeMap>();
-        private readonly IDictionary<Type, SimpleMap> _copies = new Dictionary<Type, SimpleMap>();
+        private readonly IDictionary<Type, ITypeMap> _entries = new Dictionary<Type, ITypeMap>();
+        private readonly IDictionary<Type, ISimpleMap> _copies = new Dictionary<Type, ISimpleMap>();
 
         public IRoot Root { get; }
 
@@ -17,14 +17,14 @@ namespace u2.Core
             Root = root;
         }
 
-        public TypeMap this[Type type] => _entries[type];
+        public ITypeMap this[Type type] => _entries[type];
 
         public bool Has(Type type)
         {
             return _entries.ContainsKey(type);
         }
 
-        public SimpleMap<T> Copy<T>()
+        public ISimpleMap<T> Copy<T>()
             where T : class, new()
         {
             var map = new SimpleMap<T>();
@@ -33,7 +33,7 @@ namespace u2.Core
             return map;
         }
 
-        public TypeMap<T> Register<T>()
+        public ITypeMap<T> Register<T>()
             where T : class, new()
         {
             var map = new TypeMap<T>();
@@ -57,15 +57,15 @@ namespace u2.Core
             return map;
         }
 
-        public TypeMap For<T>()
+        public ITypeMap For<T>()
             where T : class, new()
         {
             return For(typeof(T));
         }
 
-        public TypeMap For(Type type)
+        public ITypeMap For(Type type)
         {
-            return _entries.TryGetValue(type, out TypeMap typeMap) ? typeMap : null;
+            return _entries.TryGetValue(type, out ITypeMap typeMap) ? typeMap : null;
         }
 
         public Type GetType(string contentType)

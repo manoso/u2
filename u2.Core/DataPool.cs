@@ -70,7 +70,7 @@ namespace u2.Core
             return await _cacheFetcher.FetchAsync<object>(key);
         }
 
-        private async Task ModelDefer(MapDefer defer, TypeMap typeMap)
+        private async Task ModelDefer(MapDefer defer, ITypeMap typeMap)
         {
             var typeDefer = defer.For(typeMap.EntityType);
             foreach (var modelMap in typeMap.ModelMaps)
@@ -78,11 +78,14 @@ namespace u2.Core
                 var map = modelMap;
                 var alias = map.Alias;
                 var source = await DoGet(map.ModelType);
-                typeDefer.Attach(alias, (x, csv) =>
+                typeDefer.Attach(alias, (x, s) =>
                 {
-                    if (string.IsNullOrWhiteSpace(csv) || x == null) return;
-                    var ids = csv.Split(',');
-                    map.Match(x, ids, source);
+                    if (string.IsNullOrWhiteSpace(s) || x == null) return;
+
+                    if (modelMap.IsMany)
+                        map.Match(x, s.Split(','), source);
+                    else
+                        map.Match(x, s, source);
                 });
             }
         }

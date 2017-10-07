@@ -8,7 +8,7 @@ using u2.Core.Extensions;
 
 namespace u2.Core
 {
-    public class TypeMap : SimpleMap
+    public class TypeMap : SimpleMap, ITypeMap
     {
         public IList<ModelMap> ModelMaps { get; } = new List<ModelMap>();
 
@@ -23,7 +23,7 @@ namespace u2.Core
             EntityType = type;
         }
 
-        public virtual object Validate(object instance)
+        public virtual object Create(object instance)
         {
             return instance == null ? Activator.CreateInstance(EntityType) : EntityType.IsInstanceOfType(instance) ? instance : null;
         }
@@ -46,12 +46,11 @@ namespace u2.Core
         }
     }
 
-    public class TypeMap<T> : TypeMap
-        where T : class, new()
+    public class TypeMap<T> : TypeMap, ITypeMap<T> where T : class, new()
     {
         private string _alias;
 
-        public override object Validate (object instance)
+        public override object Create (object instance)
         {
             return instance == null ? new T() : instance is T ? instance : null;
         }
@@ -312,31 +311,40 @@ namespace u2.Core
             return this;
         }
 
-        public TypeMap<T> Tie<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, string alias = null)
+        public TypeMap<T> Fit<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string> funcKey = null, string alias = null)
             where TModel : class, new()
         {
             var action = expModel.ToSetter();
-            alias = string.IsNullOrWhiteSpace(alias) ? expModel.ToInfo().Name : alias;
-            var modelMap = new ModelMap<T, TModel>(alias, action);
-            ModelMaps.Add(modelMap);
 
-            return this;
-        }
+            if (string.IsNullOrWhiteSpace(alias))
+                alias = expModel.ToInfo().Name;
 
-        public TypeMap<T> Tie<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias)
-            where TModel : class, new()
-        {
-            var modelMap = new ModelMap<T, TModel>(alias, actionModel) as ModelMap;
+            var modelMap = new ModelMap<T, TModel>(alias, action, funcKey) as ModelMap;
 
             ModelMaps.Add(modelMap);
 
             return this;
         }
 
-        public TypeMap<T> Tie<TModel, TKey>(Action<T, IEnumerable<TModel>> actionModel, Func<TModel, TKey> funcKey, string alias)
+        public TypeMap<T> Fit<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string> funcKey = null, string alias = null)
             where TModel : class, new()
         {
-            var modelMap = new ModelMap<T, TModel, TKey>(alias, actionModel, funcKey) as ModelMap;
+            var action = expModel.ToSetter();
+
+            if (string.IsNullOrWhiteSpace(alias))
+                alias = expModel.ToInfo().Name;
+
+            var modelMap = new ModelMap<T, TModel>(alias, action, funcKey);
+
+            ModelMaps.Add(modelMap);
+
+            return this;
+        }
+
+        public TypeMap<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string> funcKey = null)
+            where TModel : class, new()
+        {
+            var modelMap = new ModelMap<T, TModel>(alias, actionModel, funcKey) as ModelMap;
 
             ModelMaps.Add(modelMap);
 

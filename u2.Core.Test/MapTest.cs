@@ -30,7 +30,7 @@ namespace u2.Core.Test
             _rego.Register<TestEntity>()
                 .Map(x => x.Name, "contentName")
                 .Map(x => x.Infos, "list", x => x.Split<string>(new [] {','}))
-                .Tie(x => x.Items);
+                .Fit(x => x.Items);
             _rego.Register<TestAction>()
                 .Act<int>((x, v) =>
                 {

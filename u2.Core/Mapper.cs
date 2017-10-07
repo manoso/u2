@@ -66,11 +66,11 @@ namespace u2.Core
             }
         }
 
-        private object Load(TypeMap typeMap, IContent content, object instance = null, MapDefer defer = null)
+        private object Load(ITypeMap typeMap, IContent content, object instance = null, MapDefer defer = null)
         {
             if (typeMap == null || content == null) return null;
 
-            var result = typeMap.Validate(instance);
+            var result = typeMap.Create(instance);
 
             if (result == null) return null;
 
@@ -136,7 +136,7 @@ namespace u2.Core
             return field;
         }
 
-        private IList<FieldMap> GetMaps(TypeMap typeMap)
+        private IList<FieldMap> GetMaps(ITypeMap typeMap)
         {
             var maps = new List<FieldMap>();
             foreach (var map in typeMap.Maps)
@@ -152,7 +152,7 @@ namespace u2.Core
             return maps;
         }
 
-        private bool MatchContent(TypeMap typeMap, IContent content, object value, string alias)
+        private bool MatchContent(ITypeMap typeMap, IContent content, object value, string alias)
         {
             if (string.IsNullOrWhiteSpace(alias))
                 return false;

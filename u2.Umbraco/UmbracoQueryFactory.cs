@@ -17,7 +17,7 @@ namespace u2.Umbraco
             _root = root;
         }
 
-        public ICmsQuery<T> Create<T>(TypeMap<T> typeMap) where T : class, new()
+        public ICmsQuery<T> Create<T>(ITypeMap<T> typeMap) where T : class, new()
         {
             var isMedia = typeof(IMedia).IsAssignableFrom(typeof(T));
             return isMedia
@@ -29,7 +29,7 @@ namespace u2.Umbraco
                 } as ICmsQuery<T>;
         }
 
-        public ICmsQuery Create(TypeMap typeMap)
+        public ICmsQuery Create(ITypeMap typeMap)
         {
             var isMedia = typeof(IMedia).IsAssignableFrom(typeMap.EntityType);
             return isMedia

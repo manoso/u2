@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using u2.Core.Contract;
 
 namespace u2.Core
 {
-    public class SimpleMap
+    public class SimpleMap : ISimpleMap
     {
         public IList<FieldMap> Maps { get; } = new List<FieldMap>();
         public Type EntityType { get; protected set; }
@@ -19,7 +20,7 @@ namespace u2.Core
         }
     }
 
-    public class SimpleMap<T> : SimpleMap
+    public class SimpleMap<T> : SimpleMap, ISimpleMap<T>
         where T : class, new()
     {
         /// <summary>

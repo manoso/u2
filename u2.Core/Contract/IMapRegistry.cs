@@ -5,12 +5,12 @@ namespace u2.Core.Contract
     public interface IMapRegistry
     {
         IRoot Root { get; }
-        SimpleMap<T> Copy<T>() where T : class, new();
-        TypeMap<T> Register<T>() where T : class, new();
-        TypeMap For<T>() where T : class, new();
-        TypeMap For(Type type);
+        ISimpleMap<T> Copy<T>() where T : class, new();
+        ITypeMap<T> Register<T>() where T : class, new();
+        ITypeMap For<T>() where T : class, new();
+        ITypeMap For(Type type);
         Type GetType(string contentType);
         bool Has(Type type);
-        TypeMap this[Type type] { get; }
+        ITypeMap this[Type type] { get; }
     }
 }
