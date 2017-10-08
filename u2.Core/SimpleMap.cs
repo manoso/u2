@@ -7,11 +7,11 @@ namespace u2.Core
 {
     public class SimpleMap : ISimpleMap
     {
-        public IList<FieldMap> Maps { get; } = new List<FieldMap>();
+        public IList<IFieldMap> Maps { get; } = new List<IFieldMap>();
         public Type EntityType { get; protected set; }
         public virtual string Alias { get; set; }
 
-        public void AddMap(FieldMap map)
+        public void AddMap(IFieldMap map)
         {
             if (map == null)
                 return;
@@ -32,7 +32,7 @@ namespace u2.Core
         /// <param name="mapFunc">Func to convert a TI value to a TO value.</param>
         /// <param name="defaultVal">Default value if property is not present in the content.</param>
         /// <returns>This TypeMap object.</returns>
-        public SimpleMap<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP))
+        public ISimpleMap<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP))
         {
 
             if (property != null)

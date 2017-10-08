@@ -5,7 +5,7 @@ using u2.Core.Contract;
 
 namespace u2.Core
 {
-    public abstract class ModelMap
+    public abstract class ModelMap : IModelMap
     {
         public static Func<object, string> DefaultGetKey = x => ((ICmsKey) x).Key;
 

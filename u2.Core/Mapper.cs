@@ -15,20 +15,20 @@ namespace u2.Core
             _registry = registry;
         }
 
-        public object To(IContent content, Type type, object value = null, MapDefer defer = null)
+        public object To(IContent content, Type type, object value = null, IMapDefer defer = null)
         {
             var map = _registry.For(type);
             return Load(map, content, value, defer);
         }
 
-        public T To<T>(IContent content, T value = null, MapDefer defer = null)
+        public T To<T>(IContent content, T value = null, IMapDefer defer = null)
             where T: class, new ()
         {
             var map = _registry.For<T>();
             return Load(map, content, value, defer) as T;
         }
 
-        public IEnumerable<T> To<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, MapDefer defer = null)
+        public IEnumerable<T> To<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, IMapDefer defer = null)
             where T : class, new()
         {
             var map = _registry.For<T>();
@@ -49,24 +49,18 @@ namespace u2.Core
             }
         }
 
-        public IEnumerable<T> To<T>(IEnumerable<IContent> contents, MapDefer defer = null)
+        public IEnumerable<T> To<T>(IEnumerable<IContent> contents, IMapDefer defer = null)
             where T : class, new()
         {
             return To<T, object>(contents, defer: defer);
         }
 
-        public IEnumerable<object> To(Type type, IEnumerable<IContent> contents, MapDefer defer = null)
+        public IEnumerable<object> To(Type type, IEnumerable<IContent> contents, IMapDefer defer = null)
         {
-            var map = _registry.For(type);
-
-            foreach (var content in contents)
-            {
-                var result = To(content, type, null, defer);
-                yield return result;
-            }
+            return contents.Select(x => To(x, type, null, defer));
         }
 
-        private object Load(ITypeMap typeMap, IContent content, object instance = null, MapDefer defer = null)
+        private object Load(ITypeMap typeMap, IContent content, object instance = null, IMapDefer defer = null)
         {
             if (typeMap == null || content == null) return null;
 
@@ -111,7 +105,7 @@ namespace u2.Core
 
             if (defer != null)
             {
-                if (defer.Defers.TryGetValue(typeMap.EntityType, out TypeDefer typeDefer))
+                if (defer.Defers.TryGetValue(typeMap.EntityType, out ITypeDefer typeDefer))
                 {
                     typeDefer.Maps.Select(x => x.Value).Each(x =>
                     {
@@ -124,7 +118,7 @@ namespace u2.Core
             return result;
         }
 
-        private object GetContentField(FieldMap map, IContent content)
+        private object GetContentField(IFieldMap map, IContent content)
         {
             var field = content.Get(map.ContentType, map.Alias);
             if (map.Setter != null)
@@ -136,9 +130,9 @@ namespace u2.Core
             return field;
         }
 
-        private IList<FieldMap> GetMaps(ITypeMap typeMap)
+        private IList<IFieldMap> GetMaps(ITypeMap typeMap)
         {
-            var maps = new List<FieldMap>();
+            var maps = new List<IFieldMap>();
             foreach (var map in typeMap.Maps)
             {
                 if (map is FieldMapCopy)

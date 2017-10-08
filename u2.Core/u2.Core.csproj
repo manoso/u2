@@ -60,6 +60,13 @@
     <Compile Include="Contract\IMapper.cs" />
     <Compile Include="Contract\ISimpleMap.cs" />
     <Compile Include="Contract\ITypeMap.cs" />
+    <Compile Include="Contract\ITypeDefer.cs" />
+    <Compile Include="Contract\IMapDefer.cs" />
+    <Compile Include="Contract\IFieldMap.cs" />
+    <Compile Include="Contract\IPropertySetter.cs" />
+    <Compile Include="Contract\IModelMap.cs" />
+    <Compile Include="Contract\IGroupAction.cs" />
+    <Compile Include="Contract\IOnceAsync.cs" />
     <Compile Include="MapRegistry.cs" />
     <Compile Include="DataPool.cs" />
     <Compile Include="ModelMap.cs" />
@@ -69,8 +76,10 @@
     <Compile Include="Extensions\ExpressionExtensions.cs" />
     <Compile Include="Contract\IContent.cs" />
     <Compile Include="Contract\ICmsModel.cs" />
+    <Compile Include="OnceAsync.cs" />
     <Compile Include="PropertySetter.cs" />
     <Compile Include="SimpleMap.cs" />
+    <Compile Include="TypeDefer.cs" />
     <Compile Include="TypeMap.cs" />
     <Compile Include="MapDefer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

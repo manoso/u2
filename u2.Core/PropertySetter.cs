@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using u2.Core.Contract;
 using u2.Core.Extensions;
 
 namespace u2.Core
 {
-    public class PropertySetter
+    public class PropertySetter : IPropertySetter
     {
         public Action<object, object> Set { get; set; }
 
@@ -33,7 +30,6 @@ namespace u2.Core
 
     public class PropertySetter<T, TP> : PropertySetter
     { 
-
         public PropertySetter(Expression<Func<T, TP>> property)
         {
             var info = property.ToInfo();

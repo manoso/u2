@@ -151,7 +151,6 @@ namespace u2.Core.Test
             Assert.That(items[0].ItemId, Is.EqualTo(1));
             Assert.That(items[1].ItemId, Is.EqualTo(2));
             Assert.That(items[2].ItemId, Is.EqualTo(3));
-
         }
 
         [Test]

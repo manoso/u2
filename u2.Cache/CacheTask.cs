@@ -1,41 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using u2.Core;
 using u2.Core.Contract;
 
 namespace u2.Cache
 {
-    public class CacheTask<T> : CacheTask
+    public class CacheTask<T> : CacheTask, ICacheTask<T>
     {
         public ILookupParameter<T>[] LookupParameters { get; set; }
 
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        protected override bool NeedRun => IsExpired;
 
-        private Task<bool> _task;
-
-        public override async Task Run()
+        protected override Action Reset
         {
-            TaskCompletionSource<bool> taskCompletion = null;
-            await _semaphore.WaitAsync();
-            if (IsExpired)
+            get
             {
-                taskCompletion = new TaskCompletionSource<bool>();
-                _task = taskCompletion.Task;
-                if (CacheInSecs > 0)
-                    Timestamp = DateTime.UtcNow;
+                return () =>
+                {
+                    if (CacheInSecs > 0)
+                        Timestamp = DateTime.UtcNow;
+                };
             }
-            _semaphore.Release();
-
-            if (taskCompletion != null)
-            {
-                await Load();
-                taskCompletion.SetResult(true);
-            }
-
-            await _task;
         }
+
+        protected override Task RunAsync => Load();
 
         protected override async Task Load()
         {
@@ -62,7 +52,7 @@ namespace u2.Cache
         }
     }
 
-    public abstract class CacheTask : ICacheTask
+    public abstract class CacheTask : OnceAsync, ICacheTask
     {
         public int CacheInSecs { get; set; }
         public string TaskKey { get; set; }
@@ -73,8 +63,6 @@ namespace u2.Cache
         public bool IsExpired => CacheInSecs <= 0 || Timestamp.AddSeconds(CacheInSecs) <= DateTime.UtcNow;
 
         protected DateTime Timestamp;
-
-        public abstract Task Run();
 
         /// <summary>
         /// Updates cache tasks' timestamp to be expired. Next subsequent request will be re-evaluated and data refreshed

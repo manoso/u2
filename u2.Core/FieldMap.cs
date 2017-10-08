@@ -1,12 +1,13 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using u2.Core.Contract;
 
 namespace u2.Core
 {
-    public class FieldMap
+    public class FieldMap : IFieldMap
     {
-        public PropertySetter Setter { get; set; }
+        public IPropertySetter Setter { get; set; }
         public Func<string, object> Converter { get; protected set; }
         public Action<object, object> Defer { get; protected set; }
 
@@ -30,7 +31,7 @@ namespace u2.Core
         }
     }
 
-    public class FieldMap<T, TP> : FieldMap
+    public class FieldMap<T, TP> : FieldMap, IFieldMap<T, TP>
     {
         public Func<string, TP> Convert
         {
@@ -53,7 +54,7 @@ namespace u2.Core
             }
         }
 
-        public FieldMap(string alias = null, Expression < Func<T, TP>> property = null)
+        public FieldMap(string alias = null, Expression<Func<T, TP>> property = null)
         {
             if (property != null)
             {

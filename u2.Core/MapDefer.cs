@@ -1,40 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using u2.Core.Contract;
 
 namespace u2.Core
 {
-    public class TypeDefer
+    public class MapDefer : IMapDefer
     {
-        public Dictionary<string, FieldMap> Maps = new Dictionary<string, FieldMap>();
+        public IDictionary<Type, ITypeDefer>  Defers { get; } = new Dictionary<Type, ITypeDefer>();
 
-        public TypeDefer Attach(string alias, Action<object, string> action)
-        {
-            Maps.Add(alias, new FieldMap<object, string>(alias)
-            {
-                ActDefer = action
-            });
-            return this;
-        }
-    }
-
-    public class TypeDefer<T> : TypeDefer
-            where T : class, new()
-    {
-        public TypeDefer<T> Attach<TP>(string alias, Action<T, TP> action)
-        {
-            Maps.Add(alias, new FieldMap<T, TP>(alias)
-            {
-                ActDefer = action
-            });
-            return this;
-        }
-    }
-
-    public class MapDefer
-    {
-        public Dictionary<Type, TypeDefer>  Defers = new Dictionary<Type, TypeDefer>();
-
-        public TypeDefer<T> For<T>() 
+        public ITypeDefer<T> For<T>() 
             where T : class, new()
         {
             var defer = new TypeDefer<T>();
@@ -43,7 +17,7 @@ namespace u2.Core
             return defer;
         }
 
-        public TypeDefer For(Type type)
+        public ITypeDefer For(Type type)
         {
             var defer = new TypeDefer();
             Defers.Add(type, defer);

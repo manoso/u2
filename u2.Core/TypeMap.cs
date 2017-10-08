@@ -10,11 +10,11 @@ namespace u2.Core
 {
     public class TypeMap : SimpleMap, ITypeMap
     {
-        public IList<ModelMap> ModelMaps { get; } = new List<ModelMap>();
+        public IList<IModelMap> ModelMaps { get; } = new List<IModelMap>();
 
         public IDictionary<string, Type> CmsFields { get; } = new Dictionary<string, Type>();
 
-        public IList<GroupAction> GroupActions { get; protected set; } = new List<GroupAction>();
+        public IList<IGroupAction> GroupActions { get; protected set; } = new List<IGroupAction>();
 
         public Action<IContent, object> Action { get; protected set; }
 
@@ -32,7 +32,7 @@ namespace u2.Core
         /// Map all public instance properties for the given object using naming convensions.
         /// </summary>
         /// <returns>This TypeMap object.</returns>
-        public TypeMap All()
+        public ITypeMap All()
         {
             EntityType
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -59,7 +59,7 @@ namespace u2.Core
 
         public override string Alias => _alias ?? (_alias = typeof (T).Name.ToLowerInvariant());
 
-        public TypeMap<T> AliasTo(string alias)
+        public ITypeMap<T> AliasTo(string alias)
         {
             _alias = alias.ToLowerInvariant();
             return this;
@@ -74,7 +74,7 @@ namespace u2.Core
         /// <param name="mapFunc">Func to convert a TI value to a TO value.</param>
         /// <param name="defaultVal">Default value if property is not present in the content.</param>
         /// <returns>This TypeMap object.</returns>
-        public TypeMap<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP))
+        public ITypeMap<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP))
         {
             if (property != null)
             {
@@ -96,7 +96,7 @@ namespace u2.Core
         /// <param name="alias">CMS property alias.</param>
         /// <param name="action">Run to do the mapping.</param>
         /// <returns></returns>
-        public TypeMap<T> Act<TP>(Action<T, TP> action, string alias)
+        public ITypeMap<T> Act<TP>(Action<T, TP> action, string alias)
         {
             if (!string.IsNullOrWhiteSpace(alias))
             {
@@ -119,7 +119,7 @@ namespace u2.Core
         /// <param name="alias1">CMS property alias for TP1.</param>
         /// <param name="alias2">CMS property alias for TP2.</param>
         /// <returns></returns>
-        public TypeMap<T> Act<TP1, TP2>(Action<T, TP1, TP2> action, string alias1, string alias2)
+        public ITypeMap<T> Act<TP1, TP2>(Action<T, TP1, TP2> action, string alias1, string alias2)
         {
             if (!string.IsNullOrWhiteSpace(alias1) && !string.IsNullOrWhiteSpace(alias2))
             {
@@ -144,7 +144,7 @@ namespace u2.Core
         /// <param name="alias2">CMS property alias for TP2.</param>
         /// <param name="alias3">CMS property alias for TP3.</param>
         /// <returns></returns>
-        public TypeMap<T> Act<TP1, TP2, TP3>(Action<T, TP1, TP2, TP3> action, string alias1, string alias2, string alias3)
+        public ITypeMap<T> Act<TP1, TP2, TP3>(Action<T, TP1, TP2, TP3> action, string alias1, string alias2, string alias3)
         {
             if (!string.IsNullOrWhiteSpace(alias1) && !string.IsNullOrWhiteSpace(alias2) && !string.IsNullOrWhiteSpace(alias3))
             {
@@ -171,7 +171,7 @@ namespace u2.Core
         /// <param name="alias3">CMS property alias for TP3.</param>
         /// <param name="alias4">CMS property alias for TP4.</param>
         /// <returns></returns>
-        public TypeMap<T> Act<TP1, TP2, TP3, TP4>(Action<T, TP1, TP2, TP3, TP4> action, string alias1, string alias2, string alias3, string alias4)
+        public ITypeMap<T> Act<TP1, TP2, TP3, TP4>(Action<T, TP1, TP2, TP3, TP4> action, string alias1, string alias2, string alias3, string alias4)
         {
             if (!string.IsNullOrWhiteSpace(alias1) && !string.IsNullOrWhiteSpace(alias2) && !string.IsNullOrWhiteSpace(alias3) && !string.IsNullOrWhiteSpace(alias4))
             {
@@ -200,7 +200,7 @@ namespace u2.Core
         /// <param name="alias4">CMS property alias for TP4.</param>
         /// <param name="alias5">CMS property alias for TP5.</param>
         /// <returns></returns>
-        public TypeMap<T> Act<TP1, TP2, TP3, TP4, TP5>(Action<T, TP1, TP2, TP3, TP4, TP5> action, string alias1, string alias2, string alias3, string alias4, string alias5)
+        public ITypeMap<T> Act<TP1, TP2, TP3, TP4, TP5>(Action<T, TP1, TP2, TP3, TP4, TP5> action, string alias1, string alias2, string alias3, string alias4, string alias5)
         {
             if (!string.IsNullOrWhiteSpace(alias1) 
                 && !string.IsNullOrWhiteSpace(alias2) 
@@ -235,7 +235,7 @@ namespace u2.Core
         /// <param name="alias5">CMS property alias for TP5.</param>
         /// <param name="alias6">CMS property alias for TP6.</param>
         /// <returns></returns>
-        public TypeMap<T> Act<TP1, TP2, TP3, TP4, TP5, TP6>(Action<T, TP1, TP2, TP3, TP4, TP5, TP6> action, string alias1, string alias2, string alias3, string alias4, string alias5, string alias6)
+        public ITypeMap<T> Act<TP1, TP2, TP3, TP4, TP5, TP6>(Action<T, TP1, TP2, TP3, TP4, TP5, TP6> action, string alias1, string alias2, string alias3, string alias4, string alias5, string alias6)
         {
             if (!string.IsNullOrWhiteSpace(alias1)
                 && !string.IsNullOrWhiteSpace(alias2)
@@ -261,13 +261,13 @@ namespace u2.Core
             return this;
         }
 
-        public TypeMap<T> Act(Action<IContent, T> action)
+        public ITypeMap<T> Act(Action<IContent, T> action)
         {
             Action = (x, y) => action(x, (T)y);
             return this;
         }
         
-        public TypeMap<T> Copy<TP>()
+        public ITypeMap<T> Copy<TP>()
             where TP : class, new()
         {
             AddMap(new FieldMapCopy
@@ -281,7 +281,7 @@ namespace u2.Core
         /// Map all public instance properties for the given object using naming convensions.
         /// </summary>
         /// <returns>This TypeMap object.</returns>
-        public new TypeMap<T> All()
+        public new ITypeMap<T> All()
         {
             base.All();
             return this;
@@ -293,7 +293,7 @@ namespace u2.Core
         /// <typeparam name="TO">Object/Umbraco property type.</typeparam>
         /// <param name="property">Lambda expression for the object property, given the declaring object.</param>
         /// <returns></returns>
-        public TypeMap<T> Ignore<TO>(Expression<Func<T, TO>> property)
+        public ITypeMap<T> Ignore<TO>(Expression<Func<T, TO>> property)
         {
             if (property != null)
             {
@@ -311,7 +311,7 @@ namespace u2.Core
             return this;
         }
 
-        public TypeMap<T> Fit<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string> funcKey = null, string alias = null)
+        public ITypeMap<T> Fit<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string> funcKey = null, string alias = null)
             where TModel : class, new()
         {
             var action = expModel.ToSetter();
@@ -319,14 +319,14 @@ namespace u2.Core
             if (string.IsNullOrWhiteSpace(alias))
                 alias = expModel.ToInfo().Name;
 
-            var modelMap = new ModelMap<T, TModel>(alias, action, funcKey) as ModelMap;
+            var modelMap = new ModelMap<T, TModel>(alias, action, funcKey) as IModelMap;
 
             ModelMaps.Add(modelMap);
 
             return this;
         }
 
-        public TypeMap<T> Fit<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string> funcKey = null, string alias = null)
+        public ITypeMap<T> Fit<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string> funcKey = null, string alias = null)
             where TModel : class, new()
         {
             var action = expModel.ToSetter();
@@ -341,10 +341,10 @@ namespace u2.Core
             return this;
         }
 
-        public TypeMap<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string> funcKey = null)
+        public ITypeMap<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string> funcKey = null)
             where TModel : class, new()
         {
-            var modelMap = new ModelMap<T, TModel>(alias, actionModel, funcKey) as ModelMap;
+            var modelMap = new ModelMap<T, TModel>(alias, actionModel, funcKey) as IModelMap;
 
             ModelMaps.Add(modelMap);
 
