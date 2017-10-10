@@ -34,13 +34,14 @@ namespace u2.Core
             if (string.IsNullOrWhiteSpace(key))
                 key = type.FullName;
 
-            var defer = ModelDefer(typeMap);
+            var mapDefer = new MapDefer();
 
             _cacheRegistry.Add(async () =>
             {
+                mapDefer.Defer(typeMap, DoGet);
                 var cmsQuery = _queryFactory.Create(typeMap);
                 var contents = _cmsFetcher.Fetch(cmsQuery);
-                var models = (await _mapper.To<T>(contents, defer)).AsList();
+                var models = (await _mapper.To<T>(contents, mapDefer)).AsList();
                 return models;
             }, key: key);
 
@@ -51,29 +52,6 @@ namespace u2.Core
         {
             key = string.IsNullOrWhiteSpace(key) ? type.FullName : key;
             return await _cacheFetcher.FetchAsync<object>(key);
-        }
-
-        private MapDefer ModelDefer(ITypeMap typeMap)
-        {
-            var defer = new MapDefer();
-            var typeDefer = defer.For(typeMap.EntityType);
-            foreach (var modelMap in typeMap.ModelMaps)
-            {
-                var map = modelMap;
-                var alias = map.Alias;
-                typeDefer.Attach(alias, async (x, s) =>
-                {
-                    if (string.IsNullOrWhiteSpace(s) || x == null) return;
-
-                    var source = await DoGet(map.ModelType);
-
-                    if (modelMap.IsMany)
-                        map.Match(x, s.Split(','), source);
-                    else
-                        map.Match(x, s, source);
-                });
-            }
-            return defer;
         }
     }
 }

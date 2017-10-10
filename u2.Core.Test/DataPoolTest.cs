@@ -153,10 +153,10 @@ namespace u2.Core.Test
             };
             var content3 = new UmbracoContent(item3);
 
-            var mapItem = mapRegistry.For<TestItem>();
-            var mapEntity = mapRegistry.For<TestEntity>();
-            var queryItem = Substitute.For<ICmsQuery>();
-            var queryEntity = Substitute.For<ICmsQuery>();
+            var mapItem = mapRegistry.For<TestItem>() as TypeMap<TestItem>;
+            var mapEntity = mapRegistry.For<TestEntity>() as TypeMap<TestEntity>;
+            var queryItem = new ContentQuery<TestItem>();
+            var queryEntity = new ContentQuery<TestEntity>();
             queryFactory.Create(mapItem).Returns(queryItem);
             queryFactory.Create(mapEntity).Returns(queryEntity);
 
