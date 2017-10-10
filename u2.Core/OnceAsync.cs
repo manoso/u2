@@ -10,7 +10,7 @@ namespace u2.Core
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private Task<bool> _task;
 
-        protected abstract bool NeedRun { get; }
+        protected abstract Func<bool> NeedRun { get; }
         protected abstract Action Reset { get; }
         protected abstract Task RunAsync { get; }
 
@@ -18,7 +18,7 @@ namespace u2.Core
         {
             TaskCompletionSource<bool> taskCompletion = null;
             await _semaphore.WaitAsync();
-            if (NeedRun)
+            if (NeedRun())
             {
                 taskCompletion = new TaskCompletionSource<bool>();
                 _task = taskCompletion.Task;

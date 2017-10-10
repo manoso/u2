@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using u2.Core.Contract;
 using u2.Core.Extensions;
 
@@ -15,20 +16,20 @@ namespace u2.Core
             _registry = registry;
         }
 
-        public object To(IContent content, Type type, object value = null, IMapDefer defer = null)
+        public async Task<object> To(IContent content, Type type, object value = null, IMapDefer defer = null)
         {
             var map = _registry.For(type);
-            return Load(map, content, value, defer);
+            return await Load(map, content, value, defer);
         }
 
-        public T To<T>(IContent content, T value = null, IMapDefer defer = null)
+        public async Task<T> To<T>(IContent content, T value = null, IMapDefer defer = null)
             where T: class, new ()
         {
             var map = _registry.For<T>();
-            return Load(map, content, value, defer) as T;
+            return await Load(map, content, value, defer) as T;
         }
 
-        public IEnumerable<T> To<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, IMapDefer defer = null)
+        public async Task<IEnumerable<T>> To<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, IMapDefer defer = null)
             where T : class, new()
         {
             var map = _registry.For<T>();
@@ -36,6 +37,7 @@ namespace u2.Core
 
             var needMatch = list != null && list.Any() && matchProp != null && !string.IsNullOrWhiteSpace(matchAlias);
 
+            var result = new List<T>();
             foreach (var content in contents)
             {
                 T value = null;
@@ -44,23 +46,30 @@ namespace u2.Core
                     value = list.FirstOrDefault(x => MatchContent(map, content, matchProp(x), matchAlias));
                 }
 
-                var result = To(content, value, defer);
-                yield return result;
+                var item = await To(content, value, defer);
+                result.Add(item);
             }
+            return result;
         }
 
-        public IEnumerable<T> To<T>(IEnumerable<IContent> contents, IMapDefer defer = null)
+        public async Task<IEnumerable<T>> To<T>(IEnumerable<IContent> contents, IMapDefer defer = null)
             where T : class, new()
         {
-            return To<T, object>(contents, defer: defer);
+            return await To<T, object>(contents, defer: defer);
         }
 
-        public IEnumerable<object> To(Type type, IEnumerable<IContent> contents, IMapDefer defer = null)
+        public async Task<IEnumerable<object>> To(Type type, IEnumerable<IContent> contents, IMapDefer defer = null)
         {
-            return contents.Select(x => To(x, type, null, defer));
+            var result = new List<object>();
+            foreach (var content in contents)
+            {
+                var item = await To(content, type, null, defer);
+                result.Add(item);
+            }
+            return result;
         }
 
-        private object Load(ITypeMap typeMap, IContent content, object instance = null, IMapDefer defer = null)
+        private async Task<object> Load(ITypeMap typeMap, IContent content, object instance = null, IMapDefer defer = null)
         {
             if (typeMap == null || content == null) return null;
 
@@ -107,11 +116,13 @@ namespace u2.Core
             {
                 if (defer.Defers.TryGetValue(typeMap.EntityType, out ITypeDefer typeDefer))
                 {
-                    typeDefer.Maps.Select(x => x.Value).Each(x =>
+                    foreach (var map in typeDefer.Maps.Select(x => x.Value))
                     {
-                        val = content.Get(x.ContentType, x.Alias);
-                        x.Defer?.Invoke(result, val);
-                    });
+                        val = content.Get(map.ContentType, map.Alias);
+                        if (map.Defer != null)
+                            await map.Defer(result, val);
+
+                    }
                 }
             }
 

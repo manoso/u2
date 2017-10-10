@@ -105,15 +105,16 @@ namespace u2.Core.Test
             var cacheFetcher = new CacheFetcher(cacheStore, cacheRegistry);
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
 
             mapRegistry.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
             mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "alias");
 
-            mapRegistry.Register<TestItem>()
+            registry.Register<TestItem>()
                 .Map(x => x.ItemId);
-            mapRegistry.Register<TestEntity>()
+            registry.Register<TestEntity>()
                 .Fit(x => x.Item, x => x.ItemId.ToString());
 
             var fields = new Dictionary<string, string>

@@ -1,6 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using u2.Core.Contract;
 
 namespace u2.Core
@@ -9,7 +10,7 @@ namespace u2.Core
     {
         public IPropertySetter Setter { get; set; }
         public Func<string, object> Converter { get; protected set; }
-        public Action<object, object> Defer { get; protected set; }
+        public Func<object, object, Task> Defer { get; protected set; }
 
         public string Alias { get; set; }
 
@@ -45,12 +46,12 @@ namespace u2.Core
             }
         }
 
-        public Action<T, TP> ActDefer
+        public Func<T, TP, Task> ActDefer
         {
             set
             {
                 if (value != null)
-                    Defer = (x, y) => value((T)x, (TP)y);
+                    Defer = async (x, y) => await value((T)x, (TP)y);
             }
         }
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using u2.Core;
-using u2.Core.Contract;
+﻿using u2.Core.Contract;
 
 namespace u2.Umbraco
 {

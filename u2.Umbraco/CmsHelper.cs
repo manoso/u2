@@ -36,17 +36,17 @@ namespace u2.Umbraco
                 .ToList();
         }
 
-        public static IList<T> Archetype<T>(this string source, IMapper mapper, IList<T> empty = null) where T : class, new()
-        {
-            if (string.IsNullOrEmpty(source))
-                return empty;
+        //public static IList<T> Archetype<T>(this string source, IMapper mapper, IList<T> empty = null) where T : class, new()
+        //{
+        //    if (string.IsNullOrEmpty(source))
+        //        return empty;
 
-            var model = JsonConvert.DeserializeObject<ArchetypeModel>(source);
+        //    var model = JsonConvert.DeserializeObject<ArchetypeModel>(source);
 
-            return model.Fieldsets.Any() 
-                ? model.Fieldsets.Select(x => mapper.To<T>(new Archetype(x))).ToList()
-                : empty;
-        }
+        //    return model.Fieldsets.Any() 
+        //        ? model.Fieldsets.Select(x => mapper.To<T>(new Archetype(x))).ToList()
+        //        : empty;
+        //}
 
         public static IDictionary<string, string> ToCrops(this string source)
         {

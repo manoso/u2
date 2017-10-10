@@ -29,7 +29,8 @@ namespace u2.Core
         public async Task<IEnumerable<T>> GetAsync<T>(string key = null)
             where T : class, new()
         {
-            var result = await DoGet(typeof(T), key);
+            key = string.IsNullOrWhiteSpace(key) ? typeof(T).FullName : key;
+            var result = await _cacheFetcher.FetchAsync<object>(key);
             return result.OfType<T>().AsList();
         }
 
@@ -38,57 +39,6 @@ namespace u2.Core
         //{
         //    return _cacheFetcher.FetchLookupAsync(lookupParameter);
         //}
-
-        private async Task Register(Type type, string key = null)
-        {
-            var typeMap = _mapRegistry.For(type);
-            var cmsQuery = _queryFactory.Create(typeMap);
-
-            var defer = new MapDefer();
-            await ModelDefer(defer, typeMap);
-            //if (!isMedia && !isRoot)
-            //{
-            //    MediaDefer<T>(defer, typeMap, root, medias);
-            //}
-            if (string.IsNullOrWhiteSpace(key))
-                key = type.FullName;
-
-            _cacheRegistry.Add(async () =>
-            {
-                var contents = await Task.Run(() => _cmsFetcher.Fetch(cmsQuery));
-                var models = _mapper.To(type, contents, defer).AsList();
-                return models;
-            },  key: key);
-        }
-
-        private async Task<IEnumerable<object>> DoGet(Type type, string key = null)
-        {
-            key = string.IsNullOrWhiteSpace(key) ? type.FullName : key;
-            if (!_cacheRegistry.Has(key))
-                await Register(type);
-
-            return await _cacheFetcher.FetchAsync<object>(key);
-        }
-
-        private async Task ModelDefer(MapDefer defer, ITypeMap typeMap)
-        {
-            var typeDefer = defer.For(typeMap.EntityType);
-            foreach (var modelMap in typeMap.ModelMaps)
-            {
-                var map = modelMap;
-                var alias = map.Alias;
-                var source = await DoGet(map.ModelType);
-                typeDefer.Attach(alias, (x, s) =>
-                {
-                    if (string.IsNullOrWhiteSpace(s) || x == null) return;
-
-                    if (modelMap.IsMany)
-                        map.Match(x, s.Split(','), source);
-                    else
-                        map.Match(x, s, source);
-                });
-            }
-        }
 
         //public string ToUrl(IEnumerable<Media> medias, string mediaKey)
         //{

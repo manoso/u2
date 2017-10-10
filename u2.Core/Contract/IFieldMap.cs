@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace u2.Core.Contract
 {
@@ -8,7 +9,7 @@ namespace u2.Core.Contract
         Type ContentType { get; set; }
         Func<string, object> Converter { get; }
         object Default { get; set; }
-        Action<object, object> Defer { get; }
+        Func<object, object, Task> Defer { get; }
         IPropertySetter Setter { get; set; }
 
         bool MatchAlias(string alias);
@@ -16,7 +17,7 @@ namespace u2.Core.Contract
 
     public interface IFieldMap<out T, TP> : IFieldMap
     {
-        Action<T, TP> ActDefer { set; }
+        Func<T, TP, Task> ActDefer { set; }
         Func<string, TP> Convert { set; }
     }
 }

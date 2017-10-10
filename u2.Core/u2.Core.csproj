@@ -67,6 +67,7 @@
     <Compile Include="Contract\IModelMap.cs" />
     <Compile Include="Contract\IGroupAction.cs" />
     <Compile Include="Contract\IOnceAsync.cs" />
+    <Compile Include="Contract\IRegistry.cs" />
     <Compile Include="MapRegistry.cs" />
     <Compile Include="DataPool.cs" />
     <Compile Include="ModelMap.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Contract\ICmsModel.cs" />
     <Compile Include="OnceAsync.cs" />
     <Compile Include="PropertySetter.cs" />
+    <Compile Include="Registry.cs" />
     <Compile Include="SimpleMap.cs" />
     <Compile Include="TypeDefer.cs" />
     <Compile Include="TypeMap.cs" />

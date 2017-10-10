@@ -11,7 +11,10 @@ namespace u2.Cache
     {
         public ILookupParameter<T>[] LookupParameters { get; set; }
 
-        protected override bool NeedRun => IsExpired;
+        protected override Func<bool> NeedRun
+        {
+            get { return () => IsExpired; }
+        } 
 
         protected override Action Reset
         {
