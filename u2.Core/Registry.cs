@@ -42,6 +42,7 @@ namespace u2.Core
                 var cmsQuery = _queryFactory.Create(typeMap);
                 var contents = _cmsFetcher.Fetch(cmsQuery);
                 var models = (await _mapper.To<T>(contents, mapDefer)).AsList();
+
                 return models;
             }, key: key);
 

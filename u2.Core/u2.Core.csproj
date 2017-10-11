@@ -66,10 +66,8 @@
     <Compile Include="Contract\IPropertySetter.cs" />
     <Compile Include="Contract\IModelMap.cs" />
     <Compile Include="Contract\IGroupAction.cs" />
-    <Compile Include="Contract\IOnceAsync.cs" />
     <Compile Include="Contract\IRegistry.cs" />
     <Compile Include="MapRegistry.cs" />
-    <Compile Include="DataPool.cs" />
     <Compile Include="ModelMap.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="FieldMap.cs" />

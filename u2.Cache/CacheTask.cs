@@ -57,7 +57,16 @@ namespace u2.Cache
 
     public abstract class CacheTask : OnceAsync, ICacheTask
     {
-        public int CacheInSecs { get; set; }
+        private int _cacheInSecs = 300;
+        public int CacheInSecs
+        {
+            get => _cacheInSecs;
+            set
+            {
+                if (value > 0)
+                    _cacheInSecs = value;
+            }
+        }
         public string TaskKey { get; set; }
         public Delegate Task { get; set; }
 
@@ -74,6 +83,15 @@ namespace u2.Cache
         {
             Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSecs);
             await Load();
+        }
+
+        public async Task Run(Action<string, object> save)
+        {
+            await Run(() =>
+            {
+                foreach (var cacheItem in CacheItems)
+                    save(cacheItem.Key, cacheItem.Value);
+            });
         }
 
         protected abstract Task Load();

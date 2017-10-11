@@ -45,11 +45,7 @@ namespace u2.Cache
         private async Task<IEnumerable<object>> TaskFetch(ICacheTask task, string cacheKey)
         {
             if (!_store.Has(cacheKey) || task.IsExpired)
-            {
-                await task.Run();
-                foreach (var cacheItem in task.CacheItems)
-                    _store.Save(cacheItem.Key, cacheItem.Value);
-            }
+                await task.Run((k, v) => _store.Save(k, v));
 
             return (IEnumerable<object>)_store.Get(cacheKey);
         }

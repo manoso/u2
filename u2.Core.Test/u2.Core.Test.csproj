@@ -48,7 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataPoolTest.cs" />
+    <Compile Include="IntegrationTest.cs" />
     <Compile Include="MapTest.cs" />
     <Compile Include="ModelMapTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

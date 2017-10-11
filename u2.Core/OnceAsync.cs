@@ -5,7 +5,7 @@ using u2.Core.Contract;
 
 namespace u2.Core
 {
-    public abstract class OnceAsync : IOnceAsync
+    public abstract class OnceAsync
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private Task<bool> _task;
@@ -14,7 +14,7 @@ namespace u2.Core
         protected abstract Action Reset { get; }
         protected abstract Task RunAsync { get; }
 
-        public async Task Run()
+        protected async Task Run(Action done)
         {
             TaskCompletionSource<bool> taskCompletion = null;
             await _semaphore.WaitAsync();
@@ -29,6 +29,7 @@ namespace u2.Core
             if (taskCompletion != null)
             {
                 await RunAsync;
+                done();
                 taskCompletion.SetResult(true);
             }
 

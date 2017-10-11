@@ -11,10 +11,10 @@ using u2.Umbraco;
 namespace u2.Core.Test
 {
     [TestFixture]
-    public class DataPoolTest
+    public class IntegrationTest
     {
         [Test]
-        public async Task GetAsync_fit_single_success()
+        public async Task FetchAsync_fit_single_success()
         {
             var root = Substitute.For<IRoot>();
             var mapRegistry = new MapRegistry(root);
@@ -24,15 +24,16 @@ namespace u2.Core.Test
             var cacheFetcher = new CacheFetcher(cacheStore, cacheRegistry);
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
 
             mapRegistry.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
             mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "alias");
 
-            mapRegistry.Register<TestItem>()
+            registry.Register<TestItem>()
                 .Map(x => x.Key, "itemId");
-            mapRegistry.Register<TestEntity>()
+            registry.Register<TestEntity>()
                 .Fit(x => x.Item);
 
             var fields = new Dictionary<string, string>
@@ -71,10 +72,10 @@ namespace u2.Core.Test
             };
             var content3 = new UmbracoContent(item3);
 
-            var mapItem = mapRegistry.For<TestItem>();
-            var mapEntity = mapRegistry.For<TestEntity>();
-            var queryItem = Substitute.For<ICmsQuery>();
-            var queryEntity = Substitute.For<ICmsQuery>();
+            var mapItem = mapRegistry.For<TestItem>() as TypeMap<TestItem>;
+            var mapEntity = mapRegistry.For<TestEntity>() as TypeMap<TestEntity>;
+            var queryItem = Substitute.For<ICmsQuery<TestItem>>();
+            var queryEntity = Substitute.For<ICmsQuery<TestEntity>>();
             queryFactory.Create(mapItem).Returns(queryItem);
             queryFactory.Create(mapEntity).Returns(queryEntity);
 
@@ -84,9 +85,7 @@ namespace u2.Core.Test
             cmsFetcher.Fetch(queryItem).Returns(itemContents);
             cmsFetcher.Fetch(queryEntity).Returns(entityContents);
 
-            var pool = new DataPool(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
-
-            var entities = await pool.GetAsync<TestEntity>();
+            var entities = await cacheFetcher.FetchAsync<TestEntity>();
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
             var entity = entities.First();
@@ -95,7 +94,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task GetAsync_fit_single_with_key_success()
+        public async Task FetchAsync_fit_single_with_key_success()
         {
             var root = Substitute.For<IRoot>();
             var mapRegistry = new MapRegistry(root);
@@ -155,8 +154,8 @@ namespace u2.Core.Test
 
             var mapItem = mapRegistry.For<TestItem>() as TypeMap<TestItem>;
             var mapEntity = mapRegistry.For<TestEntity>() as TypeMap<TestEntity>;
-            var queryItem = new ContentQuery<TestItem>();
-            var queryEntity = new ContentQuery<TestEntity>();
+            var queryItem = Substitute.For<ICmsQuery<TestItem>>();
+            var queryEntity = Substitute.For<ICmsQuery<TestEntity>>();
             queryFactory.Create(mapItem).Returns(queryItem);
             queryFactory.Create(mapEntity).Returns(queryEntity);
 
@@ -166,9 +165,7 @@ namespace u2.Core.Test
             cmsFetcher.Fetch(queryItem).Returns(itemContents);
             cmsFetcher.Fetch(queryEntity).Returns(entityContents);
 
-            var pool = new DataPool(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
-
-            var entities = await pool.GetAsync<TestEntity>();
+            var entities = await cacheFetcher.FetchAsync<TestEntity>();
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
             var entity = entities.First();
@@ -177,7 +174,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task GetAsync_fit_many_success()
+        public async Task FetchAsync_fit_many_success()
         {
             var root = Substitute.For<IRoot>();
             var mapRegistry = new MapRegistry(root);
@@ -187,15 +184,16 @@ namespace u2.Core.Test
             var cacheFetcher = new CacheFetcher(cacheStore, cacheRegistry);
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
 
             mapRegistry.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
             mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "alias");
 
-            mapRegistry.Register<TestItem>()
+            registry.Register<TestItem>()
                 .Map(x => x.Key, "itemId");
-            mapRegistry.Register<TestEntity>()
+            registry.Register<TestEntity>()
                 .Fit(x => x.Items);
 
             var fields = new Dictionary<string, string>
@@ -234,10 +232,10 @@ namespace u2.Core.Test
             };
             var content3 = new UmbracoContent(item3);
 
-            var mapItem = mapRegistry.For<TestItem>();
-            var mapEntity = mapRegistry.For<TestEntity>();
-            var queryItem = Substitute.For<ICmsQuery>();
-            var queryEntity = Substitute.For<ICmsQuery>();
+            var mapItem = mapRegistry.For<TestItem>() as TypeMap<TestItem>;
+            var mapEntity = mapRegistry.For<TestEntity>() as TypeMap<TestEntity>;
+            var queryItem = Substitute.For<ICmsQuery<TestItem>>();
+            var queryEntity = Substitute.For<ICmsQuery<TestEntity>>();
             queryFactory.Create(mapItem).Returns(queryItem);
             queryFactory.Create(mapEntity).Returns(queryEntity);
 
@@ -247,9 +245,7 @@ namespace u2.Core.Test
             cmsFetcher.Fetch(queryItem).Returns(itemContents);
             cmsFetcher.Fetch(queryEntity).Returns(entityContents);
 
-            var pool = new DataPool(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
-
-            var entities = await pool.GetAsync<TestEntity>();
+            var entities = await cacheFetcher.FetchAsync<TestEntity>();
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
             var entity = entities.First();
@@ -258,7 +254,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task GetAsync_fit_many_with_key_success()
+        public async Task FetchAsync_fit_many_with_key_success()
         {
             var root = Substitute.For<IRoot>();
             var mapRegistry = new MapRegistry(root);
@@ -268,15 +264,16 @@ namespace u2.Core.Test
             var cacheFetcher = new CacheFetcher(cacheStore, cacheRegistry);
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
 
             mapRegistry.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
             mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "alias");
 
-            mapRegistry.Register<TestItem>()
+            registry.Register<TestItem>()
                 .Map(x => x.Key, "itemId");
-            mapRegistry.Register<TestEntity>()
+            registry.Register<TestEntity>()
                 .Fit(x => x.Items, x => x.ItemId.ToString());
 
             var fields = new Dictionary<string, string>
@@ -315,10 +312,10 @@ namespace u2.Core.Test
             };
             var content3 = new UmbracoContent(item3);
 
-            var mapItem = mapRegistry.For<TestItem>();
-            var mapEntity = mapRegistry.For<TestEntity>();
-            var queryItem = Substitute.For<ICmsQuery>();
-            var queryEntity = Substitute.For<ICmsQuery>();
+            var mapItem = mapRegistry.For<TestItem>() as TypeMap<TestItem>;
+            var mapEntity = mapRegistry.For<TestEntity>() as TypeMap<TestEntity>;
+            var queryItem = Substitute.For<ICmsQuery<TestItem>>();
+            var queryEntity = Substitute.For<ICmsQuery<TestEntity>>();
             queryFactory.Create(mapItem).Returns(queryItem);
             queryFactory.Create(mapEntity).Returns(queryEntity);
 
@@ -328,9 +325,7 @@ namespace u2.Core.Test
             cmsFetcher.Fetch(queryItem).Returns(itemContents);
             cmsFetcher.Fetch(queryEntity).Returns(entityContents);
 
-            var pool = new DataPool(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
-
-            var entities = await pool.GetAsync<TestEntity>();
+            var entities = await cacheFetcher.FetchAsync<TestEntity>();
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
             var entity = entities.First();
@@ -349,15 +344,16 @@ namespace u2.Core.Test
             var cacheFetcher = new CacheFetcher(cacheStore, cacheRegistry);
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
 
             mapRegistry.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
             mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "alias");
 
-            mapRegistry.Register<TestItem>()
+            registry.Register<TestItem>()
                 .Map(x => x.Key, "itemId");
-            mapRegistry.Register<TestEntity>()
+            registry.Register<TestEntity>()
                 .Fit<TestItem>((x, y) =>
                 {
                     x.List = y.ToList();
@@ -400,10 +396,10 @@ namespace u2.Core.Test
             };
             var content3 = new UmbracoContent(item3);
 
-            var mapItem = mapRegistry.For<TestItem>();
-            var mapEntity = mapRegistry.For<TestEntity>();
-            var queryItem = Substitute.For<ICmsQuery>();
-            var queryEntity = Substitute.For<ICmsQuery>();
+            var mapItem = mapRegistry.For<TestItem>() as TypeMap<TestItem>;
+            var mapEntity = mapRegistry.For<TestEntity>() as TypeMap<TestEntity>;
+            var queryItem = Substitute.For<ICmsQuery<TestItem>>();
+            var queryEntity = Substitute.For<ICmsQuery<TestEntity>>();
             queryFactory.Create(mapItem).Returns(queryItem);
             queryFactory.Create(mapEntity).Returns(queryEntity);
 
@@ -413,9 +409,7 @@ namespace u2.Core.Test
             cmsFetcher.Fetch(queryItem).Returns(itemContents);
             cmsFetcher.Fetch(queryEntity).Returns(entityContents);
 
-            var pool = new DataPool(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
-
-            var entities = await pool.GetAsync<TestEntity>();
+            var entities = await cacheFetcher.FetchAsync<TestEntity>();
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
             var entity = entities.First();
@@ -426,7 +420,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task GetAsync_fit_action_with_key_success()
+        public async Task FetchAsync_fit_action_with_key_success()
         {
             var root = Substitute.For<IRoot>();
             var mapRegistry = new MapRegistry(root);
@@ -436,15 +430,16 @@ namespace u2.Core.Test
             var cacheFetcher = new CacheFetcher(cacheStore, cacheRegistry);
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
 
             mapRegistry.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
             mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "alias");
 
-            mapRegistry.Register<TestItem>()
+            registry.Register<TestItem>()
                 .Map(x => x.Key, "itemId");
-            mapRegistry.Register<TestEntity>()
+            registry.Register<TestEntity>()
                 .Fit<TestItem>((x, y) =>
                 {
                     x.List = y.ToList();
@@ -487,10 +482,10 @@ namespace u2.Core.Test
             };
             var content3 = new UmbracoContent(item3);
 
-            var mapItem = mapRegistry.For<TestItem>();
-            var mapEntity = mapRegistry.For<TestEntity>();
-            var queryItem = Substitute.For<ICmsQuery>();
-            var queryEntity = Substitute.For<ICmsQuery>();
+            var mapItem = mapRegistry.For<TestItem>() as TypeMap<TestItem>;
+            var mapEntity = mapRegistry.For<TestEntity>() as TypeMap<TestEntity>;
+            var queryItem = Substitute.For<ICmsQuery<TestItem>>();
+            var queryEntity = Substitute.For<ICmsQuery<TestEntity>>();
             queryFactory.Create(mapItem).Returns(queryItem);
             queryFactory.Create(mapEntity).Returns(queryEntity);
 
@@ -500,9 +495,7 @@ namespace u2.Core.Test
             cmsFetcher.Fetch(queryItem).Returns(itemContents);
             cmsFetcher.Fetch(queryEntity).Returns(entityContents);
 
-            var pool = new DataPool(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
-
-            var entities = await pool.GetAsync<TestEntity>();
+            var entities = await cacheFetcher.FetchAsync<TestEntity>();
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
             var entity = entities.First();
@@ -513,7 +506,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task GetAsync_concurrent_access_success()
+        public async Task FetchAsync_concurrent_access_success()
         {
             var root = Substitute.For<IRoot>();
             var mapRegistry = new MapRegistry(root);
@@ -523,19 +516,21 @@ namespace u2.Core.Test
             var cacheFetcher = new CacheFetcher(cacheStore, cacheRegistry);
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
 
             mapRegistry.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
             mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "alias");
 
-            mapRegistry.Register<TestItem>()
+            registry.Register<TestItem>()
                 .Map(x => x.Key, "itemId");
-            mapRegistry.Register<TestEntity>()
+            registry.Register<TestEntity>()
                 .Fit(x => x.Item)
                 .Fit<TestItem>((x, y) =>
                 {
                     x.List = y.ToList();
+                    x.Items = x.List;
                     x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
                 }, "items", x => x.ItemId.ToString());
 
@@ -576,10 +571,10 @@ namespace u2.Core.Test
             };
             var content3 = new UmbracoContent(item3);
 
-            var mapItem = mapRegistry.For<TestItem>();
-            var mapEntity = mapRegistry.For<TestEntity>();
-            var queryItem = Substitute.For<ICmsQuery>();
-            var queryEntity = Substitute.For<ICmsQuery>();
+            var mapItem = mapRegistry.For<TestItem>() as TypeMap<TestItem>;
+            var mapEntity = mapRegistry.For<TestEntity>() as TypeMap<TestEntity>;
+            var queryItem = Substitute.For<ICmsQuery<TestItem>>();
+            var queryEntity = Substitute.For<ICmsQuery<TestEntity>>();
             queryFactory.Create(mapItem).Returns(queryItem);
             queryFactory.Create(mapEntity).Returns(queryEntity);
 
@@ -589,11 +584,9 @@ namespace u2.Core.Test
             cmsFetcher.Fetch(queryItem).Returns(itemContents);
             cmsFetcher.Fetch(queryEntity).Returns(entityContents);
 
-            var pool = new DataPool(mapRegistry, mapper, cacheRegistry, cacheFetcher, queryFactory, cmsFetcher);
-
             var tasks = new Task<IEnumerable<TestEntity>>[50];
             for(var i = 0; i < tasks.Length; i++)
-                tasks[i] = pool.GetAsync<TestEntity>();
+                tasks[i] = cacheFetcher.FetchAsync<TestEntity>();//.GetAsync<TestEntity>();
 
             await Task.WhenAll(tasks);
 
@@ -608,10 +601,11 @@ namespace u2.Core.Test
                 Assert.That(entity.Item.ItemId, Is.EqualTo(2));
                 Assert.That(entity.Items, Is.Not.Null);
                 Assert.That(entity.Items.Count, Is.EqualTo(2));
+                Assert.That(entity.List, Is.Not.Null);
+                Assert.That(entity.List.Count, Is.EqualTo(2));
+                Assert.That(entity.Dictionary, Is.Not.Null);
+                Assert.That(entity.Dictionary.Count, Is.EqualTo(2));
             }
-
-
         }
-
     }
 }
