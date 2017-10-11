@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmsKey.cs" />
-    <Compile Include="Contract\ICacheFetcher.cs" />
+    <Compile Include="Contract\ICache.cs" />
     <Compile Include="Contract\ICacheRegistry.cs" />
     <Compile Include="Contract\ICacheStore.cs" />
     <Compile Include="Contract\ICacheTask.cs" />

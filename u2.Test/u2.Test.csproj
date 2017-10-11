@@ -44,10 +44,8 @@
     <Compile Include="TestAction.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestCmsFetcher.cs" />
     <Compile Include="TestEntity.cs" />
     <Compile Include="TestItem.cs" />
-    <Compile Include="TestQueryFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">

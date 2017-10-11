@@ -11,16 +11,16 @@ namespace u2.Core
         private readonly IMapRegistry _mapRegistry;
         private readonly IMapper _mapper;
         private readonly ICacheRegistry _cacheRegistry;
-        private readonly ICacheFetcher _cacheFetcher;
+        private readonly ICache _cache;
         private readonly IQueryFactory _queryFactory;
         private readonly ICmsFetcher _cmsFetcher;
 
-        public Registry(IMapRegistry mapRegistry, IMapper mapper, ICacheRegistry cacheRegistry, ICacheFetcher cacheFetcher, IQueryFactory queryFactory, ICmsFetcher cmsFetcher)
+        public Registry(IMapRegistry mapRegistry, IMapper mapper, ICacheRegistry cacheRegistry, ICache cache, IQueryFactory queryFactory, ICmsFetcher cmsFetcher)
         {
             _mapRegistry = mapRegistry;
             _mapper = mapper;
             _cacheRegistry = cacheRegistry;
-            _cacheFetcher = cacheFetcher;
+            _cache = cache;
             _queryFactory = queryFactory;
             _cmsFetcher = cmsFetcher;
         }
@@ -52,7 +52,7 @@ namespace u2.Core
         private async Task<IEnumerable<object>> DoGet(Type type, string key = null)
         {
             key = string.IsNullOrWhiteSpace(key) ? type.FullName : key;
-            return await _cacheFetcher.FetchAsync<object>(key);
+            return await _cache.FetchAsync<object>(key);
         }
     }
 }

@@ -7,8 +7,8 @@
     <ProjectGuid>{FD608BE9-CFE7-4EBF-BEC5-A7B0D8E84BEF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>u2.Cache.Test</RootNamespace>
-    <AssemblyName>u2.Cache.Test</AssemblyName>
+    <RootNamespace>u2.Caching.Test</RootNamespace>
+    <AssemblyName>u2.Caching.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -59,9 +59,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\u2.Cache\u2.Cache.csproj">
+    <ProjectReference Include="..\u2.Caching\u2.Caching.csproj">
       <Project>{5c409114-17e3-45bf-bf3b-82801598d953}</Project>
-      <Name>u2.Cache</Name>
+      <Name>u2.Caching</Name>
     </ProjectReference>
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">
       <Project>{bdb61368-e0c4-46cc-b47c-f275cff7f339}</Project>

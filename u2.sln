@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Core", "u2.Core\u2.Core.csproj", "{BDB61368-E0C4-46CC-B47C-F275CFF7F339}"
 EndProject
@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{983A63FA-4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Core.Test", "u2.Core.Test\u2.Core.Test.csproj", "{AD679768-EF24-4072-B5F3-9D932D4C4993}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Cache", "u2.Cache\u2.Cache.csproj", "{5C409114-17E3-45BF-BF3B-82801598D953}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Caching", "u2.Caching\u2.Caching.csproj", "{5C409114-17E3-45BF-BF3B-82801598D953}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Cache.Test", "u2.Cache.Test\u2.Cache.Test.csproj", "{FD608BE9-CFE7-4EBF-BEC5-A7B0D8E84BEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Caching.Test", "u2.Caching.Test\u2.Caching.Test.csproj", "{FD608BE9-CFE7-4EBF-BEC5-A7B0D8E84BEF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Umbraco.Test", "u2.Umbraco.Test\u2.Umbraco.Test.csproj", "{6C63194B-342A-4212-A403-AE59832867B6}"
 EndProject

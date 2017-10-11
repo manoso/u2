@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using u2.Test;
 
-namespace u2.Cache.Test
+namespace u2.Caching.Test
 {
     [TestFixture]
     public class LookupParameterTest

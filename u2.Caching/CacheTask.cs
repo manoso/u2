@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using u2.Core;
 using u2.Core.Contract;
 
-namespace u2.Cache
+namespace u2.Caching
 {
     public class CacheTask<T> : CacheTask, ICacheTask<T>
     {
@@ -85,13 +85,16 @@ namespace u2.Cache
             await Load();
         }
 
-        public async Task Run(Action<string, object> save)
+        public async Task Run(Action<string, object> save = null)
         {
-            await Run(() =>
+            if (save != null)
             {
-                foreach (var cacheItem in CacheItems)
-                    save(cacheItem.Key, cacheItem.Value);
-            });
+                await Run(() =>
+                {
+                    foreach (var cacheItem in CacheItems)
+                        save(cacheItem.Key, cacheItem.Value);
+                });
+            }
         }
 
         protected abstract Task Load();

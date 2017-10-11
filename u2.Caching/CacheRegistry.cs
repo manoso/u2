@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using u2.Core.Contract;
 
-namespace u2.Cache
+namespace u2.Caching
 {
     public class CacheRegistry : ICacheRegistry
     {

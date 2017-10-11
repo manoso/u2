@@ -58,9 +58,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\u2.Cache\u2.Cache.csproj">
+    <ProjectReference Include="..\u2.Caching\u2.Caching.csproj">
       <Project>{5C409114-17E3-45BF-BF3B-82801598D953}</Project>
-      <Name>u2.Cache</Name>
+      <Name>u2.Caching</Name>
     </ProjectReference>
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">
       <Project>{BDB61368-E0C4-46CC-B47C-F275CFF7F339}</Project>

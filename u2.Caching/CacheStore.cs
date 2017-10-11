@@ -2,7 +2,7 @@
 using System.Runtime.Caching;
 using u2.Core.Contract;
 
-namespace u2.Cache
+namespace u2.Caching
 {
     public class CacheStore : ICacheStore
     {

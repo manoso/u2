@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using u2.Core.Contract;
 using u2.Core.Extensions;
 
-namespace u2.Cache
+namespace u2.Caching
 {
-    public class CacheFetcher : ICacheFetcher
+    public class Cache : ICache
     {
         private readonly ICacheStore _store;
         private readonly ICacheRegistry _registry;
 
-        public CacheFetcher(ICacheStore store, ICacheRegistry registry)
+        public Cache(ICacheStore store, ICacheRegistry registry)
         {
             _store = store;
             _registry = registry;

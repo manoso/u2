@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace u2.Core.Contract
 {
-    public interface ICacheFetcher
+    public interface ICache
     { 
         Task<IEnumerable<T>> FetchAsync<T>(string key = null);
         //Task<T> FetchAsync<T>(string key);

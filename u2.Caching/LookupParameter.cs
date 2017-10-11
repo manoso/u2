@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using u2.Core.Contract;
 using u2.Core.Extensions;
 
-namespace u2.Cache
+namespace u2.Caching
 {
     public class LookupParameter<T> : ILookupParameter<T>
     {

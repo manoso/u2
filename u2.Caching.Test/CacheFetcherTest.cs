@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace u2.Cache.Test
+namespace u2.Caching.Test
 {
     [TestFixture]
     public class CacheFetcherTest
