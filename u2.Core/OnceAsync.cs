@@ -14,7 +14,7 @@ namespace u2.Core
         protected abstract Action Reset { get; }
         protected abstract Task RunAsync { get; }
 
-        protected async Task Run(Action done)
+        protected async Task Run(Action done = null)
         {
             TaskCompletionSource<bool> taskCompletion = null;
             await _semaphore.WaitAsync();
@@ -29,7 +29,7 @@ namespace u2.Core
             if (taskCompletion != null)
             {
                 await RunAsync;
-                done();
+                done?.Invoke();
                 taskCompletion.SetResult(true);
             }
 

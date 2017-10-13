@@ -87,14 +87,14 @@ namespace u2.Caching
 
         public async Task Run(Action<string, object> save = null)
         {
-            if (save != null)
-            {
-                await Run(() =>
+            var done = save == null
+                ? null as Action
+                : () =>
                 {
                     foreach (var cacheItem in CacheItems)
                         save(cacheItem.Key, cacheItem.Value);
-                });
-            }
+                };
+            await Run(done);
         }
 
         protected abstract Task Load();
