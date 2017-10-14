@@ -24,7 +24,7 @@ namespace u2.Caching.Test
 
             cache.Register(Func);
 
-            registryAu.Received(1).Add(Func, SiteCaches.DefaultCache, typeof(CacheItem).FullName);
+            registryAu.Received(1).Add(Func, typeof(CacheItem).FullName).Span(SiteCaches.DefaultCache);
         }
 
         [Test]
@@ -44,15 +44,15 @@ namespace u2.Caching.Test
             var cacheKey = "key";
             cache.Register(cacheKey, Func);
 
-            registryAu.Received(1).Add(Func, SiteCaches.DefaultCache, cacheKey);
-            registryNz.Received(1).Add(Func, SiteCaches.DefaultCache, cacheKey);
+            registryAu.Received(1).Add(Func, cacheKey).Span(SiteCaches.DefaultCache);
+            registryNz.Received(1).Add(Func, cacheKey).Span(SiteCaches.DefaultCache);
         }
 
         [Test]
         public void RegisterLookup_called_CacheRegistry_Add()
         {
             var registryAu = Substitute.For<ICacheRegistry>();
-            var lookup = Substitute.For<ILookupParameter<CacheItem>>();
+            var lookup = Substitute.For<ICacheLookup<CacheItem>>();
 
             var cache = new SiteCaches
             {
@@ -63,7 +63,7 @@ namespace u2.Caching.Test
 
             cache.RegisterLookup(Func, 0, lookup);
 
-            registryAu.Received(1).Add(Func, SiteCaches.DefaultCache, lookups: lookup);
+            registryAu.Received(1).Add(Func).Lookup(lookup).Span(SiteCaches.DefaultCache);
         }
 
         [Test]

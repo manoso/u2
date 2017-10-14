@@ -6,7 +6,7 @@ using u2.Core.Contract;
 
 namespace u2.Core
 {
-    public class FieldMap : IFieldMap
+    public class MapItem : IMapItem
     {
         public IPropertySetter Setter { get; set; }
         public Func<string, object> Converter { get; protected set; }
@@ -17,14 +17,14 @@ namespace u2.Core
         public object Default { get; set; }
         public Type ContentType { get; set; }
 
-        public FieldMap(PropertyInfo info)
+        public MapItem(PropertyInfo info)
         {
             Alias = info.Name.ToLowerInvariant();
             ContentType = info.PropertyType;
             Setter = new PropertySetter(info);
         }
 
-        public FieldMap() { }
+        public MapItem() { }
 
         public bool MatchAlias(string alias)
         {
@@ -32,7 +32,7 @@ namespace u2.Core
         }
     }
 
-    public class FieldMap<T, TP> : FieldMap, IFieldMap<T, TP>
+    public class MapItem<T, TP> : MapItem, IMapItem<T, TP>
     {
         public Func<string, TP> Convert
         {
@@ -55,7 +55,7 @@ namespace u2.Core
             }
         }
 
-        public FieldMap(string alias = null, Expression<Func<T, TP>> property = null)
+        public MapItem(string alias = null, Expression<Func<T, TP>> property = null)
         {
             if (property != null)
             {
@@ -68,7 +68,7 @@ namespace u2.Core
 
     }
 
-    public class FieldMapCopy : FieldMap
+    public class MapItemCopy : MapItem
     {
     }
 }

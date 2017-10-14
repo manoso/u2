@@ -9,7 +9,27 @@ namespace u2.Caching
 {
     public class CacheTask<T> : CacheTask, ICacheTask<T>
     {
-        public ILookupParameter<T>[] LookupParameters { get; set; }
+        public IList<ICacheLookup<T>> CacheLookups { get; } = new List<ICacheLookup<T>>();
+
+        public ICacheTask<T> Span(int seconds)
+        {
+            CacheInSecs = seconds;
+            return this;
+        }
+
+        public ICacheTask<T> Lookup(ICacheLookup<T> cacheLookup)
+        {
+            CacheLookups.Add(cacheLookup);
+            return this;
+        }
+
+        private Func<object, object> _beforeSave;
+
+        public ICacheTask<T> OnSave(Func<IEnumerable<T>, IEnumerable<T>> func)
+        {
+            _beforeSave = x => func((IEnumerable<T>) x);
+            return this;
+        }
 
         protected override Func<bool> NeedRun
         {
@@ -39,14 +59,15 @@ namespace u2.Caching
 
                 if (data != null)
                 {
+                    _beforeSave?.Invoke(data);
                     CacheItems[TaskKey] = data;
                     items = data.ToList();
                 }
             }
 
-            if (LookupParameters != null && LookupParameters.Any() && items != null && items.Any())
+            if (CacheLookups != null && CacheLookups.Any() && items != null && items.Any())
             {
-                foreach (var lookup in LookupParameters)
+                foreach (var lookup in CacheLookups)
                 {
                     var data = items.ToLookup(lookup.GetLookupKey);
                     CacheItems[lookup.CacheKey] = data;
@@ -67,7 +88,9 @@ namespace u2.Caching
                     _cacheInSecs = value;
             }
         }
+
         public string TaskKey { get; set; }
+
         public Delegate Task { get; set; }
 
         public IDictionary<string, object> CacheItems { get; } = new Dictionary<string, object>();

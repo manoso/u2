@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,17 +10,18 @@ namespace u2.Caching.Test
     [TestFixture]
     public class CacheTaskTest
     {
+        private readonly Func<Task<IEnumerable<CacheItem>>> _task = async () => await Task.Run(() => CacheItems);
+
         [Test]
         public async Task Run_concurrent_run_single_result_success()
         {
-            Func<Task<IEnumerable<CacheItem>>> func = async () => await Task.Run(() => CacheItems);
             const string key = "CacheItem";
             const int cacheTime = 300;
 
             var task = new CacheTask<CacheItem>
             {
                 TaskKey = key,
-                Task = func,
+                Task = _task,
                 CacheInSecs = cacheTime
             };
 
@@ -43,18 +43,17 @@ namespace u2.Caching.Test
         [Test]
         public async Task Run_with_lookups_concurrent_run_single_result_success()
         {
-            Func<Task<IEnumerable<CacheItem>>> func = async () => await Task.Run(() => CacheItems);
             const int cacheTime = 300;
             var taskKey = typeof(CacheItem).FullName;
-            var loopupParam = new LookupParameter<CacheItem>().Add(x => x.LookupKey);
+            var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
 
             var task = new CacheTask<CacheItem>
             {
                 TaskKey = taskKey,
-                Task = func,
-                CacheInSecs = cacheTime,
-                LookupParameters = new [] { loopupParam }
+                Task = _task,
+                CacheInSecs = cacheTime
             };
+            task.Lookup(lookup);
 
             await task.Run();
             var items = task.CacheItems;
@@ -65,8 +64,8 @@ namespace u2.Caching.Test
             Assert.That(all.Count(), Is.EqualTo(3));
             Assert.That(lookups.Count(), Is.EqualTo(2));
 
-            var lookupKey1 = loopupParam.GetLookupKey(new CacheItem { LookupKey = 1 });
-            var lookupKey2 = loopupParam.GetLookupKey(new CacheItem { LookupKey = 2 });
+            var lookupKey1 = lookup.GetLookupKey(new CacheItem { LookupKey = 1 });
+            var lookupKey2 = lookup.GetLookupKey(new CacheItem { LookupKey = 2 });
 
             Assert.That(lookups[lookupKey1].Count(), Is.EqualTo(2));
             Assert.That(lookups[lookupKey2].Count(), Is.EqualTo(1));
@@ -75,14 +74,13 @@ namespace u2.Caching.Test
         [Test]
         public async Task Reload_success()
         {
-            Func<Task<IEnumerable<CacheItem>>> func = async () => await Task.Run(() => CacheItems);
             const int cacheTime = 300;
             var taskKey = typeof(CacheItem).FullName;
 
             var task = new CacheTask<CacheItem>
             {
                 TaskKey = taskKey,
-                Task = func,
+                Task = _task,
                 CacheInSecs = cacheTime,
             };
 
@@ -94,18 +92,18 @@ namespace u2.Caching.Test
             Assert.That(before.Id, Is.Not.EqualTo(after.Id));
         }
 
-
         private async Task<T> GetFirstAsync<T>(CacheTask<T> task) where T: class
         {
             await task.Run();
             return ((IEnumerable<T>)task.CacheItems.First().Value).First();
         }
+
         private T GetFirst<T>(CacheTask<T> task) where T : class
         {
             return ((IEnumerable<T>)task.CacheItems.First().Value).First();
         }
 
-        public IEnumerable<CacheItem> CacheItems => new[]
+        private static IEnumerable<CacheItem> CacheItems => new[]
         {
             new CacheItem { LookupKey = 1},
             new CacheItem { LookupKey = 1},

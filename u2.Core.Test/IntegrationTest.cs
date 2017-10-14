@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
@@ -14,7 +15,7 @@ namespace u2.Core.Test
     [TestFixture]
     public class IntegrationTest
     {
-        private ICache Setup(Action<ITypeMap<TestEntity>> fit)
+        private ICache Setup(Action<IMapTask<TestEntity>> fit)
         {
             var root = Substitute.For<IRoot>();
             var mapRegistry = new MapRegistry(root);
@@ -94,9 +95,9 @@ namespace u2.Core.Test
             };
             var contentInfo2 = new UmbracoContent(info2);
 
-            var mapItem = mapRegistry.For<TestItem>() as TypeMap<TestItem>;
-            var mapEntity = mapRegistry.For<TestEntity>() as TypeMap<TestEntity>;
-            var mapInfo = mapRegistry.For<TestInfo>() as TypeMap<TestInfo>;
+            var mapItem = mapRegistry.For<TestItem>() as MapTask<TestItem>;
+            var mapEntity = mapRegistry.For<TestEntity>() as MapTask<TestEntity>;
+            var mapInfo = mapRegistry.For<TestInfo>() as MapTask<TestInfo>;
             var queryItem = Substitute.For<ICmsQuery<TestItem>>();
             var queryEntity = Substitute.For<ICmsQuery<TestEntity>>();
             var queryInfo = Substitute.For<ICmsQuery<TestInfo>>();
@@ -244,6 +245,42 @@ namespace u2.Core.Test
                 Assert.That(item.Infos, Is.Not.Null);
                 Assert.That(item.Infos.Count(), Is.EqualTo(2));
             }
+        }
+
+        [Test]
+        public async Task Cache_lookup_test()
+        {
+            var cacheRegistry = new CacheRegistry();
+            var cacheStore = new CacheStore();
+            var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
+            var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
+            var cache = new Cache(cacheStore, cacheRegistry);
+
+            async Task<IEnumerable<CacheItem>> Task() => await System.Threading.Tasks.Task.Run(() => new[]
+            {
+                new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
+                new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
+                new CacheItem {LookupKey = 2, LookupKeyOther = "1"}
+            });
+
+            cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther).Span(300).OnSave(x => x.OrderBy(y => y.LookupKeyOther));
+
+            var result = await cache.FetchAsync(lookup);
+            var resultOther = await cache.FetchAsync(lookupOther);
+            var item = result["2"].First();
+            var itemOther = resultOther["1"].First();
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result["1"].Count(), Is.EqualTo(2));
+            Assert.That(result["2"].Count(), Is.EqualTo(1));
+
+            Assert.That(resultOther, Is.Not.Null);
+            Assert.That(resultOther.Count, Is.EqualTo(2));
+            Assert.That(resultOther["1"].Count(), Is.EqualTo(1));
+            Assert.That(resultOther["2"].Count(), Is.EqualTo(2));
+
+            Assert.That(item.Id, Is.EqualTo(itemOther.Id));
         }
     }
 }

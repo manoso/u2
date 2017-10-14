@@ -6,7 +6,7 @@ namespace u2.Core.Contract
 {
     public interface ICacheRegistry
     {
-        void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, string key = null, params ILookupParameter<T>[] lookups);
+        ICacheTask<T> Add<T>(Func<Task<IEnumerable<T>>> func, string key = null);
         bool Has<T>();
         bool Has(string key);
         bool TryGetTask(string taskKey, out ICacheTask task);

@@ -8,6 +8,6 @@ namespace u2.Core.Contract
     { 
         Task<IEnumerable<T>> FetchAsync<T>(string key = null);
         //Task<T> FetchAsync<T>(string key);
-        //Task<ILookup<string, T>> FetchLookupAsync<T>(ILookupParameter<T> lookupParameter);
+        Task<ILookup<string, T>> FetchAsync<T>(ICacheLookup<T> lookup);
     }
 }

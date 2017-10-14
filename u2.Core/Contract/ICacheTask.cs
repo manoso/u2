@@ -24,6 +24,10 @@ namespace u2.Core.Contract
 
     public interface ICacheTask<T> : ICacheTask
     {
-        ILookupParameter<T>[] LookupParameters { get; set; }
+        ICacheTask<T> OnSave(Func<IEnumerable<T>, IEnumerable<T>> func);
+        IList<ICacheLookup<T>> CacheLookups { get; }
+        ICacheTask<T> Span(int seconds);
+        ICacheTask<T> Lookup(ICacheLookup<T> cacheLookup);
+
     }
 }

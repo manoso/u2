@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using u2.Core.Contract;
-using u2.Core.Extensions;
 
 namespace u2.Caching
 {
@@ -20,19 +19,19 @@ namespace u2.Caching
         public async Task<IEnumerable<T>> FetchAsync<T>(string key = null)
         {
             var result = await DoFetch<T>(string.IsNullOrWhiteSpace(key) ? typeof(T).FullName : key);
-            return result.OfType<T>().AsList();
+            return result as IEnumerable<T>;
         }
 
-        //public async Task<ILookup<string, T>> FetchLookupAsync<T>(ILookupParameter<T> lookupParameter)
-        //{
-        //    if (lookupParameter == null)
-        //        return null;
+        public async Task<ILookup<string, T>> FetchAsync<T>(ICacheLookup<T> lookup)
+        {
+            if (lookup == null)
+                return null;
 
-        //    var result = await FetchAsync<ILookup<string, T>, T>(lookupParameter.CacheKey, true);
-        //    return result.OfType<ILookup<string, T>>()
-        //}
+            var result = await DoFetch<T>(lookup.CacheKey, true);
+            return result as ILookup<string, T>;
+        }
 
-        private async Task<IEnumerable<object>> DoFetch<T>(string key, bool isLookup = false)
+        private async Task<object> DoFetch<T>(string key, bool isLookup = false)
         {
             var type = typeof(T);
             var taskKey = isLookup ? type.FullName : key;
@@ -42,12 +41,12 @@ namespace u2.Caching
                 : null;
         }
 
-        private async Task<IEnumerable<object>> TaskFetch(ICacheTask task, string cacheKey)
+        private async Task<object> TaskFetch(ICacheTask task, string cacheKey)
         {
             if (!_store.Has(cacheKey) || task.IsExpired)
                 await task.Run((k, v) => _store.Save(k, v));
 
-            return (IEnumerable<object>)_store.Get(cacheKey);
+            return _store.Get(cacheKey);
         }
     }
 }

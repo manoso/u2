@@ -9,19 +9,20 @@ namespace u2.Caching
     {
         private readonly IDictionary<string, ICacheTask> _tasks = new Dictionary<string, ICacheTask>();
 
-        public void Add<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, string key = null, params ILookupParameter<T>[] lookups)
+        public ICacheTask<T> Add<T>(Func<Task<IEnumerable<T>>> func, string key = null)
         {
             if (string.IsNullOrWhiteSpace(key))
                 key = typeof(T).FullName;
 
-            _tasks.Add(key,
-                new CacheTask<T>
-                {
-                    TaskKey = key,
-                    Task = func,
-                    CacheInSecs = cacheInSecs,
-                    LookupParameters = lookups
-                });
+            var task = new CacheTask<T>
+            {
+                TaskKey = key,
+                Task = func
+            };
+
+            _tasks.Add(key, task);
+
+            return task;
         }
 
         public bool Has<T>()

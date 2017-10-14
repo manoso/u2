@@ -29,16 +29,20 @@ namespace u2.Caching
             cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
             foreach (var registry in _registries.Values)
             {
-                registry.Add(func, cacheInSecs, key);
+                registry.Add(func, key).Span(cacheInSecs);
             }
         }
 
-        public void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, params ILookupParameter<T>[] lookups)
+        public void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, params ICacheLookup<T>[] lookups)
         {
             cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
             foreach (var registry in _registries.Values)
             {
-                registry.Add(func, cacheInSecs, lookups: lookups);
+                var task = registry.Add(func).Span(cacheInSecs);
+                foreach (var lookup in lookups)
+                {
+                    task.Lookup(lookup);
+                }
             }
         }
 

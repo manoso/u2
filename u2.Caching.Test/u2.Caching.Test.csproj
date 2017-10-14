@@ -52,7 +52,7 @@
     <Compile Include="CacheRegistryTest.cs" />
     <Compile Include="CacheTaskTest.cs" />
     <Compile Include="SiteCachesTest.cs" />
-    <Compile Include="LookupParameterTest.cs" />
+    <Compile Include="CacheLookupTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

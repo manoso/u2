@@ -4,12 +4,12 @@ using u2.Test;
 namespace u2.Caching.Test
 {
     [TestFixture]
-    public class LookupParameterTest
+    public class CacheLookupTest
     {
         [Test]
         public void CacheKey_get_success()
         {
-            var lookup = new LookupParameter<CacheItem>()
+            var lookup = new CacheLookup<CacheItem>()
                 .Add(x => x.LookupKey);
 
             var key = lookup.CacheKey;
@@ -19,7 +19,7 @@ namespace u2.Caching.Test
         [Test]
         public void GetLookupKey_sucess()
         {
-            var lookup = new LookupParameter<CacheItem>()
+            var lookup = new CacheLookup<CacheItem>()
                 .Add(x => x.LookupKey)
                 .Add(x => x.LookupKeyOther);
 

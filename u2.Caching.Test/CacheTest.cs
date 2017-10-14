@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
@@ -10,21 +11,21 @@ namespace u2.Caching.Test
     public class CacheTest
     {
         [Test]
-        public void FetchAsync_without_key_success()
+        public async Task FetchAsync_without_key_success()
         {
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
 
             var cache = new Cache(cacheStore, cacheRegistry);
 
-            cache.FetchAsync<TestItem>();
+            await cache.FetchAsync<TestItem>();
 
             var key = typeof(TestItem).FullName;
             cacheRegistry.Received(1).TryGetTask(key, out ICacheTask _);
         }
 
         [Test]
-        public void FetchAsync_with_key_success()
+        public async Task FetchAsync_with_key_success()
         {
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
@@ -32,13 +33,13 @@ namespace u2.Caching.Test
             var cache = new Cache(cacheStore, cacheRegistry);
 
             var key = "key";
-            cache.FetchAsync<TestItem>(key);
+            await cache.FetchAsync<TestItem>(key);
 
             cacheRegistry.Received(1).TryGetTask(key, out ICacheTask _);
         }
 
         [Test]
-        public void FetchAsync_TaskRun_called()
+        public async Task FetchAsync_TaskRun_called()
         {
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
@@ -52,9 +53,24 @@ namespace u2.Caching.Test
             var cache = new Cache(cacheStore, cacheRegistry);
             cacheStore.Has(Arg.Any<string>()).Returns(false);
 
-            cache.FetchAsync<TestItem>();
+            await cache.FetchAsync<TestItem>();
 
-            task.Received(1).Run(Arg.Any<Action<string, object>>());
+            await task.Received(1).Run(Arg.Any<Action<string, object>>());
+        }
+
+        [Test]
+        public async Task FetchAsync_no_task_returns_null()
+        {
+            var cacheRegistry = Substitute.For<ICacheRegistry>();
+
+            cacheRegistry.TryGetTask(Arg.Any<string>(), out ICacheTask _)
+                .Returns(false);
+
+            var cache = new Cache(null, cacheRegistry);
+
+            var result = await cache.FetchAsync<TestItem>();
+
+            Assert.That(result, Is.Null);
         }
     }
 }

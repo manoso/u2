@@ -7,39 +7,39 @@ namespace u2.Core
 {
     public class MapDefer : IMapDefer
     {
-        public IDictionary<Type, ITypeDefer>  Defers { get; } = new Dictionary<Type, ITypeDefer>();
+        public IDictionary<Type, ITaskDefer>  Defers { get; } = new Dictionary<Type, ITaskDefer>();
 
-        public ITypeDefer<T> For<T>() 
+        public ITaskDefer<T> For<T>() 
             where T : class, new()
         {
             var type = typeof(T);
-            if (!Defers.TryGetValue(type, out ITypeDefer defer))
+            if (!Defers.TryGetValue(type, out ITaskDefer defer))
             {
-                defer = new TypeDefer<T>();
+                defer = new TaskDefer<T>();
                 Defers.Add(typeof(T), defer);
             }
 
-            return defer as ITypeDefer<T>;
+            return defer as ITaskDefer<T>;
         }
 
-        public ITypeDefer For(Type type)
+        public ITaskDefer For(Type type)
         {
-            if (!Defers.TryGetValue(type, out ITypeDefer defer))
+            if (!Defers.TryGetValue(type, out ITaskDefer defer))
             {
-                defer = new TypeDefer();
+                defer = new TaskDefer();
                 Defers.Add(type, defer);
             }
 
             return defer;
         }
 
-        public void Defer(ITypeMap typeMap, Func<Type, string, Task<IEnumerable<object>>> task)
+        public void Defer(IMapTask mapTask, Func<Type, string, Task<IEnumerable<object>>> task)
         {
-            if (Defers.TryGetValue(typeMap.EntityType, out ITypeDefer _))
+            if (Defers.TryGetValue(mapTask.EntityType, out ITaskDefer _))
                 return;
 
-            var typeDefer = For(typeMap.EntityType);
-            foreach (var modelMap in typeMap.ModelMaps)
+            var typeDefer = For(mapTask.EntityType);
+            foreach (var modelMap in mapTask.ModelMaps)
             {
                 var map = modelMap;
                 var alias = map.Alias;

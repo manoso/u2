@@ -7,11 +7,11 @@ using u2.Core.Extensions;
 
 namespace u2.Caching
 {
-    public class LookupParameter<T> : ILookupParameter<T>
+    public class CacheLookup<T> : ICacheLookup<T>
     {
         private readonly IDictionary<string, Func<T, string>> _keys = new Dictionary<string, Func<T, string>>();
 
-        public ILookupParameter<T> Add<TP>(Expression<Func<T, TP>> expProp)
+        public ICacheLookup<T> Add<TP>(Expression<Func<T, TP>> expProp)
         {
             var info = expProp.ToInfo();
             var func = expProp.Compile();

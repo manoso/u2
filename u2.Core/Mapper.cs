@@ -69,15 +69,15 @@ namespace u2.Core
             return result;
         }
 
-        private async Task<object> Load(ITypeMap typeMap, IContent content, object instance = null, IMapDefer defer = null)
+        private async Task<object> Load(IMapTask mapTask, IContent content, object instance = null, IMapDefer defer = null)
         {
-            if (typeMap == null || content == null) return null;
+            if (mapTask == null || content == null) return null;
 
-            var result = typeMap.Create(instance);
+            var result = mapTask.Create(instance);
 
             if (result == null) return null;
 
-            var maps = GetMaps(typeMap);
+            var maps = GetMaps(mapTask);
 
             object val = null;
             maps.Each(x =>
@@ -96,25 +96,25 @@ namespace u2.Core
 
             var fields = new Dictionary<string, object>();
 
-            if (typeMap.CmsFields.Any() && typeMap.GroupActions.Any())
+            if (mapTask.CmsFields.Any() && mapTask.GroupActions.Any())
             {
-                foreach (var field in typeMap.CmsFields)
+                foreach (var field in mapTask.CmsFields)
                 {
                     fields.Add(field.Key, content.Get(field.Value, field.Key));
                 }
 
-                foreach (var ga in typeMap.GroupActions)
+                foreach (var ga in mapTask.GroupActions)
                 {
                     var values = ga.Aliases.Select(x => fields[x]).ToList();
                     ga.Action(result, values);
                 }
             }
 
-            typeMap.Action?.Invoke(content, result);
+            mapTask.Action?.Invoke(content, result);
 
             if (defer != null)
             {
-                if (defer.Defers.TryGetValue(typeMap.EntityType, out ITypeDefer typeDefer))
+                if (defer.Defers.TryGetValue(mapTask.EntityType, out ITaskDefer typeDefer))
                 {
                     foreach (var map in typeDefer.Maps.Select(x => x.Value))
                     {
@@ -129,24 +129,24 @@ namespace u2.Core
             return result;
         }
 
-        private object GetContentField(IFieldMap map, IContent content)
+        private object GetContentField(IMapItem mapItem, IContent content)
         {
-            var field = content.Get(map.ContentType, map.Alias);
-            if (map.Setter != null)
+            var field = content.Get(mapItem.ContentType, mapItem.Alias);
+            if (mapItem.Setter != null)
             {
                 var str = field as string;
-                if (map.Converter != null && field != null)
-                    field = map.Converter(str);
+                if (mapItem.Converter != null && field != null)
+                    field = mapItem.Converter(str);
             }
             return field;
         }
 
-        private IList<IFieldMap> GetMaps(ITypeMap typeMap)
+        private IList<IMapItem> GetMaps(IMapTask mapTask)
         {
-            var maps = new List<IFieldMap>();
-            foreach (var map in typeMap.Maps)
+            var maps = new List<IMapItem>();
+            foreach (var map in mapTask.Maps)
             {
-                if (map is FieldMapCopy)
+                if (map is MapItemCopy)
                 {
                     if (_registry.Has(map.ContentType))
                         maps.AddRange(_registry[map.ContentType].Maps);
@@ -157,14 +157,14 @@ namespace u2.Core
             return maps;
         }
 
-        private bool MatchContent(ITypeMap typeMap, IContent content, object value, string alias)
+        private bool MatchContent(IMapTask mapTask, IContent content, object value, string alias)
         {
             if (string.IsNullOrWhiteSpace(alias))
                 return false;
 
             alias = alias.ToLowerInvariant();
 
-            var maps = GetMaps(typeMap);
+            var maps = GetMaps(mapTask);
             if (maps == null || value == null) 
                 return false;
 

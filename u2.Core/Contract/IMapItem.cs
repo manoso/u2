@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace u2.Core.Contract
 {
-    public interface IFieldMap
+    public interface IMapItem
     {
         string Alias { get; set; }
         Type ContentType { get; set; }
@@ -15,7 +15,7 @@ namespace u2.Core.Contract
         bool MatchAlias(string alias);
     }
 
-    public interface IFieldMap<out T, TP> : IFieldMap
+    public interface IMapItem<out T, TP> : IMapItem
     {
         Func<T, TP, Task> ActDefer { set; }
         Func<string, TP> Convert { set; }

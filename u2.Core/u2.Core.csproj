@@ -47,7 +47,7 @@
     <Compile Include="Contract\ICacheTask.cs" />
     <Compile Include="Contract\ICmsFetcher.cs" />
     <Compile Include="Contract\ICmsQuery.cs" />
-    <Compile Include="Contract\ILookupParameter.cs" />
+    <Compile Include="Contract\ICacheLookup.cs" />
     <Compile Include="Contract\IMedia.cs" />
     <Compile Include="Contract\IQueryFactory.cs" />
     <Compile Include="Contract\IRoot.cs" />
@@ -58,11 +58,11 @@
     <Compile Include="Contract\IDataPool.cs" />
     <Compile Include="Contract\IMapRegistry.cs" />
     <Compile Include="Contract\IMapper.cs" />
-    <Compile Include="Contract\ISimpleMap.cs" />
-    <Compile Include="Contract\ITypeMap.cs" />
-    <Compile Include="Contract\ITypeDefer.cs" />
+    <Compile Include="Contract\IBaseTask.cs" />
+    <Compile Include="Contract\IMapTask.cs" />
+    <Compile Include="Contract\ITaskDefer.cs" />
     <Compile Include="Contract\IMapDefer.cs" />
-    <Compile Include="Contract\IFieldMap.cs" />
+    <Compile Include="Contract\IMapItem.cs" />
     <Compile Include="Contract\IPropertySetter.cs" />
     <Compile Include="Contract\IModelMap.cs" />
     <Compile Include="Contract\IGroupAction.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="MapRegistry.cs" />
     <Compile Include="ModelMap.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
-    <Compile Include="FieldMap.cs" />
+    <Compile Include="MapItem.cs" />
     <Compile Include="ContentType.cs" />
     <Compile Include="Extensions\ExpressionExtensions.cs" />
     <Compile Include="Contract\IContent.cs" />
@@ -78,9 +78,9 @@
     <Compile Include="OnceAsync.cs" />
     <Compile Include="PropertySetter.cs" />
     <Compile Include="Registry.cs" />
-    <Compile Include="SimpleMap.cs" />
-    <Compile Include="TypeDefer.cs" />
-    <Compile Include="TypeMap.cs" />
+    <Compile Include="BaseTask.cs" />
+    <Compile Include="TaskDefer.cs" />
+    <Compile Include="MapTask.cs" />
     <Compile Include="MapDefer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mapper.cs" />

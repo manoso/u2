@@ -25,7 +25,7 @@ namespace u2.Core
             _cmsFetcher = cmsFetcher;
         }
 
-        public ITypeMap<T> Register<T>(string key = null)
+        public IMapTask<T> Register<T>(string key = null)
             where T : class, new()
         {
             var type = typeof(T);
@@ -44,7 +44,7 @@ namespace u2.Core
                 var models = (await _mapper.To<T>(contents, mapDefer)).AsList();
 
                 return models;
-            }, key: key);
+            }, key);
 
             return typeMap;
         }

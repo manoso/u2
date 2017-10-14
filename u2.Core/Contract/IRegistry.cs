@@ -2,6 +2,6 @@
 {
     public interface IRegistry
     {
-        ITypeMap<T> Register<T>(string key = null) where T : class, new();
+        IMapTask<T> Register<T>(string key = null) where T : class, new();
     }
 }

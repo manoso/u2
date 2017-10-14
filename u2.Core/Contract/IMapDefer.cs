@@ -5,8 +5,8 @@ namespace u2.Core.Contract
 {
     public interface IMapDefer
     {
-        IDictionary<Type, ITypeDefer> Defers { get; }
-        ITypeDefer For(Type type);
-        ITypeDefer<T> For<T>() where T : class, new();
+        IDictionary<Type, ITaskDefer> Defers { get; }
+        ITaskDefer For(Type type);
+        ITaskDefer<T> For<T>() where T : class, new();
     }
 }

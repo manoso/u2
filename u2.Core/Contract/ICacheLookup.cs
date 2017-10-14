@@ -3,9 +3,9 @@ using System.Linq.Expressions;
 
 namespace u2.Core.Contract
 {
-    public interface ILookupParameter<T>
+    public interface ICacheLookup<T>
     {
-        ILookupParameter<T> Add<TP>(Expression<Func<T, TP>> expProp);
+        ICacheLookup<T> Add<TP>(Expression<Func<T, TP>> expProp);
         string CacheKey { get; }
         string GetLookupKey(T value);
     }

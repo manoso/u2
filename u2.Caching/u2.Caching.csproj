@@ -46,7 +46,7 @@
     <Compile Include="CacheRegistry.cs" />
     <Compile Include="CacheTask.cs" />
     <Compile Include="CacheStore.cs" />
-    <Compile Include="LookupParameter.cs" />
+    <Compile Include="CacheLookup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

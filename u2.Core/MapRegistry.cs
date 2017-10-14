@@ -7,8 +7,8 @@ namespace u2.Core
 {
     public class MapRegistry : IMapRegistry
     {
-        private readonly IDictionary<Type, ITypeMap> _entries = new Dictionary<Type, ITypeMap>();
-        private readonly IDictionary<Type, ISimpleMap> _copies = new Dictionary<Type, ISimpleMap>();
+        private readonly IDictionary<Type, IMapTask> _entries = new Dictionary<Type, IMapTask>();
+        private readonly IDictionary<Type, IBaseTask> _copies = new Dictionary<Type, IBaseTask>();
 
         public IRoot Root { get; }
 
@@ -17,26 +17,26 @@ namespace u2.Core
             Root = root;
         }
 
-        public ITypeMap this[Type type] => _entries[type];
+        public IMapTask this[Type type] => _entries[type];
 
         public bool Has(Type type)
         {
             return _entries.ContainsKey(type);
         }
 
-        public ISimpleMap<T> Copy<T>()
+        public IBaseTask<T> Copy<T>()
             where T : class, new()
         {
-            var map = new SimpleMap<T>();
+            var map = new BaseTask<T>();
             _copies[typeof(T)] = map;
 
             return map;
         }
 
-        public ITypeMap<T> Register<T>()
+        public IMapTask<T> Register<T>()
             where T : class, new()
         {
-            var map = new TypeMap<T>();
+            var map = new MapTask<T>();
             map.All();
 
             var type = typeof(T);
@@ -57,15 +57,15 @@ namespace u2.Core
             return map;
         }
 
-        public ITypeMap For<T>()
+        public IMapTask For<T>()
             where T : class, new()
         {
             return For(typeof(T));
         }
 
-        public ITypeMap For(Type type)
+        public IMapTask For(Type type)
         {
-            return _entries.TryGetValue(type, out ITypeMap typeMap) ? typeMap : null;
+            return _entries.TryGetValue(type, out IMapTask typeMap) ? typeMap : null;
         }
 
         public Type GetType(string contentType)

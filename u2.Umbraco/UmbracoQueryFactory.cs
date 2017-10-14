@@ -11,27 +11,27 @@ namespace u2.Umbraco
             _root = root;
         }
 
-        public ICmsQuery<T> Create<T>(ITypeMap<T> typeMap) where T : class, new()
+        public ICmsQuery<T> Create<T>(IMapTask<T> mapTask) where T : class, new()
         {
             var isMedia = typeof(IMedia).IsAssignableFrom(typeof(T));
             return isMedia
                 ? new MediaQuery<T>()
                 : new ContentQuery<T>
                 {
-                    Alias = typeMap.Alias,
+                    Alias = mapTask.Alias,
                     Root = typeof(IRoot).IsAssignableFrom(typeof(T)) ? null : _root
                 } as ICmsQuery<T>;
         }
 
-        public ICmsQuery Create(ITypeMap typeMap)
+        public ICmsQuery Create(IMapTask mapTask)
         {
-            var isMedia = typeof(IMedia).IsAssignableFrom(typeMap.EntityType);
+            var isMedia = typeof(IMedia).IsAssignableFrom(mapTask.EntityType);
             return isMedia
                 ? new MediaQuery()
                 : new ContentQuery
                 {
-                    Alias = typeMap.Alias,
-                    Root = typeof(IRoot).IsAssignableFrom(typeMap.EntityType) ? null : _root
+                    Alias = mapTask.Alias,
+                    Root = typeof(IRoot).IsAssignableFrom(mapTask.EntityType) ? null : _root
                 } as ICmsQuery;
         }
     }
