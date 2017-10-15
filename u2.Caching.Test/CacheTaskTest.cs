@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using u2.Core.Contract;
 using u2.Test;
 
 namespace u2.Caching.Test
@@ -18,12 +19,10 @@ namespace u2.Caching.Test
             const string key = "CacheItem";
             const int cacheTime = 300;
 
-            var task = new CacheTask<CacheItem>
+            var task = new CacheTask<CacheItem>(_task)
             {
-                TaskKey = key,
-                Task = _task,
-                CacheInSecs = cacheTime
-            };
+                TaskKey = key
+            }.Span(cacheTime);
 
             var tasks = new Task<CacheItem>[50];
             for (var i = 0; i < tasks.Length; i++)
@@ -47,12 +46,10 @@ namespace u2.Caching.Test
             var taskKey = typeof(CacheItem).FullName;
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
 
-            var task = new CacheTask<CacheItem>
+            var task = new CacheTask<CacheItem>(_task)
             {
-                TaskKey = taskKey,
-                Task = _task,
-                CacheInSecs = cacheTime
-            };
+                TaskKey = taskKey
+            }.Span(cacheTime);
             task.Lookup(lookup);
 
             await task.Run();
@@ -77,12 +74,10 @@ namespace u2.Caching.Test
             const int cacheTime = 300;
             var taskKey = typeof(CacheItem).FullName;
 
-            var task = new CacheTask<CacheItem>
+            var task = new CacheTask<CacheItem>(_task)
             {
-                TaskKey = taskKey,
-                Task = _task,
-                CacheInSecs = cacheTime,
-            };
+                TaskKey = taskKey
+            }.Span(cacheTime);
 
             await task.Run();
             var before = GetFirst(task);
@@ -92,13 +87,13 @@ namespace u2.Caching.Test
             Assert.That(before.Id, Is.Not.EqualTo(after.Id));
         }
 
-        private async Task<T> GetFirstAsync<T>(CacheTask<T> task) where T: class
+        private async Task<T> GetFirstAsync<T>(ICacheTask<T> task) where T: class
         {
             await task.Run();
             return ((IEnumerable<T>)task.CacheItems.First().Value).First();
         }
 
-        private T GetFirst<T>(CacheTask<T> task) where T : class
+        private T GetFirst<T>(ICacheTask<T> task) where T : class
         {
             return ((IEnumerable<T>)task.CacheItems.First().Value).First();
         }

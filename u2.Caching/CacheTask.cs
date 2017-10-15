@@ -11,9 +11,12 @@ namespace u2.Caching
     {
         public IList<ICacheLookup<T>> CacheLookups { get; } = new List<ICacheLookup<T>>();
 
+        private readonly Func<Task<IEnumerable<T>>> _task;
+
         public ICacheTask<T> Span(int seconds)
         {
-            CacheInSecs = seconds;
+            if (seconds > 0)
+                CacheInSecs = seconds;
             return this;
         }
 
@@ -23,15 +26,20 @@ namespace u2.Caching
             return this;
         }
 
-        private Func<object, object> _beforeSave;
+        private Func<IEnumerable<T>, IEnumerable<T>> _onSave;
+
+        public CacheTask(Func<Task<IEnumerable<T>>> task)
+        {
+            _task = task;
+        }
 
         public ICacheTask<T> OnSave(Func<IEnumerable<T>, IEnumerable<T>> func)
         {
-            _beforeSave = x => func((IEnumerable<T>) x);
+            _onSave = func;
             return this;
         }
 
-        protected override Func<bool> NeedRun
+        protected override Func<bool> CanRun
         {
             get { return () => IsExpired; }
         } 
@@ -53,15 +61,16 @@ namespace u2.Caching
         protected override async Task Load()
         {
             IList<T> items = null;
-            if (Task is Func<Task<IEnumerable<T>>> func)
+            if (_task != null)
             {
-                var data = await func();
+                var data = await _task();
 
                 if (data != null)
                 {
-                    _beforeSave?.Invoke(data);
-                    CacheItems[TaskKey] = data;
+                    data = _onSave?.Invoke(data) ?? data;
+
                     items = data.ToList();
+                    CacheItems[TaskKey] = items;
                 }
             }
 
@@ -78,20 +87,9 @@ namespace u2.Caching
 
     public abstract class CacheTask : OnceAsync, ICacheTask
     {
-        private int _cacheInSecs = 300;
-        public int CacheInSecs
-        {
-            get => _cacheInSecs;
-            set
-            {
-                if (value > 0)
-                    _cacheInSecs = value;
-            }
-        }
+        protected int CacheInSecs = 300;
 
         public string TaskKey { get; set; }
-
-        public Delegate Task { get; set; }
 
         public IDictionary<string, object> CacheItems { get; } = new Dictionary<string, object>();
 

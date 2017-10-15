@@ -14,10 +14,9 @@ namespace u2.Caching
             if (string.IsNullOrWhiteSpace(key))
                 key = typeof(T).FullName;
 
-            var task = new CacheTask<T>
+            var task = new CacheTask<T>(func)
             {
                 TaskKey = key,
-                Task = func
             };
 
             _tasks.Add(key, task);

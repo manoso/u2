@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
@@ -57,7 +56,7 @@ namespace u2.Core.Test
                 {"itemId", "1"},
                 {"price", "10.00"},
                 {"onSale", "true"},
-                {"infos", "1,2" }
+                {"infos", "1,2"}
             };
             var content1 = new UmbracoContent(item1);
 
@@ -83,7 +82,7 @@ namespace u2.Core.Test
             {
                 {"alias", "testInfo1"},
                 {"infoId", "1"},
-                {"info", "info1" }
+                {"info", "info1"}
             };
             var contentInfo1 = new UmbracoContent(info1);
 
@@ -91,7 +90,7 @@ namespace u2.Core.Test
             {
                 {"alias", "testInfo2"},
                 {"infoId", "2"},
-                {"info", "info2" }
+                {"info", "info2"}
             };
             var contentInfo2 = new UmbracoContent(info2);
 
@@ -106,9 +105,9 @@ namespace u2.Core.Test
             queryFactory.Create(mapEntity).Returns(queryEntity);
             queryFactory.Create(mapInfo).Returns(queryInfo);
 
-            var entityContents = new IContent[] { content };
-            var itemContents = new IContent[] { content1, content2, content3 };
-            var infoContents = new IContent[] { contentInfo2, contentInfo1 };
+            var entityContents = new IContent[] {content};
+            var itemContents = new IContent[] {content1, content2, content3};
+            var infoContents = new IContent[] {contentInfo2, contentInfo1};
 
             cmsFetcher.Fetch(queryItem).Returns(itemContents);
             cmsFetcher.Fetch(queryEntity).Returns(entityContents);
@@ -220,7 +219,7 @@ namespace u2.Core.Test
                 }, "items", x => x.ItemId.ToString()));
 
             var tasks = new Task<IEnumerable<TestEntity>>[50];
-            for(var i = 0; i < tasks.Length; i++)
+            for (var i = 0; i < tasks.Length; i++)
                 tasks[i] = cache.FetchAsync<TestEntity>();
 
             await Task.WhenAll(tasks);
@@ -263,7 +262,7 @@ namespace u2.Core.Test
                 new CacheItem {LookupKey = 2, LookupKeyOther = "1"}
             });
 
-            cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther).Span(300).OnSave(x => x.OrderBy(y => y.LookupKeyOther));
+            cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther).Span(300);
 
             var result = await cache.FetchAsync(lookup);
             var resultOther = await cache.FetchAsync(lookupOther);
@@ -281,6 +280,30 @@ namespace u2.Core.Test
             Assert.That(resultOther["2"].Count(), Is.EqualTo(2));
 
             Assert.That(item.Id, Is.EqualTo(itemOther.Id));
+        }
+
+        [Test]
+        public async Task Cache_OnSave_test()
+        {
+            var cacheRegistry = new CacheRegistry();
+            var cacheStore = new CacheStore();
+            var cache = new Cache(cacheStore, cacheRegistry);
+
+            async Task<IEnumerable<TestItem>> Task() => await System.Threading.Tasks.Task.Run(() => new[]
+            {
+                new TestItem {ItemId = 1},
+                new TestItem {ItemId = 3},
+                new TestItem {ItemId = 2}
+            });
+            cacheRegistry.Add(Task)
+                .Span(300)
+                .OnSave(x => x.OrderBy(y => y.ItemId));
+
+            var result = (await cache.FetchAsync<TestItem>()).ToList();
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.First().ItemId, Is.EqualTo(1));
+            Assert.That(result.Last().ItemId, Is.EqualTo(3));
         }
     }
 }

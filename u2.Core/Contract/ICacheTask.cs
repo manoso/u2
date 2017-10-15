@@ -6,9 +6,7 @@ namespace u2.Core.Contract
 {
     public interface ICacheTask
     {
-        int CacheInSecs { get; }
         string TaskKey { get; }
-        Delegate Task { get; }
 
         IDictionary<string, object> CacheItems { get; }
 
@@ -19,15 +17,15 @@ namespace u2.Core.Contract
         /// </summary>
         Task Reload();
 
-        Task Run(Action<string, object> save);
+        Task Run(Action<string, object> save = null);
     }
 
     public interface ICacheTask<T> : ICacheTask
     {
-        ICacheTask<T> OnSave(Func<IEnumerable<T>, IEnumerable<T>> func);
         IList<ICacheLookup<T>> CacheLookups { get; }
         ICacheTask<T> Span(int seconds);
         ICacheTask<T> Lookup(ICacheLookup<T> cacheLookup);
+        ICacheTask<T> OnSave(Func<IEnumerable<T>, IEnumerable<T>> func);
 
     }
 }
