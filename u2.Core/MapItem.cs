@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using u2.Core.Contract;
+using u2.Core.Extensions;
 
 namespace u2.Core
 {
@@ -57,6 +58,7 @@ namespace u2.Core
 
         public MapItem(string alias = null, Expression<Func<T, TP>> property = null)
         {
+
             if (property != null)
             {
                 Setter = new PropertySetter<T, TP>(property);

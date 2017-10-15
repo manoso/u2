@@ -10,7 +10,7 @@ using u2.Umbraco;
 namespace u2.Core.Test
 {
     [TestFixture]
-    public class MapTest
+    public class MapperTest
     {
         private IMapRegistry _rego;
         private IMapper _mapper;

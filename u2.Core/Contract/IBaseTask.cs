@@ -6,8 +6,6 @@ namespace u2.Core.Contract
 {
     public interface IBaseTask
     {
-        string Alias { get; set; }
-        Type EntityType { get; }
         IList<IMapItem> Maps { get; }
 
         void AddMap(IMapItem mapItem);

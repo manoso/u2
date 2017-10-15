@@ -6,6 +6,8 @@ namespace u2.Core.Contract
 {
     public interface IMapTask : IBaseTask
     {
+        string Alias { get; }
+        Type EntityType { get; }
         Action<IContent, object> Action { get; }
         IDictionary<string, Type> CmsFields { get; }
         IList<IGroupAction> GroupActions { get; }

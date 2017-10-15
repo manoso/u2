@@ -48,8 +48,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseTaskTest.cs" />
     <Compile Include="IntegrationTest.cs" />
-    <Compile Include="MapTest.cs" />
+    <Compile Include="MapperTest.cs" />
     <Compile Include="ModelMapTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

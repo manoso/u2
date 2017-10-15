@@ -10,6 +10,10 @@ namespace u2.Core
 {
     public class MapTask : BaseTask, IMapTask
     {
+        public string Alias { get; protected set; }
+
+        public Type EntityType { get; protected set; }
+
         public IList<IModelMap> ModelMaps { get; } = new List<IModelMap>();
 
         public IDictionary<string, Type> CmsFields { get; } = new Dictionary<string, Type>();
@@ -21,6 +25,7 @@ namespace u2.Core
         public MapTask(Type type)
         {
             EntityType = type;
+            Alias = type.Name.ToLowerInvariant();
         }
 
         public virtual object Create(object instance)
@@ -48,8 +53,6 @@ namespace u2.Core
 
     public class MapTask<T> : MapTask, IMapTask<T> where T : class, new()
     {
-        private string _alias;
-
         public override object Create (object instance)
         {
             return instance == null ? new T() : instance is T ? instance : null;
@@ -57,34 +60,18 @@ namespace u2.Core
 
         public MapTask() : base(typeof(T)) { }
 
-        public override string Alias => _alias ?? (_alias = typeof (T).Name.ToLowerInvariant());
-
         public IMapTask<T> AliasTo(string alias)
         {
-            _alias = alias.ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(alias))
+                Alias = alias.ToLowerInvariant();
             return this;
         }
 
-        /// <summary>
-        /// Map a Umbraco property to a object property using Func. Use it to map properties from both ends that need post processing.
-        /// </summary>
-        /// <typeparam name="TP">Object property type (same as Umbraco property type.</typeparam>
-        /// <param name="alias">Umbraco property alias.</param>
-        /// <param name="property">Lambda expression for the object property, given the declaring object.</param>
-        /// <param name="mapFunc">Func to convert a TI value to a TO value.</param>
-        /// <param name="defaultVal">Default value if property is not present in the content.</param>
-        /// <returns>This MapTask object.</returns>
         public IMapTask<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP))
         {
-            if (property != null)
-            {
-                var map = new MapItem<T, TP>(alias, property)
-                {
-                    Convert = mapFunc,
-                    Default = defaultVal
-                };
+            var map = CreatItem(property, alias, mapFunc, defaultVal);
+            if (map != null)
                 AddMap(map);
-            }
 
             return this;
         }

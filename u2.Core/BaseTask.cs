@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using u2.Core.Contract;
+using u2.Core.Extensions;
 
 namespace u2.Core
 {
     public class BaseTask : IBaseTask
     {
         public IList<IMapItem> Maps { get; } = new List<IMapItem>();
-        public Type EntityType { get; protected set; }
-        public virtual string Alias { get; set; }
 
         public void AddMap(IMapItem mapItem)
         {
@@ -17,6 +16,20 @@ namespace u2.Core
                 return;
 
             Maps.Add(mapItem);
+        }
+
+        protected MapItem<T, TP> CreatItem<T, TP>(Expression<Func<T, TP>> property,
+            string alias = null,
+            Func<string, TP> mapFunc = null,
+            TP defaultVal = default(TP))
+        {
+            return property == null
+                ? null
+                : new MapItem<T, TP>(alias, property)
+                    {
+                        Convert = mapFunc,
+                        Default = defaultVal
+                    };
         }
     }
 
@@ -35,15 +48,9 @@ namespace u2.Core
         public IBaseTask<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP))
         {
 
-            if (property != null)
-            {
-                var map = new MapItem<T, TP>(alias, property)
-                {
-                    Convert = mapFunc,
-                    Default = defaultVal
-                };
+            var map = CreatItem(property, alias, mapFunc, defaultVal);
+            if (map != null)
                 AddMap(map);
-            }
 
             return this;
         }
