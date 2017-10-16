@@ -48,10 +48,25 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExamineVisitorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\u2.Core\u2.Core.csproj">
+      <Project>{bdb61368-e0c4-46cc-b47c-f275cff7f339}</Project>
+      <Name>u2.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\u2.Test\u2.Test.csproj">
+      <Project>{E2B6276A-21C6-4D40-AB7E-FA480511D915}</Project>
+      <Name>u2.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\u2.Umbraco\u2.Umbraco.csproj">
+      <Project>{C4A0E78C-6801-446C-AACC-C1E6D6F22BE1}</Project>
+      <Name>u2.Umbraco</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
