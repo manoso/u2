@@ -35,15 +35,15 @@ namespace u2.Core
 
         public void Defer(IMapTask mapTask, Func<Type, string, Task<IEnumerable<object>>> task)
         {
-            if (Defers.TryGetValue(mapTask.EntityType, out ITaskDefer _))
+            if (task == null || Defers.TryGetValue(mapTask.EntityType, out ITaskDefer _))
                 return;
 
-            var typeDefer = For(mapTask.EntityType);
+            var taskDefer = For(mapTask.EntityType);
             foreach (var modelMap in mapTask.ModelMaps)
             {
                 var map = modelMap;
                 var alias = map.Alias;
-                typeDefer.Attach(alias, async (x, s) =>
+                taskDefer.Attach(alias, async (x, s) =>
                 {
                     if (string.IsNullOrWhiteSpace(s) || x == null) return;
 
