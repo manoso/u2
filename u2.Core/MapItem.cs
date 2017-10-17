@@ -67,7 +67,6 @@ namespace u2.Core
             ContentType = typeof(TP);
             Alias = (string.IsNullOrWhiteSpace(alias) ? Setter?.Name : alias)?.ToLowerInvariant();
         }
-
     }
 
     public class MapItemCopy : MapItem
