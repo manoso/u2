@@ -54,6 +54,7 @@
     <Compile Include="MapItemTest.cs" />
     <Compile Include="MapperTest.cs" />
     <Compile Include="MapRegistryTest.cs" />
+    <Compile Include="MapTaskTest.cs" />
     <Compile Include="ModelMapTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -47,7 +47,7 @@ namespace u2.Core
                     var copy = _copies[key];
                     foreach (var fieldMap in copy.Maps)
                     {
-                        map.AddMap(fieldMap, true);
+                        map.AddMap(fieldMap);
                     }
                 }
             }

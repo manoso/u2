@@ -14,7 +14,7 @@ namespace u2.Core.Contract
         IList<IModelMap> ModelMaps { get; }
 
         IMapTask All();
-        object Create(object instance);
+        object Create(object instance = null);
     }
 
     public interface IMapTask<T> : IMapTask

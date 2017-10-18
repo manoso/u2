@@ -8,7 +8,7 @@ using u2.Core.Extensions;
 
 namespace u2.Core
 {
-    public class MapTask : BaseTask, IMapTask
+    public abstract class MapTask : BaseTask, IMapTask
     {
         public string Alias { get; protected set; }
 
@@ -22,16 +22,13 @@ namespace u2.Core
 
         public Action<IContent, object> Action { get; protected set; }
 
-        public MapTask(Type type)
+        protected MapTask(Type type)
         {
             EntityType = type;
             Alias = type.Name.ToLowerInvariant();
         }
 
-        public virtual object Create(object instance)
-        {
-            return instance == null ? Activator.CreateInstance(EntityType) : EntityType.IsInstanceOfType(instance) ? instance : null;
-        }
+        public abstract object Create(object instance = null);
 
         /// <summary>
         /// Map all public instance properties for the given object using naming convensions.
@@ -53,9 +50,9 @@ namespace u2.Core
 
     public class MapTask<T> : MapTask, IMapTask<T> where T : class, new()
     {
-        public override object Create (object instance)
+        public override object Create (object instance = null)
         {
-            return instance == null ? new T() : instance is T ? instance : null;
+            return instance is T ? instance : new T();
         }
 
         public MapTask() : base(typeof(T)) { }

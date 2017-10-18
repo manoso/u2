@@ -8,7 +8,7 @@ namespace u2.Core.Contract
     {
         IList<IMapItem> Maps { get; }
 
-        void AddMap(IMapItem mapItem, bool overWrite = false);
+        void AddMap(IMapItem mapItem);
     }
 
     public interface IBaseTask<T> : IBaseTask

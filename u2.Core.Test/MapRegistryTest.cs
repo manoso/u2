@@ -79,8 +79,8 @@ namespace u2.Core.Test
 
             var task = registry.Register<TestItem>();
             Assert.That(task, Is.Not.Null);
-            Assert.That(task.Maps.Count, Is.EqualTo(5));
-            Assert.That(task.Maps[4] is MapItem<CmsKey, string>);
+            Assert.That(task.Maps.Count, Is.EqualTo(6));
+            Assert.That(task.Maps[5] is MapItem<CmsKey, string>);
         }
     }
 }
