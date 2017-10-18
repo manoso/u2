@@ -71,7 +71,6 @@
     <Compile Include="ModelMap.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="MapItem.cs" />
-    <Compile Include="ContentType.cs" />
     <Compile Include="Extensions\ExpressionExtensions.cs" />
     <Compile Include="Contract\IContent.cs" />
     <Compile Include="Contract\ICmsModel.cs" />

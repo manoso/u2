@@ -47,7 +47,7 @@ namespace u2.Core
                     var copy = _copies[key];
                     foreach (var fieldMap in copy.Maps)
                     {
-                        map.AddMap(fieldMap);
+                        map.AddMap(fieldMap, true);
                     }
                 }
             }
@@ -70,7 +70,7 @@ namespace u2.Core
 
         public Type GetType(string contentType)
         {
-            var config = _entries.Values.FirstOrDefault(x => x.Alias == contentType);
+            var config = _entries.Values.FirstOrDefault(x => string.Equals(x.Alias, contentType, StringComparison.InvariantCultureIgnoreCase));
             return config?.EntityType;
         }
     }

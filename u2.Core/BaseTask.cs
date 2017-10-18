@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using u2.Core.Contract;
 using u2.Core.Extensions;
@@ -10,11 +11,16 @@ namespace u2.Core
     {
         public IList<IMapItem> Maps { get; } = new List<IMapItem>();
 
-        public void AddMap(IMapItem mapItem)
+        public void AddMap(IMapItem mapItem, bool overWrite = false)
         {
             if (mapItem == null)
                 return;
-
+            if (overWrite)
+            {
+                var find = Maps.FirstOrDefault(x => x.Alias == mapItem.Alias);
+                if (find != null)
+                    Maps.Remove(find);
+            }
             Maps.Add(mapItem);
         }
 
