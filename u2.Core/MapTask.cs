@@ -250,16 +250,6 @@ namespace u2.Core
             Action = (x, y) => action(x, (T)y);
             return this;
         }
-        
-        public IMapTask<T> Copy<TP>()
-            where TP : class, new()
-        {
-            AddMap(new MapItemCopy
-            {
-                ContentType = typeof(TP)
-            });
-            return this;
-        }
 
         /// <summary>
         /// Map all public instance properties for the given object using naming convensions.
@@ -272,7 +262,7 @@ namespace u2.Core
         }
 
         /// <summary>
-        /// To be used with All, to ignore a property doesn't need to be mapped. A map with Func can't be ignored.
+        /// To be used with All, to ignore a property doesn't need to be mapped.
         /// </summary>
         /// <typeparam name="TO">Object/Umbraco property type.</typeparam>
         /// <param name="property">Lambda expression for the object property, given the declaring object.</param>
@@ -328,9 +318,11 @@ namespace u2.Core
         public IMapTask<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string> funcKey = null)
             where TModel : class, new()
         {
-            var modelMap = new ModelMap<T, TModel>(alias, actionModel, funcKey) as IModelMap;
-
-            ModelMaps.Add(modelMap);
+            if (!string.IsNullOrWhiteSpace(alias) && actionModel != null)
+            {
+                var modelMap = new ModelMap<T, TModel>(alias, actionModel, funcKey) as IModelMap;
+                ModelMaps.Add(modelMap);
+            }
 
             return this;
         }

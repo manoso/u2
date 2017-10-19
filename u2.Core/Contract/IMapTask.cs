@@ -28,7 +28,6 @@ namespace u2.Core.Contract
         IMapTask<T> Act<TP1, TP2, TP3>(Action<T, TP1, TP2, TP3> action, string alias1, string alias2, string alias3);
         IMapTask<T> Act<TP1, TP2>(Action<T, TP1, TP2> action, string alias1, string alias2);
         IMapTask<T> AliasTo(string alias);
-        IMapTask<T> Copy<TP>() where TP : class, new();
         IMapTask<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string> funcKey = null) where TModel : class, new();
         IMapTask<T> Fit<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string> funcKey = null, string alias = null) where TModel : class, new();
         IMapTask<T> Fit<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string> funcKey = null, string alias = null) where TModel : class, new();
