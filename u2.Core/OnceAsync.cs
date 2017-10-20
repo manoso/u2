@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using u2.Core.Contract;
 
 namespace u2.Core
 {
