@@ -16,11 +16,10 @@ namespace u2.Caching
 
             var task = new CacheTask<T>(func)
             {
-                TaskKey = key,
+                TaskKey = key
             };
 
             _tasks.Add(key, task);
-
             return task;
         }
 

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
 using u2.Test;
@@ -38,6 +40,28 @@ namespace u2.Caching.Test
             var result = _cacheRegistry.TryGetTask(taskKey, out ICacheTask task);
             Assert.That(result, Is.True);
             Assert.That(task, Is.Not.Null);
+        }
+
+        [Test]
+        public void Reload_no_key()
+        {
+            var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
+            _cacheRegistry = new CacheRegistry();
+            _cacheRegistry.Add(task);
+            _cacheRegistry.Reload();
+
+            task.Received(1);
+        }
+
+        [Test]
+        public void Reload_with_key()
+        {
+            var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
+            _cacheRegistry = new CacheRegistry();
+            _cacheRegistry.Add(task, "test");
+            _cacheRegistry.Reload();
+
+            task.Received(1);
         }
     }
 }

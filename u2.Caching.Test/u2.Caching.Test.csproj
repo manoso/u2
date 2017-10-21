@@ -48,6 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheStoreTest.cs" />
     <Compile Include="CacheTest.cs" />
     <Compile Include="CacheRegistryTest.cs" />
     <Compile Include="CacheTaskTest.cs" />
