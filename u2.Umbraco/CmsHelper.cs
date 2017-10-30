@@ -26,6 +26,7 @@ namespace u2.Umbraco
             var converter = TypeDescriptor.GetConverter(typeof(T));
 
             return list
+                .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(converter.ConvertFromInvariantString)
                 .OfType<T>()
                 .ToList();

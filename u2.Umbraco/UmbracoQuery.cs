@@ -6,8 +6,7 @@ namespace u2.Umbraco
 {
     public abstract class UmbracoQuery : ICmsQuery
     {
-        public IRoot Root { get; set; }
-        public string Alias { get; set; }
+        public string Alias { get; protected set; }
 
         public abstract string Query { get; }
     }
