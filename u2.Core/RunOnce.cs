@@ -4,19 +4,19 @@ using System.Threading.Tasks;
 
 namespace u2.Core
 {
-    public abstract class OnceAsync
+    public abstract class RunOnce
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private Task<bool> _task;
 
         protected abstract Func<bool> CanRun { get; }
         protected abstract Action Reset { get; }
-        protected abstract Task RunAsync { get; }
+        protected abstract Task RunTask { get; }
 
-        protected async Task Run(Action done = null)
+        protected async Task RunAsync(Action done = null)
         {
             TaskCompletionSource<bool> taskCompletion = null;
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
             if (CanRun())
             {
                 taskCompletion = new TaskCompletionSource<bool>();
@@ -27,12 +27,12 @@ namespace u2.Core
 
             if (taskCompletion != null)
             {
-                await RunAsync;
+                await RunTask.ConfigureAwait(false);
                 done?.Invoke();
                 taskCompletion.SetResult(true);
             }
 
-            await _task;
+            await _task.ConfigureAwait(false);
         }
     }
 }

@@ -52,7 +52,7 @@ namespace u2.Core
         private async Task<IEnumerable<object>> DoGet(Type type, string key = null)
         {
             key = string.IsNullOrWhiteSpace(key) ? type.FullName : key;
-            return await _cache.FetchAsync<object>(key);
+            return await _cache.FetchAsync<object>(key).ConfigureAwait(false);
         }
     }
 }

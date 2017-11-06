@@ -56,14 +56,14 @@ namespace u2.Caching
             }
         }
 
-        protected override Task RunAsync => Load();
+        protected override Task RunTask => Load();
 
         protected override async Task Load()
         {
             IList<T> items = null;
             if (_task != null)
             {
-                var data = await _task();
+                var data = await _task().ConfigureAwait(false);
 
                 if (data != null)
                 {
@@ -85,7 +85,7 @@ namespace u2.Caching
         }
     }
 
-    public abstract class CacheTask : OnceAsync, ICacheTask
+    public abstract class CacheTask : RunOnce, ICacheTask
     {
         protected int CacheInSecs = 300;
 
@@ -103,7 +103,7 @@ namespace u2.Caching
         public async Task Reload()
         {
             Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSecs);
-            await Load();
+            await Load().ConfigureAwait(false);
         }
 
         public async Task Run(Action<string, object> save = null)
@@ -115,7 +115,7 @@ namespace u2.Caching
                     foreach (var cacheItem in CacheItems)
                         save(cacheItem.Key, cacheItem.Value);
                 };
-            await Run(done);
+            await RunAsync(done).ConfigureAwait(false);
         }
 
         protected abstract Task Load();

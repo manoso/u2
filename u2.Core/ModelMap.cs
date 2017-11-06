@@ -23,6 +23,7 @@ namespace u2.Core
             var models = ToList(ToModels(keys, source));
             SetModel(target, models);
         }
+
         public void Match(object target, string key, IEnumerable<object> source)
         {
             var model = Find(key, source);

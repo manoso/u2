@@ -41,13 +41,13 @@ namespace u2.Caching
         public async Task Reload<T>(string key = null)
         {
             if (_tasks.TryGetValue(key ?? typeof(T).FullName, out ICacheTask task))
-                await task.Reload();
+                await task.Reload().ConfigureAwait(false);
         }
 
         public async Task Reload()
         {
             foreach (var task in _tasks.Values)
-                await task.Reload();
+                await task.Reload().ConfigureAwait(false);
         }
     }
 }

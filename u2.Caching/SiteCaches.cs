@@ -52,11 +52,11 @@ namespace u2.Caching
             {
                 foreach (var registry in _registries.Values)
                 {
-                    await registry.Reload();
+                    await registry.Reload().ConfigureAwait(false);
                 }
             }
             else
-                await _registries[site].Reload();
+                await _registries[site].Reload().ConfigureAwait(false);
         }
     }
 }

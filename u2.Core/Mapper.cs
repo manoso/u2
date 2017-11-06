@@ -19,14 +19,14 @@ namespace u2.Core
         public async Task<object> To(IContent content, Type type, object value = null, IMapDefer defer = null)
         {
             var map = _registry.For(type);
-            return await Load(map, content, value, defer);
+            return await Load(map, content, value, defer).ConfigureAwait(false);
         }
 
         public async Task<T> To<T>(IContent content, T value = null, IMapDefer defer = null)
             where T: class, new ()
         {
             var map = _registry.For<T>();
-            return await Load(map, content, value, defer) as T;
+            return await Load(map, content, value, defer).ConfigureAwait(false) as T;
         }
 
         public async Task<IEnumerable<T>> To<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, IMapDefer defer = null)
@@ -46,7 +46,7 @@ namespace u2.Core
                     value = list.FirstOrDefault(x => MatchContent(map, content, matchProp(x), matchAlias));
                 }
 
-                var item = await To(content, value, defer);
+                var item = await To(content, value, defer).ConfigureAwait(false);
                 result.Add(item);
             }
             return result;
@@ -55,7 +55,7 @@ namespace u2.Core
         public async Task<IEnumerable<T>> To<T>(IEnumerable<IContent> contents, IMapDefer defer = null)
             where T : class, new()
         {
-            return await To<T, object>(contents, defer: defer);
+            return await To<T, object>(contents, defer: defer).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<object>> To(Type type, IEnumerable<IContent> contents, IMapDefer defer = null)
@@ -63,7 +63,7 @@ namespace u2.Core
             var result = new List<object>();
             foreach (var content in contents)
             {
-                var item = await To(content, type, null, defer);
+                var item = await To(content, type, null, defer).ConfigureAwait(false);
                 result.Add(item);
             }
             return result;
@@ -120,7 +120,7 @@ namespace u2.Core
                     {
                         val = content.Get(map.ContentType, map.Alias);
                         if (map.Defer != null)
-                            await map.Defer(result, val);
+                            await map.Defer(result, val).ConfigureAwait(false);
 
                     }
                 }

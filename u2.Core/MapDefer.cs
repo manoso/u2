@@ -9,7 +9,7 @@ namespace u2.Core
     {
         public IDictionary<Type, ITaskDefer>  Defers { get; } = new Dictionary<Type, ITaskDefer>();
 
-        public ITaskDefer<T> For<T>() 
+        public ITaskDefer<T> For<T>()
             where T : class, new()
         {
             var type = typeof(T);
@@ -47,7 +47,7 @@ namespace u2.Core
                 {
                     if (string.IsNullOrWhiteSpace(s) || x == null) return;
 
-                    var source = await task(map.ModelType, null);
+                    var source = await task(map.ModelType, null).ConfigureAwait(false);
 
                     if (modelMap.IsMany)
                         map.Match(x, s.Split(','), source);

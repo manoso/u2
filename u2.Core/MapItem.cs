@@ -52,7 +52,7 @@ namespace u2.Core
             set
             {
                 if (value != null)
-                    Defer = async (x, y) => await value((T)x, (TP)y);
+                    Defer = async (x, y) => await value((T)x, (TP)y).ConfigureAwait(false);
             }
         }
 

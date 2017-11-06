@@ -11,55 +11,56 @@ namespace u2.Caching.Test
     [TestFixture]
     public class CacheRegistryTest
     {
-        private ICacheRegistry _cacheRegistry;
-
-        [OneTimeSetUp]
-        public void Setup()
+        public ICacheRegistry CacheRegistry
         {
-            _cacheRegistry = new CacheRegistry();
-            _cacheRegistry.Add(async () => await Task.Run(() => new[] { new CacheItem() } as IEnumerable<CacheItem>));
+            get
+            {
+                var registry = new CacheRegistry();
+                registry.Add(async () => await Task.Run(() => new[] {new CacheItem()} as IEnumerable<CacheItem>));
+                return registry;
+            }
         }
 
         [Test]
         public void Add_has_success()
         {
-            Assert.That(_cacheRegistry.Has<CacheItem>(), Is.True);
+            Assert.That(CacheRegistry.Has<CacheItem>(), Is.True);
         }
 
         [Test]
         public void Add_has_key_success()
         {
             var key = typeof(CacheItem).FullName;
-            Assert.That(_cacheRegistry.Has(key), Is.True);
+            Assert.That(CacheRegistry.Has(key), Is.True);
         }
 
         [Test]
         public void TryGetTask_success()
         {
             var taskKey = typeof(CacheItem).FullName;
-            var result = _cacheRegistry.TryGetTask(taskKey, out ICacheTask task);
+            var result = CacheRegistry.TryGetTask(taskKey, out ICacheTask task);
             Assert.That(result, Is.True);
             Assert.That(task, Is.Not.Null);
         }
 
         [Test]
-        public void Reload_no_key()
+        public async Task Reload_no_key()
         {
             var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
-            _cacheRegistry = new CacheRegistry();
-            _cacheRegistry.Add(task);
-            _cacheRegistry.Reload();
+            var cacheRegistry = new CacheRegistry();
+            cacheRegistry.Add(task);
+            await cacheRegistry.Reload();
 
             task.Received(1);
         }
 
         [Test]
-        public void Reload_with_key()
+        public async Task Reload_with_key()
         {
             var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
-            _cacheRegistry = new CacheRegistry();
-            _cacheRegistry.Add(task, "test");
-            _cacheRegistry.Reload();
+            var cacheRegistry = new CacheRegistry();
+            cacheRegistry.Add(task, "test");
+            await cacheRegistry.Reload();
 
             task.Received(1);
         }
