@@ -40,7 +40,7 @@ namespace u2.Umbraco
         //    var model = JsonConvert.DeserializeObject<ArchetypeModel>(source);
 
         //    return model.Fieldsets.Any()
-        //        ? model.Fieldsets.Select(x => mapper.To<T>(new Archetype(x))).ToList()
+        //        ? model.Fieldsets.Select(x => mapper.ToAsync<T>(new Archetype(x))).ToList()
         //        : empty;
         //}
 

@@ -41,7 +41,7 @@ namespace u2.Core
                 mapDefer.Defer(typeMap, DoGet);
                 var cmsQuery = _queryFactory.Create(typeMap);
                 var contents = _cmsFetcher.Fetch(cmsQuery);
-                var models = (await _mapper.To<T>(contents, mapDefer)).AsList();
+                var models = (await _mapper.ToAsync<T>(contents, mapDefer)).AsList();
 
                 return models;
             }, key);

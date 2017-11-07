@@ -16,20 +16,48 @@ namespace u2.Core
             _registry = registry;
         }
 
-        public async Task<object> To(IContent content, Type type, object value = null, IMapDefer defer = null)
+        public object To(IContent content, Type type, object value = null, IMapDefer defer = null)
+        {
+            return ToAsync(content, type, value, defer).Result;
+        }
+
+        public T To<T>(IContent content, T value = null, IMapDefer defer = null)
+            where T : class, new()
+        {
+            return ToAsync(content, value, defer).Result;
+        }
+
+        public IEnumerable<T> To<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, IMapDefer defer = null)
+            where T : class, new()
+        {
+            return ToAsync(contents, values, matchProp, matchAlias, defer).Result;
+        }
+
+        public IEnumerable<T> To<T>(IEnumerable<IContent> contents, IMapDefer defer = null)
+            where T : class, new()
+        {
+            return ToAsync<T>(contents, defer).Result;
+        }
+
+        public IEnumerable<object> To(Type type, IEnumerable<IContent> contents, IMapDefer defer = null)
+        {
+            return ToAsync(type, contents, defer).Result;
+        }
+
+        public async Task<object> ToAsync(IContent content, Type type, object value = null, IMapDefer defer = null)
         {
             var map = _registry.For(type);
             return await Load(map, content, value, defer).ConfigureAwait(false);
         }
 
-        public async Task<T> To<T>(IContent content, T value = null, IMapDefer defer = null)
+        public async Task<T> ToAsync<T>(IContent content, T value = null, IMapDefer defer = null)
             where T: class, new ()
         {
             var map = _registry.For<T>();
             return await Load(map, content, value, defer).ConfigureAwait(false) as T;
         }
 
-        public async Task<IEnumerable<T>> To<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, IMapDefer defer = null)
+        public async Task<IEnumerable<T>> ToAsync<T, TP>(IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, IMapDefer defer = null)
             where T : class, new()
         {
             var map = _registry.For<T>();
@@ -46,24 +74,24 @@ namespace u2.Core
                     value = list.FirstOrDefault(x => MatchContent(map, content, matchProp(x), matchAlias));
                 }
 
-                var item = await To(content, value, defer).ConfigureAwait(false);
+                var item = await ToAsync(content, value, defer).ConfigureAwait(false);
                 result.Add(item);
             }
             return result;
         }
 
-        public async Task<IEnumerable<T>> To<T>(IEnumerable<IContent> contents, IMapDefer defer = null)
+        public async Task<IEnumerable<T>> ToAsync<T>(IEnumerable<IContent> contents, IMapDefer defer = null)
             where T : class, new()
         {
-            return await To<T, object>(contents, defer: defer).ConfigureAwait(false);
+            return await ToAsync<T, object>(contents, defer: defer).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<object>> To(Type type, IEnumerable<IContent> contents, IMapDefer defer = null)
+        public async Task<IEnumerable<object>> ToAsync(Type type, IEnumerable<IContent> contents, IMapDefer defer = null)
         {
             var result = new List<object>();
             foreach (var content in contents)
             {
-                var item = await To(content, type, null, defer).ConfigureAwait(false);
+                var item = await ToAsync(content, type, null, defer).ConfigureAwait(false);
                 result.Add(item);
             }
             return result;

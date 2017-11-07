@@ -18,8 +18,12 @@ namespace u2.Caching
 
         public IEnumerable<T> Fetch<T>(string key = null)
         {
-            var result = DoFetchAsync<T>(string.IsNullOrWhiteSpace(key) ? typeof(T).FullName : key);
-            return result as IEnumerable<T>;
+            return FetchAsync<T>(key).Result;
+        }
+
+        public ILookup<string, T> Fetch<T>(ICacheLookup<T> lookup)
+        {
+            return FetchAsync(lookup).Result;
         }
 
         public async Task<IEnumerable<T>> FetchAsync<T>(string key = null)

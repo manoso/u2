@@ -74,7 +74,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task To_single_success()
+        public async Task ToAsync_single_success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -85,7 +85,7 @@ namespace u2.Core.Test
                 {"items", "1,3"}
             };
             var content = new UmbracoContent(fields);
-            var result = await _mapper.To<TestEntity>(content);
+            var result = await _mapper.ToAsync<TestEntity>(content);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Id, Is.EqualTo(1000));
@@ -94,7 +94,47 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task To_single_with_match_success()
+        public void To_single_success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"alias", "test"},
+                {"id", "1000"},
+                {"contentName", "test name"},
+                {"list", "a,b,c"},
+                {"items", "1,3"}
+            };
+            var content = new UmbracoContent(fields);
+            var result = _mapper.To<TestEntity>(content);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(1000));
+            Assert.That(result.Name, Is.EqualTo("test name"));
+            Assert.That(result.Infos.Count, Is.EqualTo(3));
+        }
+
+        [Test]
+        public async Task ToAsync_single_with_match_success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"alias", "test"},
+                {"id", "1000"},
+                {"list", "a,b,c"},
+                {"items", "1,3"}
+            };
+            var content = new UmbracoContent(fields);
+            var result = new TestEntity { Name = "name" };
+            await _mapper.ToAsync(content, result);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(1000));
+            Assert.That(result.Name, Is.EqualTo("name"));
+            Assert.That(result.Infos.Count, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void To_single_with_match_success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -105,7 +145,7 @@ namespace u2.Core.Test
             };
             var content = new UmbracoContent(fields);
             var result = new TestEntity {Name = "name"};
-            await _mapper.To(content, result);
+            _mapper.To(content, result);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Id, Is.EqualTo(1000));
@@ -114,8 +154,8 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task To_many_success()
-        { 
+        public async Task ToAsync_many_success()
+        {
             var item1 = new Dictionary<string, string>
             {
                 {"alias", "testItem"},
@@ -143,9 +183,9 @@ namespace u2.Core.Test
             };
             var content3 = new UmbracoContent(item3);
 
-            var itemContents = new IContent[] {content1, content2, content3};
+            var itemContents = new IContent[] { content1, content2, content3 };
 
-            var items = (await _mapper.To<TestItem>(itemContents)).ToList();
+            var items = (await _mapper.ToAsync<TestItem>(itemContents)).ToList();
 
             Assert.That(items, Is.Not.Null);
             Assert.That(items.Count, Is.EqualTo(3));
@@ -155,7 +195,48 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task To_many_with_match_success()
+        public void To_many_success()
+        {
+            var item1 = new Dictionary<string, string>
+            {
+                {"alias", "testItem"},
+                {"itemId", "1"},
+                {"price", "10.00"},
+                {"onSale", "true"}
+            };
+            var content1 = new UmbracoContent(item1);
+
+            var item2 = new Dictionary<string, string>
+            {
+                {"alias", "testItem"},
+                {"itemId", "2"},
+                {"price", "20.00"},
+                {"onSale", "true"}
+            };
+            var content2 = new UmbracoContent(item2);
+
+            var item3 = new Dictionary<string, string>
+            {
+                {"alias", "testItem"},
+                {"itemId", "3"},
+                {"price", "30.00"},
+                {"onSale", "true"}
+            };
+            var content3 = new UmbracoContent(item3);
+
+            var itemContents = new IContent[] { content1, content2, content3 };
+
+            var items = _mapper.To<TestItem>(itemContents).ToList();
+
+            Assert.That(items, Is.Not.Null);
+            Assert.That(items.Count, Is.EqualTo(3));
+            Assert.That(items[0].ItemId, Is.EqualTo(1));
+            Assert.That(items[1].ItemId, Is.EqualTo(2));
+            Assert.That(items[2].ItemId, Is.EqualTo(3));
+        }
+
+        [Test]
+        public async Task ToAsync_many_with_match_success()
         {
             var item1 = new Dictionary<string, string>
             {
@@ -193,7 +274,7 @@ namespace u2.Core.Test
                 new TestItem {ItemId = 3, Name = "three"},
             };
 
-            (await _mapper.To(itemContents, items, x => x.ItemId, "itemId")).ToList();
+            (await _mapper.ToAsync(itemContents, items, x => x.ItemId, "itemId")).ToList();
 
             Assert.That(items, Is.Not.Null);
             Assert.That(items.Count, Is.EqualTo(3));
@@ -208,7 +289,60 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Act_1_augs_Success()
+        public void To_many_with_match_success()
+        {
+            var item1 = new Dictionary<string, string>
+            {
+                {"alias", "testItem"},
+                {"itemId", "1"},
+                {"price", "10.00"},
+                {"onSale", "true"}
+            };
+            var content1 = new UmbracoContent(item1);
+
+            var item2 = new Dictionary<string, string>
+            {
+                {"alias", "testItem"},
+                {"itemId", "2"},
+                {"price", "20.00"},
+                {"onSale", "true"}
+            };
+            var content2 = new UmbracoContent(item2);
+
+            var item3 = new Dictionary<string, string>
+            {
+                {"alias", "testItem"},
+                {"itemId", "3"},
+                {"price", "30.00"},
+                {"onSale", "true"}
+            };
+            var content3 = new UmbracoContent(item3);
+
+            var itemContents = new IContent[] { content1, content2, content3 };
+
+            var items = new[]
+            {
+                new TestItem {ItemId = 1, Name = "one"},
+                new TestItem {ItemId = 2, Name = "two"},
+                new TestItem {ItemId = 3, Name = "three"},
+            };
+
+            _mapper.To(itemContents, items, x => x.ItemId, "itemId").ToList();
+
+            Assert.That(items, Is.Not.Null);
+            Assert.That(items.Count, Is.EqualTo(3));
+            //load from content
+            Assert.That(items[0].Price, Is.EqualTo(10d));
+            Assert.That(items[1].Price, Is.EqualTo(20d));
+            Assert.That(items[2].Price, Is.EqualTo(30d));
+            //existing value
+            Assert.That(items[0].Name, Is.EqualTo("one"));
+            Assert.That(items[1].Name, Is.EqualTo("two"));
+            Assert.That(items[2].Name, Is.EqualTo("three"));
+        }
+
+        [Test]
+        public async Task ToAsync_Act_1_augs_Success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -222,7 +356,7 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = await _mapper.To<TestAction>(content);
+            var result = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -230,7 +364,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Act_2_augs_Success()
+        public void To_Act_1_augs_Success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -244,7 +378,29 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = await _mapper.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
+
+            Assert.IsNotNull(result);
+            Assert.That(result.ActionId, Is.EqualTo(1));
+            Assert.That(result.Sum, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task ToAsync_Act_2_augs_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"actionid", "1"},
+                {"name", "test action"},
+                {"value1", "1"},
+                {"value2", "2"},
+                {"value3", "3"},
+                {"value4", "4"},
+                {"value5", "5"},
+                {"value6", "6"}
+            };
+            var content = new UmbracoContent(fields);
+            var result = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -252,7 +408,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Act_3_augs_Success()
+        public void To_Act_2_augs_Success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -266,7 +422,29 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = await _mapper.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
+
+            Assert.IsNotNull(result);
+            Assert.That(result.ActionId, Is.EqualTo(1));
+            Assert.That(result.Sum2, Is.EqualTo(3));
+        }
+
+        [Test]
+        public async Task ToAsync_Act_3_augs_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"actionid", "1"},
+                {"name", "test action"},
+                {"value1", "1"},
+                {"value2", "2"},
+                {"value3", "3"},
+                {"value4", "4"},
+                {"value5", "5"},
+                {"value6", "6"}
+            };
+            var content = new UmbracoContent(fields);
+            var result = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -274,7 +452,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Act_4_augs_Success()
+        public void To_Act_3_augs_Success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -288,7 +466,29 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = await _mapper.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
+
+            Assert.IsNotNull(result);
+            Assert.That(result.ActionId, Is.EqualTo(1));
+            Assert.That(result.Sum3, Is.EqualTo(6));
+        }
+
+        [Test]
+        public async Task ToAsync_Act_4_augs_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"actionid", "1"},
+                {"name", "test action"},
+                {"value1", "1"},
+                {"value2", "2"},
+                {"value3", "3"},
+                {"value4", "4"},
+                {"value5", "5"},
+                {"value6", "6"}
+            };
+            var content = new UmbracoContent(fields);
+            var result = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -296,7 +496,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Act_5_augs_Success()
+        public void To_Act_4_augs_Success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -310,16 +510,37 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = await _mapper.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
+
+            Assert.IsNotNull(result);
+            Assert.That(result.ActionId, Is.EqualTo(1));
+            Assert.That(result.Sum4, Is.EqualTo(10));
+        }
+
+        [Test]
+        public async Task ToAsync_Act_5_augs_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"actionid", "1"},
+                {"name", "test action"},
+                {"value1", "1"},
+                {"value2", "2"},
+                {"value3", "3"},
+                {"value4", "4"},
+                {"value5", "5"},
+                {"value6", "6"}
+            };
+            var content = new UmbracoContent(fields);
+            var result = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
             Assert.That(result.Sum5, Is.EqualTo(15));
         }
 
-
         [Test]
-        public async Task Act_6_augs_Success()
+        public void To_Act_5_augs_Success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -333,7 +554,29 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = await _mapper.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
+
+            Assert.IsNotNull(result);
+            Assert.That(result.ActionId, Is.EqualTo(1));
+            Assert.That(result.Sum5, Is.EqualTo(15));
+        }
+
+        [Test]
+        public async Task ToAsync_Act_6_augs_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"actionid", "1"},
+                {"name", "test action"},
+                {"value1", "1"},
+                {"value2", "2"},
+                {"value3", "3"},
+                {"value4", "4"},
+                {"value5", "5"},
+                {"value6", "6"}
+            };
+            var content = new UmbracoContent(fields);
+            var result = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -341,7 +584,7 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Act_mix_Success()
+        public void To_Act_6_augs_Success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -355,7 +598,29 @@ namespace u2.Core.Test
                 {"value6", "6"}
             };
             var content = new UmbracoContent(fields);
-            var result = await _mapper.To<TestAction>(content);
+            var result = _mapper.To<TestAction>(content);
+
+            Assert.IsNotNull(result);
+            Assert.That(result.ActionId, Is.EqualTo(1));
+            Assert.That(result.Sum6, Is.EqualTo(21));
+        }
+
+        [Test]
+        public async Task ToAsync_Act_mix_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"actionid", "1"},
+                {"name", "test action"},
+                {"value1", "1"},
+                {"value2", "2"},
+                {"value3", "3"},
+                {"value4", "4"},
+                {"value5", "5"},
+                {"value6", "6"}
+            };
+            var content = new UmbracoContent(fields);
+            var result = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -363,7 +628,29 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Act_Content_Success()
+        public void To_Act_mix_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"actionid", "1"},
+                {"name", "test action"},
+                {"value1", "1"},
+                {"value2", "2"},
+                {"value3", "3"},
+                {"value4", "4"},
+                {"value5", "5"},
+                {"value6", "6"}
+            };
+            var content = new UmbracoContent(fields);
+            var result = _mapper.To<TestAction>(content);
+
+            Assert.IsNotNull(result);
+            Assert.That(result.ActionId, Is.EqualTo(1));
+            Assert.That(result.Mix, Is.EqualTo(2));
+        }
+
+        [Test]
+        public async Task ToAsync_Act_Content_Success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -378,7 +665,7 @@ namespace u2.Core.Test
             };
 
             var content = new UmbracoContent(fields);
-            var result = await _mapper.To<TestAction>(content);
+            var result = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(result);
             Assert.That(result.ActionId, Is.EqualTo(1));
@@ -386,7 +673,30 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Copy_Success()
+        public void To_Act_Content_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"actionid", "1"},
+                {"name", "test action"},
+                {"value1", "1"},
+                {"value2", "2"},
+                {"value3", "3"},
+                {"value4", "4"},
+                {"value5", "5"},
+                {"value6", "6"}
+            };
+
+            var content = new UmbracoContent(fields);
+            var result = _mapper.To<TestAction>(content);
+
+            Assert.IsNotNull(result);
+            Assert.That(result.ActionId, Is.EqualTo(1));
+            Assert.That(result.Agregate, Is.EqualTo("123456"));
+        }
+
+        [Test]
+        public async Task ToAsync_Copy_Success()
         {
             var fields = new Dictionary<string, string>
             {
@@ -395,8 +705,8 @@ namespace u2.Core.Test
             };
 
             var content = new UmbracoContent(fields);
-            var item = await  _mapper.To<TestItem>(content);
-            var action = await _mapper.To<TestAction>(content);
+            var item = await  _mapper.ToAsync<TestItem>(content);
+            var action = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(item);
             Assert.That(item.Key, Is.EqualTo("cmskey"));
@@ -407,6 +717,27 @@ namespace u2.Core.Test
             Assert.That(action.Name, Is.Null);
         }
 
+        [Test]
+        public void To_Copy_Success()
+        {
+            var fields = new Dictionary<string, string>
+            {
+                {"id", "cmskey" },
+                {"nodeName", "a name" }
+            };
+
+            var content = new UmbracoContent(fields);
+            var item = _mapper.To<TestItem>(content);
+            var action = _mapper.To<TestAction>(content);
+
+            Assert.IsNotNull(item);
+            Assert.That(item.Key, Is.EqualTo("cmskey"));
+            Assert.That(item.Name, Is.EqualTo("a name"));
+
+            Assert.IsNotNull(action);
+            Assert.That(action.Key, Is.EqualTo("cmskey"));
+            Assert.That(action.Name, Is.Null);
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
@@ -130,11 +131,37 @@ namespace u2.Core.Test
         }
 
         [Test]
+        public void Fetch_fit_single_success()
+        {
+            var cache = Setup(map => map.Fit(x => x.Item));
+            var entities = cache.Fetch<TestEntity>();
+
+            Assert.That(entities, Is.Not.Null);
+            Assert.That(entities.Count(), Is.EqualTo(1));
+            var entity = entities.First();
+            Assert.That(entity.Item, Is.Not.Null);
+            Assert.That(entity.Item.ItemId, Is.EqualTo(2));
+        }
+
+        [Test]
         public async Task FetchAsync_fit_single_with_key_success()
         {
 
             var cache = Setup(map => map.Fit(x => x.Item, x => x.ItemId.ToString()));
             var entities = await cache.FetchAsync<TestEntity>();
+
+            Assert.That(entities, Is.Not.Null);
+            Assert.That(entities.Count(), Is.EqualTo(1));
+            var entity = entities.First();
+            Assert.That(entity.Item, Is.Not.Null);
+            Assert.That(entity.Item.ItemId, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Fetch_fit_single_with_key_success()
+        {
+            var cache = Setup(map => map.Fit(x => x.Item, x => x.ItemId.ToString()));
+            var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
@@ -157,10 +184,36 @@ namespace u2.Core.Test
         }
 
         [Test]
+        public void Fetch_fit_many_success()
+        {
+            var cache = Setup(map => map.Fit(x => x.Items));
+            var entities = cache.Fetch<TestEntity>();
+
+            Assert.That(entities, Is.Not.Null);
+            Assert.That(entities.Count(), Is.EqualTo(1));
+            var entity = entities.First();
+            Assert.That(entity.Items, Is.Not.Null);
+            Assert.That(entity.Items.Count, Is.EqualTo(2));
+        }
+
+        [Test]
         public async Task FetchAsync_fit_many_with_key_success()
         {
             var cache = Setup(map => map.Fit(x => x.Items, x => x.ItemId.ToString()));
             var entities = await cache.FetchAsync<TestEntity>();
+
+            Assert.That(entities, Is.Not.Null);
+            Assert.That(entities.Count(), Is.EqualTo(1));
+            var entity = entities.First();
+            Assert.That(entity.Items, Is.Not.Null);
+            Assert.That(entity.Items.Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Fetch_fit_many_with_key_success()
+        {
+            var cache = Setup(map => map.Fit(x => x.Items, x => x.ItemId.ToString()));
+            var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
@@ -189,6 +242,25 @@ namespace u2.Core.Test
         }
 
         [Test]
+        public void Fetch_fit_action_success()
+        {
+            var cache = Setup(map => map.Fit<TestItem>((x, y) =>
+            {
+                x.List = y.ToList();
+                x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
+            }, "items"));
+            var entities = cache.Fetch<TestEntity>();
+
+            Assert.That(entities, Is.Not.Null);
+            Assert.That(entities.Count(), Is.EqualTo(1));
+            var entity = entities.First();
+            Assert.That(entity.List, Is.Not.Null);
+            Assert.That(entity.List.Count, Is.EqualTo(2));
+            Assert.That(entity.Dictionary, Is.Not.Null);
+            Assert.That(entity.Dictionary.Count, Is.EqualTo(2));
+        }
+
+        [Test]
         public async Task FetchAsync_fit_action_with_key_success()
         {
             var cache = Setup(map => map.Fit<TestItem>((x, y) =>
@@ -197,6 +269,25 @@ namespace u2.Core.Test
                 x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
             }, "items", x => x.ItemId.ToString()));
             var entities = await cache.FetchAsync<TestEntity>();
+
+            Assert.That(entities, Is.Not.Null);
+            Assert.That(entities.Count(), Is.EqualTo(1));
+            var entity = entities.First();
+            Assert.That(entity.List, Is.Not.Null);
+            Assert.That(entity.List.Count, Is.EqualTo(2));
+            Assert.That(entity.Dictionary, Is.Not.Null);
+            Assert.That(entity.Dictionary.Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Fetch_fit_action_with_key_success()
+        {
+            var cache = Setup(map => map.Fit<TestItem>((x, y) =>
+            {
+                x.List = y.ToList();
+                x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
+            }, "items", x => x.ItemId.ToString()));
+            var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
@@ -247,7 +338,47 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Cache_lookup_test()
+        public void Fetch_concurrent_access_success()
+        {
+            var cache = Setup(map => map.Fit(x => x.Item)
+                .Fit<TestItem>((x, y) =>
+                {
+                    x.List = y.ToList();
+                    x.Items = x.List;
+                    x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
+                }, "items", x => x.ItemId.ToString()));
+
+            var arr = new IEnumerable<TestEntity>[50];
+            for (var i = 0; i < arr.Length; i++)
+            {
+                var index = i;
+                var thread = new Thread(() => arr[index] = cache.Fetch<TestEntity>());
+                thread.Start();
+                thread.Join();
+            }
+
+            foreach (var entities in arr)
+            {
+                Assert.That(entities, Is.Not.Null);
+                Assert.That(entities.Count(), Is.EqualTo(1));
+                var entity = entities.First();
+                Assert.That(entity.Item, Is.Not.Null);
+                Assert.That(entity.Item.ItemId, Is.EqualTo(2));
+                Assert.That(entity.Items, Is.Not.Null);
+                Assert.That(entity.Items.Count, Is.EqualTo(2));
+                Assert.That(entity.List, Is.Not.Null);
+                Assert.That(entity.List.Count, Is.EqualTo(2));
+                Assert.That(entity.Dictionary, Is.Not.Null);
+                Assert.That(entity.Dictionary.Count, Is.EqualTo(2));
+                var item = entity.Items.First();
+                Assert.That(item, Is.Not.Null);
+                Assert.That(item.Infos, Is.Not.Null);
+                Assert.That(item.Infos.Count(), Is.EqualTo(2));
+            }
+        }
+
+        [Test]
+        public async Task FetchAsync_lookup_test()
         {
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
@@ -283,7 +414,43 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public async Task Cache_OnSave_test()
+        public void Fetch_lookup_test()
+        {
+            var cacheRegistry = new CacheRegistry();
+            var cacheStore = new CacheStore();
+            var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
+            var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
+            var cache = new Cache(cacheStore, cacheRegistry);
+
+            async Task<IEnumerable<CacheItem>> Task() => await System.Threading.Tasks.Task.Run(() => new[]
+            {
+                new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
+                new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
+                new CacheItem {LookupKey = 2, LookupKeyOther = "1"}
+            });
+
+            cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther).Span(300);
+
+            var result = cache.Fetch(lookup);
+            var resultOther = cache.Fetch(lookupOther);
+            var item = result["2"].First();
+            var itemOther = resultOther["1"].First();
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result["1"].Count(), Is.EqualTo(2));
+            Assert.That(result["2"].Count(), Is.EqualTo(1));
+
+            Assert.That(resultOther, Is.Not.Null);
+            Assert.That(resultOther.Count, Is.EqualTo(2));
+            Assert.That(resultOther["1"].Count(), Is.EqualTo(1));
+            Assert.That(resultOther["2"].Count(), Is.EqualTo(2));
+
+            Assert.That(item.Id, Is.EqualTo(itemOther.Id));
+        }
+
+        [Test]
+        public async Task FetchAsync_OnSave_test()
         {
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
@@ -300,6 +467,30 @@ namespace u2.Core.Test
                 .OnSave(x => x.OrderBy(y => y.ItemId));
 
             var result = (await cache.FetchAsync<TestItem>()).ToList();
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.First().ItemId, Is.EqualTo(1));
+            Assert.That(result.Last().ItemId, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void Fetch_OnSave_test()
+        {
+            var cacheRegistry = new CacheRegistry();
+            var cacheStore = new CacheStore();
+            var cache = new Cache(cacheStore, cacheRegistry);
+
+            async Task<IEnumerable<TestItem>> Task() => await System.Threading.Tasks.Task.Run(() => new[]
+            {
+                new TestItem {ItemId = 1},
+                new TestItem {ItemId = 3},
+                new TestItem {ItemId = 2}
+            });
+            cacheRegistry.Add(Task)
+                .Span(300)
+                .OnSave(x => x.OrderBy(y => y.ItemId));
+
+            var result = cache.Fetch<TestItem>().ToList();
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.First().ItemId, Is.EqualTo(1));
