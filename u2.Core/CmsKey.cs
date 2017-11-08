@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using u2.Core.Contract;
+﻿using u2.Core.Contract;
 
 namespace u2.Core
 {

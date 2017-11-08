@@ -38,16 +38,26 @@ namespace u2.Caching
             return _tasks.TryGetValue(taskKey, out task);
         }
 
-        public async Task Reload<T>(string key = null)
+        public async Task ReloadAsync<T>(string key = null)
         {
             if (_tasks.TryGetValue(key ?? typeof(T).FullName, out ICacheTask task))
                 await task.Reload().ConfigureAwait(false);
         }
 
-        public async Task Reload()
+        public async Task ReloadAsync()
         {
             foreach (var task in _tasks.Values)
                 await task.Reload().ConfigureAwait(false);
+        }
+
+        public void Reload<T>(string key = null)
+        {
+            ReloadAsync<T>(key).Wait();
+        }
+
+        public void Reload()
+        {
+            ReloadAsync().Wait();
         }
     }
 }

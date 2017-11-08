@@ -3,7 +3,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using u2.Core.Contract;
-using u2.Core.Extensions;
 
 namespace u2.Core
 {

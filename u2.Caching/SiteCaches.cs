@@ -33,7 +33,8 @@ namespace u2.Caching
             }
         }
 
-        public void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0, params ICacheLookup<T>[] lookups)
+        public void RegisterLookup<T>(Func<Task<IEnumerable<T>>> func, int cacheInSecs = 0,
+            params ICacheLookup<T>[] lookups)
         {
             cacheInSecs = cacheInSecs == UseDefault ? DefaultCache : cacheInSecs;
             foreach (var registry in _registries.Values)
@@ -46,18 +47,22 @@ namespace u2.Caching
             }
         }
 
-        public async Task Refresh(string site = null)
+        public async Task RefreshAsync(string site = null)
         {
             if (string.IsNullOrWhiteSpace(site))
             {
                 foreach (var registry in _registries.Values)
                 {
-                    await registry.Reload().ConfigureAwait(false);
+                    await registry.ReloadAsync().ConfigureAwait(false);
                 }
             }
             else
-                await _registries[site].Reload().ConfigureAwait(false);
+                await _registries[site].ReloadAsync().ConfigureAwait(false);
+        }
+
+        public void Refresh(string site = null)
+        {
+            RefreshAsync(site).Wait();
         }
     }
 }
-

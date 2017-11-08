@@ -44,23 +44,45 @@ namespace u2.Caching.Test
         }
 
         [Test]
-        public async Task Reload_no_key()
+        public async Task ReloadAsync_no_key()
         {
             var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
             var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task);
-            await cacheRegistry.Reload();
+            await cacheRegistry.ReloadAsync();
 
             task.Received(1);
         }
 
         [Test]
-        public async Task Reload_with_key()
+        public void Reload_no_key()
+        {
+            var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
+            var cacheRegistry = new CacheRegistry();
+            cacheRegistry.Add(task);
+            cacheRegistry.Reload();
+
+            task.Received(1);
+        }
+
+        [Test]
+        public async Task ReloadAsync_with_key()
         {
             var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
             var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task, "test");
-            await cacheRegistry.Reload();
+            await cacheRegistry.ReloadAsync();
+
+            task.Received(1);
+        }
+
+        [Test]
+        public void Reload_with_key()
+        {
+            var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
+            var cacheRegistry = new CacheRegistry();
+            cacheRegistry.Add(task, "test");
+            cacheRegistry.Reload();
 
             task.Received(1);
         }

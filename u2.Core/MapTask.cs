@@ -30,10 +30,6 @@ namespace u2.Core
 
         public abstract object Create(object instance = null);
 
-        /// <summary>
-        /// Map all public instance properties for the given object using naming convensions.
-        /// </summary>
-        /// <returns>This MapTask object.</returns>
         public IMapTask All()
         {
             EntityType
@@ -73,13 +69,6 @@ namespace u2.Core
             return this;
         }
 
-        /// <summary>
-        /// Map a CMS property to object properties using Run.
-        /// </summary>
-        /// <typeparam name="TP">CMS property type.</typeparam>
-        /// <param name="alias">CMS property alias.</param>
-        /// <param name="action">Run to do the mapping.</param>
-        /// <returns></returns>
         public IMapTask<T> Act<TP>(Action<T, TP> action, string alias)
         {
             if (!string.IsNullOrWhiteSpace(alias))
@@ -96,13 +85,6 @@ namespace u2.Core
             return this;
         }
 
-        /// <summary>
-        /// Map a CMS property to object properties using Run.
-        /// </summary>
-        /// <param name="action">Run to do the mapping.</param>
-        /// <param name="alias1">CMS property alias for TP1.</param>
-        /// <param name="alias2">CMS property alias for TP2.</param>
-        /// <returns></returns>
         public IMapTask<T> Act<TP1, TP2>(Action<T, TP1, TP2> action, string alias1, string alias2)
         {
             if (!string.IsNullOrWhiteSpace(alias1) && !string.IsNullOrWhiteSpace(alias2))
@@ -120,14 +102,6 @@ namespace u2.Core
             return this;
         }
 
-        /// <summary>
-        /// Map a CMS property to object properties using Run.
-        /// </summary>
-        /// <param name="action">Run to do the mapping.</param>
-        /// <param name="alias1">CMS property alias for TP1.</param>
-        /// <param name="alias2">CMS property alias for TP2.</param>
-        /// <param name="alias3">CMS property alias for TP3.</param>
-        /// <returns></returns>
         public IMapTask<T> Act<TP1, TP2, TP3>(Action<T, TP1, TP2, TP3> action, string alias1, string alias2, string alias3)
         {
             if (!string.IsNullOrWhiteSpace(alias1) && !string.IsNullOrWhiteSpace(alias2) && !string.IsNullOrWhiteSpace(alias3))
@@ -146,15 +120,6 @@ namespace u2.Core
             return this;
         }
 
-        /// <summary>
-        /// Map a CMS property to object properties using Run.
-        /// </summary>
-        /// <param name="action">Run to do the mapping.</param>
-        /// <param name="alias1">CMS property alias for TP1.</param>
-        /// <param name="alias2">CMS property alias for TP2.</param>
-        /// <param name="alias3">CMS property alias for TP3.</param>
-        /// <param name="alias4">CMS property alias for TP4.</param>
-        /// <returns></returns>
         public IMapTask<T> Act<TP1, TP2, TP3, TP4>(Action<T, TP1, TP2, TP3, TP4> action, string alias1, string alias2, string alias3, string alias4)
         {
             if (!string.IsNullOrWhiteSpace(alias1) && !string.IsNullOrWhiteSpace(alias2) && !string.IsNullOrWhiteSpace(alias3) && !string.IsNullOrWhiteSpace(alias4))
@@ -174,16 +139,6 @@ namespace u2.Core
             return this;
         }
 
-        /// <summary>
-        /// Map a CMS property to object properties using Run.
-        /// </summary>
-        /// <param name="action">Run to do the mapping.</param>
-        /// <param name="alias1">CMS property alias for TP1.</param>
-        /// <param name="alias2">CMS property alias for TP2.</param>
-        /// <param name="alias3">CMS property alias for TP3.</param>
-        /// <param name="alias4">CMS property alias for TP4.</param>
-        /// <param name="alias5">CMS property alias for TP5.</param>
-        /// <returns></returns>
         public IMapTask<T> Act<TP1, TP2, TP3, TP4, TP5>(Action<T, TP1, TP2, TP3, TP4, TP5> action, string alias1, string alias2, string alias3, string alias4, string alias5)
         {
             if (!string.IsNullOrWhiteSpace(alias1) 
@@ -208,17 +163,6 @@ namespace u2.Core
             return this;
         }
 
-        /// <summary>
-        /// Map a CMS property to object properties using Run.
-        /// </summary>
-        /// <param name="action">Run to do the mapping.</param>
-        /// <param name="alias1">CMS property alias for TP1.</param>
-        /// <param name="alias2">CMS property alias for TP2.</param>
-        /// <param name="alias3">CMS property alias for TP3.</param>
-        /// <param name="alias4">CMS property alias for TP4.</param>
-        /// <param name="alias5">CMS property alias for TP5.</param>
-        /// <param name="alias6">CMS property alias for TP6.</param>
-        /// <returns></returns>
         public IMapTask<T> Act<TP1, TP2, TP3, TP4, TP5, TP6>(Action<T, TP1, TP2, TP3, TP4, TP5, TP6> action, string alias1, string alias2, string alias3, string alias4, string alias5, string alias6)
         {
             if (!string.IsNullOrWhiteSpace(alias1)
@@ -251,22 +195,12 @@ namespace u2.Core
             return this;
         }
 
-        /// <summary>
-        /// Map all public instance properties for the given object using naming convensions.
-        /// </summary>
-        /// <returns>This MapTask object.</returns>
         public new IMapTask<T> All()
         {
             base.All();
             return this;
         }
 
-        /// <summary>
-        /// To be used with All, to ignore a property doesn't need to be mapped.
-        /// </summary>
-        /// <typeparam name="TO">Object/Umbraco property type.</typeparam>
-        /// <param name="property">Lambda expression for the object property, given the declaring object.</param>
-        /// <returns></returns>
         public IMapTask<T> Ignore<TO>(Expression<Func<T, TO>> property)
         {
             if (property != null)

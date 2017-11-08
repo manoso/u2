@@ -26,15 +26,5 @@ namespace u2.Umbraco
             var results = searcher.Search(searchCriteria);
             return results.Select(x => new UmbracoContent(x.Fields)).ToList();
         }
-
-        //private IEnumerable<IContent> ChildrenFor(IContent parent)
-        //{
-        //    var searcher = ExamineManager.Instance.SearchProviderCollection["ExternalSearcher"];
-        //    var searchCriteria = searcher.CreateSearchCriteria(BooleanOperation.Or);
-        //    searchCriteria.RawQuery("__path:" + $"{parent.Get<string>("__path")}*");
-        //    var results = searcher.Search(searchCriteria);
-
-        //    return results.Select(x => new UmbracoContent(x.Fields)).ToList();
-        //}
     }
 }

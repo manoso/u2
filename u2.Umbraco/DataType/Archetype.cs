@@ -13,7 +13,7 @@ namespace u2.Umbraco.DataType
 
         public Archetype(ArchetypeFieldsetModel model)
         {
-            _fields = model.Properties.ToDictionary(x => x.Alias, x => x.Value.ToString());
+            _fields = model.Properties.ToDictionary(x => x.Alias.ToLowerInvariant(), x => x.Value.ToString());
         }
 
         public string Alias => string.Empty;

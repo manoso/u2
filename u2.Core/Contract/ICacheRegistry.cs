@@ -10,7 +10,9 @@ namespace u2.Core.Contract
         bool Has<T>();
         bool Has(string key);
         bool TryGetTask(string taskKey, out ICacheTask task);
-        Task Reload<T>(string key = null);
-        Task Reload();
+        Task ReloadAsync<T>(string key = null);
+        Task ReloadAsync();
+        void Reload<T>(string key = null);
+        void Reload();
     }
 }

@@ -67,7 +67,7 @@ namespace u2.Caching.Test
         }
 
         [Test]
-        public async Task Refresh_with_null_success()
+        public async Task RefreshAsync_with_null_success()
         {
             var registryAu = Substitute.For<ICacheRegistry>();
             var registryNz = Substitute.For<ICacheRegistry>();
@@ -78,14 +78,32 @@ namespace u2.Caching.Test
                 ["nz"] = registryNz
             };
 
-            await cache.Refresh();
+            await cache.RefreshAsync();
 
-            await registryAu.Received(1).Reload();
-            await registryNz.Received(1).Reload();
+            await registryAu.Received(1).ReloadAsync();
+            await registryNz.Received(1).ReloadAsync();
         }
 
         [Test]
-        public async Task Refresh_not_null_success()
+        public void Refresh_with_null_success()
+        {
+            var registryAu = Substitute.For<ICacheRegistry>();
+            var registryNz = Substitute.For<ICacheRegistry>();
+
+            var cache = new SiteCaches
+            {
+                ["au"] = registryAu,
+                ["nz"] = registryNz
+            };
+
+            cache.Refresh();
+
+            registryAu.Received(1).ReloadAsync();
+            registryNz.Received(1).ReloadAsync();
+        }
+
+        [Test]
+        public async Task RefreshAsync_not_null_success()
         {
             var registryAu = Substitute.For<ICacheRegistry>();
             var registryNz = Substitute.For<ICacheRegistry>();
@@ -98,10 +116,30 @@ namespace u2.Caching.Test
                 [nz] = registryNz
             };
 
-            await cache.Refresh(au);
+            await cache.RefreshAsync(au);
 
-            await registryAu.Received(1).Reload();
-            await registryNz.DidNotReceive().Reload();
+            await registryAu.Received(1).ReloadAsync();
+            await registryNz.DidNotReceive().ReloadAsync();
+        }
+
+        [Test]
+        public void Refresh_not_null_success()
+        {
+            var registryAu = Substitute.For<ICacheRegistry>();
+            var registryNz = Substitute.For<ICacheRegistry>();
+            var au = "au";
+            var nz = "nz";
+
+            var cache = new SiteCaches
+            {
+                [au] = registryAu,
+                [nz] = registryNz
+            };
+
+            cache.Refresh(au);
+
+            registryAu.Received(1).ReloadAsync();
+            registryNz.DidNotReceive().ReloadAsync();
         }
     }
 }
