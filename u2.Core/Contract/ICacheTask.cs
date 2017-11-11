@@ -15,9 +15,9 @@ namespace u2.Core.Contract
         /// <summary>
         /// Updates cache tasks' timestamp to be expired. Next subsequent request will be re-evaluated and data refreshed
         /// </summary>
-        Task Reload();
+        Task Reload(ICache cache);
 
-        Task Run(Action<string, object> save = null);
+        Task Run(ICache cache, Action<string, object> save = null);
     }
 
     public interface ICacheTask<T> : ICacheTask

@@ -10,13 +10,6 @@ namespace u2.Core
         private readonly IDictionary<Type, IMapTask> _entries = new Dictionary<Type, IMapTask>();
         private readonly IDictionary<Type, IBaseTask> _copies = new Dictionary<Type, IBaseTask>();
 
-        public IRoot Root { get; }
-
-        public MapRegistry(IRoot root)
-        {
-            Root = root;
-        }
-
         public IMapTask this[Type type] => _entries[type];
 
         public bool Has(Type type)

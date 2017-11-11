@@ -2,6 +2,6 @@
 {
     public interface IQueryFactory
     {
-        ICmsQuery<T> Create<T>(IMapTask<T> mapTask) where T : class, new();
+        ICmsQuery<T> Create<T>(IRoot root, IMapTask<T> mapTask) where T : class, new();
     }
 }

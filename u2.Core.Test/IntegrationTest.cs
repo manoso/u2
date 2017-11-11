@@ -17,15 +17,15 @@ namespace u2.Core.Test
     {
         private ICache Setup(Action<IMapTask<TestEntity>> fit)
         {
-            var root = Substitute.For<IRoot>();
-            var mapRegistry = new MapRegistry(root);
+            var mapRegistry = new MapRegistry();
             var mapper = new Mapper(mapRegistry);
+            var root = Substitute.For<IRoot>();
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
-            var cache = new Cache(cacheStore, cacheRegistry);
+            var cache = new Cache(root, cacheStore, cacheRegistry);
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
-            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cache, queryFactory, cmsFetcher);
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, queryFactory, cmsFetcher);
 
             mapRegistry.Copy<CmsKey>()
                 .Map(x => x.Key, "id");
@@ -102,9 +102,9 @@ namespace u2.Core.Test
             var queryEntity = Substitute.For<ICmsQuery<TestEntity>>();
             var queryInfo = Substitute.For<ICmsQuery<TestInfo>>();
 
-            queryFactory.Create(mapItem).Returns(queryItem);
-            queryFactory.Create(mapEntity).Returns(queryEntity);
-            queryFactory.Create(mapInfo).Returns(queryInfo);
+            queryFactory.Create(root, mapItem).Returns(queryItem);
+            queryFactory.Create(root, mapEntity).Returns(queryEntity);
+            queryFactory.Create(root, mapInfo).Returns(queryInfo);
 
             var entityContents = new IContent[] {content};
             var itemContents = new IContent[] {content1, content2, content3};
@@ -380,13 +380,14 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_lookup_test()
         {
+            var root = Substitute.For<IRoot>();
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
             var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
-            var cache = new Cache(cacheStore, cacheRegistry);
+            var cache = new Cache(root, cacheStore, cacheRegistry);
 
-            async Task<IEnumerable<CacheItem>> Task() => await System.Threading.Tasks.Task.Run(() => new[]
+            async Task<IEnumerable<CacheItem>> Task(ICache c) => await System.Threading.Tasks.Task.Run(() => new[]
             {
                 new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
                 new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
@@ -416,13 +417,14 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_lookup_test()
         {
+            var root = Substitute.For<IRoot>();
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
             var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
-            var cache = new Cache(cacheStore, cacheRegistry);
+            var cache = new Cache(root, cacheStore, cacheRegistry);
 
-            async Task<IEnumerable<CacheItem>> Task() => await System.Threading.Tasks.Task.Run(() => new[]
+            async Task<IEnumerable<CacheItem>> Task(ICache c) => await System.Threading.Tasks.Task.Run(() => new[]
             {
                 new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
                 new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
@@ -452,11 +454,12 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_OnSave_test()
         {
+            var root = Substitute.For<IRoot>();
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
-            var cache = new Cache(cacheStore, cacheRegistry);
+            var cache = new Cache(root, cacheStore, cacheRegistry);
 
-            async Task<IEnumerable<TestItem>> Task() => await System.Threading.Tasks.Task.Run(() => new[]
+            async Task<IEnumerable<TestItem>> Task(ICache c) => await System.Threading.Tasks.Task.Run(() => new[]
             {
                 new TestItem {ItemId = 1},
                 new TestItem {ItemId = 3},
@@ -476,11 +479,12 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_OnSave_test()
         {
+            var root = Substitute.For<IRoot>();
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
-            var cache = new Cache(cacheStore, cacheRegistry);
+            var cache = new Cache(root, cacheStore, cacheRegistry);
 
-            async Task<IEnumerable<TestItem>> Task() => await System.Threading.Tasks.Task.Run(() => new[]
+            async Task<IEnumerable<TestItem>> Task(ICache c) => await System.Threading.Tasks.Task.Run(() => new[]
             {
                 new TestItem {ItemId = 1},
                 new TestItem {ItemId = 3},

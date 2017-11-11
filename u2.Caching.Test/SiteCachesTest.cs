@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
-using u2.Test;
 
 namespace u2.Caching.Test
 {
@@ -11,135 +9,79 @@ namespace u2.Caching.Test
     public class SiteCachesTest
     {
         [Test]
-        public void Register_called_CacheRegistry_Add()
-        {
-            var registryAu = Substitute.For<ICacheRegistry>();
-
-            var cache = new SiteCaches
-            {
-                ["au"] = registryAu,
-            };
-
-            async Task<IEnumerable<CacheItem>> Func() => await Task.Run(() => new[] {new CacheItem()} as IEnumerable<CacheItem>);
-
-            cache.Register(Func);
-
-            registryAu.Received(1).Add(Func, typeof(CacheItem).FullName).Span(SiteCaches.DefaultCache);
-        }
-
-        [Test]
-        public void Register_2_called_CacheRegistry_Add()
-        {
-            var registryAu = Substitute.For<ICacheRegistry>();
-            var registryNz = Substitute.For<ICacheRegistry>();
-
-            var cache = new SiteCaches
-            {
-                ["au"] = registryAu,
-                ["nz"] = registryNz
-            };
-
-            async Task<IEnumerable<CacheItem>> Func() => await Task.Run(() => new[] { new CacheItem() } as IEnumerable<CacheItem>);
-
-            var cacheKey = "key";
-            cache.Register(cacheKey, Func);
-
-            registryAu.Received(1).Add(Func, cacheKey).Span(SiteCaches.DefaultCache);
-            registryNz.Received(1).Add(Func, cacheKey).Span(SiteCaches.DefaultCache);
-        }
-
-        [Test]
-        public void RegisterLookup_called_CacheRegistry_Add()
-        {
-            var registryAu = Substitute.For<ICacheRegistry>();
-            var lookup = Substitute.For<ICacheLookup<CacheItem>>();
-
-            var cache = new SiteCaches
-            {
-                ["au"] = registryAu,
-            };
-
-            async Task<IEnumerable<CacheItem>> Func() => await Task.Run(() => new[] { new CacheItem() } as IEnumerable<CacheItem>);
-
-            cache.RegisterLookup(Func, 0, lookup);
-
-            registryAu.Received(1).Add(Func).Lookup(lookup).Span(SiteCaches.DefaultCache);
-        }
-
-        [Test]
         public async Task RefreshAsync_with_null_success()
         {
-            var registryAu = Substitute.For<ICacheRegistry>();
-            var registryNz = Substitute.For<ICacheRegistry>();
+            var cacheAu = Substitute.For<ICache>();
+            var cacheNz = Substitute.For<ICache>();
 
-            var cache = new SiteCaches
+            var siteCaches = new SiteCaches
             {
-                ["au"] = registryAu,
-                ["nz"] = registryNz
+                ["au"] = cacheAu,
+                ["nz"] = cacheNz
             };
 
-            await cache.RefreshAsync();
+            await siteCaches.RefreshAsync();
 
-            await registryAu.Received(1).ReloadAsync();
-            await registryNz.Received(1).ReloadAsync();
+            await cacheAu.Received(1).ReloadAsync();
+            await cacheNz.Received(1).ReloadAsync();
         }
 
         [Test]
         public void Refresh_with_null_success()
         {
-            var registryAu = Substitute.For<ICacheRegistry>();
-            var registryNz = Substitute.For<ICacheRegistry>();
+            var cacheAu = Substitute.For<ICache>();
+            var cacheNz = Substitute.For<ICache>();
 
-            var cache = new SiteCaches
+            var siteCaches = new SiteCaches
             {
-                ["au"] = registryAu,
-                ["nz"] = registryNz
+                ["au"] = cacheAu,
+                ["nz"] = cacheNz
             };
 
-            cache.Refresh();
+            siteCaches.Refresh();
 
-            registryAu.Received(1).ReloadAsync();
-            registryNz.Received(1).ReloadAsync();
+            cacheAu.Received(1).ReloadAsync();
+            cacheNz.Received(1).ReloadAsync();
         }
 
         [Test]
         public async Task RefreshAsync_not_null_success()
         {
-            var registryAu = Substitute.For<ICacheRegistry>();
-            var registryNz = Substitute.For<ICacheRegistry>();
+            var cacheAu = Substitute.For<ICache>();
+            var cacheNz = Substitute.For<ICache>();
             var au = "au";
             var nz = "nz";
 
-            var cache = new SiteCaches
+            var siteCaches = new SiteCaches
             {
-                [au] = registryAu,
-                [nz] = registryNz
+                [au] = cacheAu,
+                [nz] = cacheNz
             };
 
-            await cache.RefreshAsync(au);
+            await siteCaches.RefreshAsync(au);
 
-            await registryAu.Received(1).ReloadAsync();
-            await registryNz.DidNotReceive().ReloadAsync();
+            await cacheAu.Received(1).ReloadAsync();
+            await cacheNz.DidNotReceive().ReloadAsync();
         }
 
         [Test]
         public void Refresh_not_null_success()
         {
-            var registryAu = Substitute.For<ICacheRegistry>();
-            var registryNz = Substitute.For<ICacheRegistry>();
+            var cacheAu = Substitute.For<ICache>();
+            var cacheNz = Substitute.For<ICache>();
             var au = "au";
             var nz = "nz";
 
-            var cache = new SiteCaches
+            var siteCaches = new SiteCaches
             {
-                [au] = registryAu,
-                [nz] = registryNz
+                [au] = cacheAu,
+                [nz] = cacheNz
             };
 
-            cache.Refresh(au);
+            siteCaches.Refresh(au);
 
-            registryAu.Received(1).ReloadAsync();
-            registryNz.DidNotReceive().ReloadAsync();
+            cacheAu.Received(1).ReloadAsync();
+            cacheNz.DidNotReceive().ReloadAsync();
         }
     }
 }

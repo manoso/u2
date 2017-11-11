@@ -9,19 +9,9 @@ namespace u2.Core.Test
     public class MapRegistryTest
     {
         [Test]
-        public void Constructor_has_root()
-        {
-            var root = Substitute.For<IRoot>();
-            var registry = new MapRegistry(root);
-
-            Assert.That(registry.Root, Is.EqualTo(root));
-        }
-
-        [Test]
         public void Register_has()
         {
-            var root = Substitute.For<IRoot>();
-            var registry = new MapRegistry(root);
+            var registry = new MapRegistry();
 
             registry.Register<TestItem>();
             Assert.That(registry.Has(typeof(TestItem)));
@@ -30,8 +20,7 @@ namespace u2.Core.Test
         [Test]
         public void Register_Indexer()
         {
-            var root = Substitute.For<IRoot>();
-            var registry = new MapRegistry(root);
+            var registry = new MapRegistry();
 
             registry.Register<TestItem>();
             Assert.That(registry[typeof(TestItem)], Is.Not.Null);
@@ -40,8 +29,7 @@ namespace u2.Core.Test
         [Test]
         public void Register_GetType_return_type()
         {
-            var root = Substitute.For<IRoot>();
-            var registry = new MapRegistry(root);
+            var registry = new MapRegistry();
 
             registry.Register<TestItem>().AliasTo("testObj");
             Assert.That(registry.GetType("TestObj"), Is.EqualTo(typeof(TestItem)));
@@ -50,8 +38,7 @@ namespace u2.Core.Test
         [Test]
         public void Register_GetType_return_null()
         {
-            var root = Substitute.For<IRoot>();
-            var registry = new MapRegistry(root);
+            var registry = new MapRegistry();
 
             registry.Register<TestItem>().AliasTo("testObj");
             Assert.That(registry.GetType("TestOb"), Is.Null);
@@ -60,8 +47,7 @@ namespace u2.Core.Test
         [Test]
         public void Register_Map_All()
         {
-            var root = Substitute.For<IRoot>();
-            var registry = new MapRegistry(root);
+            var registry = new MapRegistry();
 
             var task = registry.Register<TestItem>();
             Assert.That(task, Is.Not.Null);
@@ -71,8 +57,7 @@ namespace u2.Core.Test
         [Test]
         public void Register_Copy_Map()
         {
-            var root = Substitute.For<IRoot>();
-            var registry = new MapRegistry(root);
+            var registry = new MapRegistry();
 
             registry.Copy<CmsKey>()
                 .Map(x => x.Key);

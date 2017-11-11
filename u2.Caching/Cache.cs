@@ -10,11 +10,14 @@ namespace u2.Caching
         private readonly ICacheStore _store;
         private readonly ICacheRegistry _registry;
 
-        public Cache(ICacheStore store, ICacheRegistry registry)
+        public Cache(IRoot root, ICacheStore store, ICacheRegistry registry)
         {
+            Root = root;
             _store = store;
             _registry = registry;
         }
+
+        public IRoot Root { get; }
 
         public IEnumerable<T> Fetch<T>(string key = null)
         {
@@ -41,6 +44,26 @@ namespace u2.Caching
             return result as ILookup<string, T>;
         }
 
+        public async Task ReloadAsync<T>(string key = null)
+        {
+            await _registry.ReloadAsync<T>(this, key).ConfigureAwait(false);
+        }
+
+        public async Task ReloadAsync()
+        {
+            await _registry.ReloadAsync(this).ConfigureAwait(false);
+        }
+
+        public void Reload<T>(string key = null)
+        {
+            ReloadAsync<T>(key).Wait();
+        }
+
+        public void Reload()
+        {
+            ReloadAsync().Wait();
+        }
+
         private async Task<object> DoFetchAsync<T>(string key, bool isLookup = false)
         {
             var type = typeof(T);
@@ -54,7 +77,7 @@ namespace u2.Caching
         private async Task<object> TaskFetchAsync(ICacheTask task, string cacheKey)
         {
             if (!_store.Has(cacheKey) || task.IsExpired)
-                await task.Run((k, v) => _store.Save(k, v)).ConfigureAwait(false);
+                await task.Run(this, (k, v) => _store.Save(k, v)).ConfigureAwait(false);
 
             return _store.Get(cacheKey);
         }

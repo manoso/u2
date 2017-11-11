@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
 using u2.Test;
@@ -11,7 +12,7 @@ namespace u2.Caching.Test
     [TestFixture]
     public class CacheTaskTest
     {
-        private readonly Func<Task<IEnumerable<CacheItem>>> _task = async () => await Task.Run(() => CacheItems);
+        private readonly Func<ICache, Task<IEnumerable<CacheItem>>> _task = async x => await Task.Run(() => CacheItems);
 
         [Test]
         public async Task Run_concurrent_run_single_result_success()
@@ -52,7 +53,9 @@ namespace u2.Caching.Test
             }.Span(cacheTime);
             task.Lookup(lookup);
 
-            await task.Run();
+            var cache = Substitute.For<ICache>();
+
+            await task.Run(cache);
             var items = task.CacheItems;
             var lookups = items["Lookup_CacheItem_LookupKey"] as ILookup<string, CacheItem>;
             var all = items[taskKey] as IEnumerable<CacheItem>;
@@ -79,9 +82,11 @@ namespace u2.Caching.Test
                 TaskKey = taskKey
             }.Span(cacheTime);
 
-            await task.Run();
+            var cache = Substitute.For<ICache>();
+
+            await task.Run(cache);
             var before = GetFirst(task);
-            await task.Reload();
+            await task.Reload(cache);
             var after = GetFirst(task);
 
             Assert.That(before.Id, Is.Not.EqualTo(after.Id));
@@ -89,7 +94,8 @@ namespace u2.Caching.Test
 
         private async Task<T> GetFirstAsync<T>(ICacheTask<T> task) where T: class
         {
-            await task.Run();
+            var cache = Substitute.For<ICache>();
+            await task.Run(cache);
             return ((IEnumerable<T>)task.CacheItems.First().Value).First();
         }
 

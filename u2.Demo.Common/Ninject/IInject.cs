@@ -1,4 +1,4 @@
-﻿namespace u2.Demo.Common
+﻿namespace u2.Demo.Common.Ninject
 {
     public interface IInject
     {

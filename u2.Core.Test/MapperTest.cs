@@ -18,8 +18,7 @@ namespace u2.Core.Test
         [OneTimeSetUp]
         public void Setup()
         {
-            var root = Substitute.For<IRoot>();
-            _rego = new MapRegistry(root);
+            _rego = new MapRegistry();
             _mapper = new Mapper(_rego);
 
             _rego.Copy<CmsKey>()

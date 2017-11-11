@@ -4,16 +4,16 @@ using System.Threading.Tasks;
 
 namespace u2.Core
 {
-    public abstract class RunOnce
+    public abstract class RunOnce<T>
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private Task<bool> _task;
 
         protected abstract Func<bool> CanRun { get; }
         protected abstract Action Reset { get; }
-        protected abstract Task RunTask { get; }
+        protected abstract Func<T, Task> RunTask { get; }
 
-        protected async Task RunAsync(Action done = null)
+        protected async Task RunAsync(T parameter, Action done = null)
         {
             TaskCompletionSource<bool> taskCompletion = null;
             await _semaphore.WaitAsync().ConfigureAwait(false);
@@ -27,7 +27,7 @@ namespace u2.Core
 
             if (taskCompletion != null)
             {
-                await RunTask.ConfigureAwait(false);
+                await RunTask(parameter).ConfigureAwait(false);
                 done?.Invoke();
                 taskCompletion.SetResult(true);
             }

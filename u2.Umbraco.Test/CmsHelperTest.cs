@@ -108,7 +108,7 @@ fieldsets: [
     ]}
 ]}";
             var root = Substitute.For<IRoot>();
-            var rego = new MapRegistry(root);
+            var rego = new MapRegistry();
             var mapper = new Mapper(rego);
 
             rego.Register<TestItem>();
@@ -128,7 +128,7 @@ fieldsets: [
         {
             var source = @"{fieldsets: []}";
             var root = Substitute.For<IRoot>();
-            var rego = new MapRegistry(root);
+            var rego = new MapRegistry();
             var mapper = new Mapper(rego);
 
             rego.Register<TestItem>();

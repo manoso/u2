@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using u2.Core.Contract;
+﻿using u2.Core.Contract;
 using u2.Core.Extensions;
 
 namespace u2.Core
@@ -11,16 +8,14 @@ namespace u2.Core
         private readonly IMapRegistry _mapRegistry;
         private readonly IMapper _mapper;
         private readonly ICacheRegistry _cacheRegistry;
-        private readonly ICache _cache;
         private readonly IQueryFactory _queryFactory;
         private readonly ICmsFetcher _cmsFetcher;
 
-        public Registry(IMapRegistry mapRegistry, IMapper mapper, ICacheRegistry cacheRegistry, ICache cache, IQueryFactory queryFactory, ICmsFetcher cmsFetcher)
+        public Registry(IMapRegistry mapRegistry, IMapper mapper, ICacheRegistry cacheRegistry, IQueryFactory queryFactory, ICmsFetcher cmsFetcher)
         {
             _mapRegistry = mapRegistry;
             _mapper = mapper;
             _cacheRegistry = cacheRegistry;
-            _cache = cache;
             _queryFactory = queryFactory;
             _cmsFetcher = cmsFetcher;
         }
@@ -36,10 +31,16 @@ namespace u2.Core
 
             var mapDefer = new MapDefer();
 
-            _cacheRegistry.Add(async () =>
+            _cacheRegistry.Add(async x =>
             {
-                mapDefer.Defer(typeMap, DoGet);
-                var cmsQuery = _queryFactory.Create(typeMap);
+                var cache = x;
+
+                mapDefer.Defer(typeMap, async (t, k) =>
+                {
+                    k = string.IsNullOrWhiteSpace(k) ? t.FullName : k;
+                    return await cache.FetchAsync<object>(k).ConfigureAwait(false);
+                });
+                var cmsQuery = _queryFactory.Create(cache.Root, typeMap);
                 var contents = _cmsFetcher.Fetch(cmsQuery);
                 var models = (await _mapper.ToAsync<T>(contents, mapDefer)).AsList();
 
@@ -47,12 +48,6 @@ namespace u2.Core
             }, key);
 
             return typeMap;
-        }
-
-        private async Task<IEnumerable<object>> DoGet(Type type, string key = null)
-        {
-            key = string.IsNullOrWhiteSpace(key) ? type.FullName : key;
-            return await _cache.FetchAsync<object>(key).ConfigureAwait(false);
         }
     }
 }

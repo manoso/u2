@@ -4,7 +4,6 @@ namespace u2.Core.Contract
 {
     public interface IMapRegistry
     {
-        IRoot Root { get; }
         IBaseTask<T> Copy<T>() where T : class, new();
         IMapTask<T> Register<T>() where T : class, new();
         IMapTask For<T>() where T : class, new();

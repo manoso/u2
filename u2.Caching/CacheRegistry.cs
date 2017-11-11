@@ -9,7 +9,7 @@ namespace u2.Caching
     {
         private readonly IDictionary<string, ICacheTask> _tasks = new Dictionary<string, ICacheTask>();
 
-        public ICacheTask<T> Add<T>(Func<Task<IEnumerable<T>>> func, string key = null)
+        public ICacheTask<T> Add<T>(Func<ICache, Task<IEnumerable<T>>> func, string key = null)
         {
             if (string.IsNullOrWhiteSpace(key))
                 key = typeof(T).FullName;
@@ -38,26 +38,26 @@ namespace u2.Caching
             return _tasks.TryGetValue(taskKey, out task);
         }
 
-        public async Task ReloadAsync<T>(string key = null)
+        public async Task ReloadAsync<T>(ICache cache, string key = null)
         {
             if (_tasks.TryGetValue(key ?? typeof(T).FullName, out ICacheTask task))
-                await task.Reload().ConfigureAwait(false);
+                await task.Reload(cache).ConfigureAwait(false);
         }
 
-        public async Task ReloadAsync()
+        public async Task ReloadAsync(ICache cache)
         {
             foreach (var task in _tasks.Values)
-                await task.Reload().ConfigureAwait(false);
+                await task.Reload(cache).ConfigureAwait(false);
         }
 
-        public void Reload<T>(string key = null)
+        public void Reload<T>(ICache cache, string key = null)
         {
-            ReloadAsync<T>(key).Wait();
+            ReloadAsync<T>(cache, key).Wait();
         }
 
-        public void Reload()
+        public void Reload(ICache cache)
         {
-            ReloadAsync().Wait();
+            ReloadAsync(cache).Wait();
         }
     }
 }

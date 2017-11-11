@@ -16,7 +16,7 @@ namespace u2.Caching.Test
             get
             {
                 var registry = new CacheRegistry();
-                registry.Add(async () => await Task.Run(() => new[] {new CacheItem()} as IEnumerable<CacheItem>));
+                registry.Add(async (x) => await Task.Run(() => new[] {new CacheItem()} as IEnumerable<CacheItem>));
                 return registry;
             }
         }
@@ -46,10 +46,10 @@ namespace u2.Caching.Test
         [Test]
         public async Task ReloadAsync_no_key()
         {
-            var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
+            var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
             var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task);
-            await cacheRegistry.ReloadAsync();
+            await cacheRegistry.ReloadAsync(Arg.Any<ICache>());
 
             task.Received(1);
         }
@@ -57,10 +57,10 @@ namespace u2.Caching.Test
         [Test]
         public void Reload_no_key()
         {
-            var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
+            var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
             var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task);
-            cacheRegistry.Reload();
+            cacheRegistry.Reload(Arg.Any<ICache>());
 
             task.Received(1);
         }
@@ -68,10 +68,10 @@ namespace u2.Caching.Test
         [Test]
         public async Task ReloadAsync_with_key()
         {
-            var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
+            var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
             var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task, "test");
-            await cacheRegistry.ReloadAsync();
+            await cacheRegistry.ReloadAsync(Arg.Any<ICache>());
 
             task.Received(1);
         }
@@ -79,10 +79,10 @@ namespace u2.Caching.Test
         [Test]
         public void Reload_with_key()
         {
-            var task = Substitute.For<Func<Task<IEnumerable<TestItem>>>>();
+            var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
             var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task, "test");
-            cacheRegistry.Reload();
+            cacheRegistry.Reload(Arg.Any<ICache>());
 
             task.Received(1);
         }

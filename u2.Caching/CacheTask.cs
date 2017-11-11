@@ -11,7 +11,7 @@ namespace u2.Caching
     {
         public IList<ICacheLookup<T>> CacheLookups { get; } = new List<ICacheLookup<T>>();
 
-        private readonly Func<Task<IEnumerable<T>>> _task;
+        private readonly Func<ICache, Task<IEnumerable<T>>> _task;
 
         public ICacheTask<T> Span(int seconds)
         {
@@ -28,7 +28,7 @@ namespace u2.Caching
 
         private Func<IEnumerable<T>, IEnumerable<T>> _onSave;
 
-        public CacheTask(Func<Task<IEnumerable<T>>> task)
+        public CacheTask(Func<ICache, Task<IEnumerable<T>>> task)
         {
             _task = task;
         }
@@ -56,14 +56,14 @@ namespace u2.Caching
             }
         }
 
-        protected override Task RunTask => Load();
+        protected override Func<ICache, Task> RunTask => Load;
 
-        protected override async Task Load()
+        protected override async Task Load(ICache cache)
         {
             IList<T> items = null;
             if (_task != null)
             {
-                var data = await _task().ConfigureAwait(false);
+                var data = await _task(cache).ConfigureAwait(false);
 
                 if (data != null)
                 {
@@ -85,7 +85,7 @@ namespace u2.Caching
         }
     }
 
-    public abstract class CacheTask : RunOnce, ICacheTask
+    public abstract class CacheTask : RunOnce<ICache>, ICacheTask
     {
         protected int CacheInSecs = 300;
 
@@ -97,13 +97,13 @@ namespace u2.Caching
 
         protected DateTime Timestamp;
 
-        public async Task Reload()
+        public async Task Reload(ICache cache)
         {
             Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSecs);
-            await Load().ConfigureAwait(false);
+            await Load(cache).ConfigureAwait(false);
         }
 
-        public async Task Run(Action<string, object> save = null)
+        public async Task Run(ICache cache, Action<string, object> save = null)
         {
             var done = save == null
                 ? null as Action
@@ -112,9 +112,9 @@ namespace u2.Caching
                     foreach (var cacheItem in CacheItems)
                         save(cacheItem.Key, cacheItem.Value);
                 };
-            await RunAsync(done).ConfigureAwait(false);
+            await RunAsync(cache, done).ConfigureAwait(false);
         }
 
-        protected abstract Task Load();
+        protected abstract Task Load(ICache cache);
     }
 }

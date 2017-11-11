@@ -17,16 +17,15 @@ namespace u2.Core.Test
             var mapRegistry = Substitute.For<IMapRegistry>();
             var mapper = Substitute.For<IMapper>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
-            var cache = Substitute.For<ICache>();
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
 
-            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cache, queryFactory, cmsFetcher);
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, queryFactory, cmsFetcher);
 
             registry.Register<TestItem>();
 
             mapRegistry.Register<TestItem>().Received(1);
-            cacheRegistry.Add(Arg.Any<Func<Task<IEnumerable<TestItem>>>>(), typeof(TestItem).FullName).Received(1);
+            cacheRegistry.Add(Arg.Any<Func<ICache, Task<IEnumerable<TestItem>>>>(), typeof(TestItem).FullName).Received(1);
         }
 
         [Test]
@@ -35,16 +34,15 @@ namespace u2.Core.Test
             var mapRegistry = Substitute.For<IMapRegistry>();
             var mapper = Substitute.For<IMapper>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
-            var cache = Substitute.For<ICache>();
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
 
-            var registry = new Registry(mapRegistry, mapper, cacheRegistry, cache, queryFactory, cmsFetcher);
+            var registry = new Registry(mapRegistry, mapper, cacheRegistry, queryFactory, cmsFetcher);
 
             registry.Register<TestItem>("test");
 
             mapRegistry.Register<TestItem>().Received(1);
-            cacheRegistry.Add(Arg.Any<Func<Task<IEnumerable<TestItem>>>>(), "test").Received(1);
+            cacheRegistry.Add(Arg.Any<Func<ICache, Task<IEnumerable<TestItem>>>>(), "test").Received(1);
         }
     }
 }
