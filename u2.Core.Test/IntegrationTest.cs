@@ -22,7 +22,7 @@ namespace u2.Core.Test
             var root = Substitute.For<IRoot>();
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
             var queryFactory = Substitute.For<IQueryFactory>();
             var cmsFetcher = Substitute.For<ICmsFetcher>();
             var registry = new Registry(mapRegistry, mapper, cacheRegistry, queryFactory, cmsFetcher);
@@ -385,7 +385,7 @@ namespace u2.Core.Test
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
             var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             async Task<IEnumerable<CacheItem>> Task(ICache c) => await System.Threading.Tasks.Task.Run(() => new[]
             {
@@ -422,7 +422,7 @@ namespace u2.Core.Test
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
             var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             async Task<IEnumerable<CacheItem>> Task(ICache c) => await System.Threading.Tasks.Task.Run(() => new[]
             {
@@ -457,7 +457,7 @@ namespace u2.Core.Test
             var root = Substitute.For<IRoot>();
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             async Task<IEnumerable<TestItem>> Task(ICache c) => await System.Threading.Tasks.Task.Run(() => new[]
             {
@@ -482,7 +482,7 @@ namespace u2.Core.Test
             var root = Substitute.For<IRoot>();
             var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             async Task<IEnumerable<TestItem>> Task(ICache c) => await System.Threading.Tasks.Task.Run(() => new[]
             {

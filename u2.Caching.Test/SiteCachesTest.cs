@@ -2,6 +2,7 @@
 using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
+using u2.Test;
 
 namespace u2.Caching.Test
 {
@@ -14,10 +15,10 @@ namespace u2.Caching.Test
             var cacheAu = Substitute.For<ICache>();
             var cacheNz = Substitute.For<ICache>();
 
-            var siteCaches = new SiteCaches
+            var siteCaches = new SiteCaches(null)
             {
-                ["au"] = cacheAu,
-                ["nz"] = cacheNz
+                [new TestRoot { Key = "au" }] = cacheAu,
+                [new TestRoot { Key = "nz" }] = cacheNz
             };
 
             await siteCaches.RefreshAsync();
@@ -32,10 +33,10 @@ namespace u2.Caching.Test
             var cacheAu = Substitute.For<ICache>();
             var cacheNz = Substitute.For<ICache>();
 
-            var siteCaches = new SiteCaches
+            var siteCaches = new SiteCaches(null)
             {
-                ["au"] = cacheAu,
-                ["nz"] = cacheNz
+                [new TestRoot { Key = "au" }] = cacheAu,
+                [new TestRoot { Key = "nz" }] = cacheNz
             };
 
             siteCaches.Refresh();
@@ -49,10 +50,10 @@ namespace u2.Caching.Test
         {
             var cacheAu = Substitute.For<ICache>();
             var cacheNz = Substitute.For<ICache>();
-            var au = "au";
-            var nz = "nz";
+            var au = new TestRoot { Key = "au" };
+            var nz = new TestRoot { Key = "au" };
 
-            var siteCaches = new SiteCaches
+            var siteCaches = new SiteCaches(null)
             {
                 [au] = cacheAu,
                 [nz] = cacheNz
@@ -69,10 +70,10 @@ namespace u2.Caching.Test
         {
             var cacheAu = Substitute.For<ICache>();
             var cacheNz = Substitute.For<ICache>();
-            var au = "au";
-            var nz = "nz";
+            var au = new TestRoot { Key = "au" };
+            var nz = new TestRoot { Key = "au" };
 
-            var siteCaches = new SiteCaches
+            var siteCaches = new SiteCaches(null)
             {
                 [au] = cacheAu,
                 [nz] = cacheNz

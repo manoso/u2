@@ -10,11 +10,12 @@ namespace u2.Caching
         private readonly ICacheStore _store;
         private readonly ICacheRegistry _registry;
 
-        public Cache(IRoot root, ICacheStore store, ICacheRegistry registry)
+        public Cache(ICacheStore store, ICacheRegistry registry, IRoot root = null)
         {
-            Root = root;
             _store = store;
             _registry = registry;
+
+            Root = root;
         }
 
         public IRoot Root { get; }

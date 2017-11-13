@@ -17,7 +17,7 @@ namespace u2.Caching.Test
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             await cache.FetchAsync<TestItem>();
 
@@ -32,7 +32,7 @@ namespace u2.Caching.Test
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             var key = "key";
             await cache.FetchAsync<TestItem>(key);
@@ -53,7 +53,7 @@ namespace u2.Caching.Test
                     x[1] = task;
                     return true;
                 });
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
             cacheStore.Has(Arg.Any<string>()).Returns(false);
 
             await cache.FetchAsync<TestItem>();
@@ -70,7 +70,7 @@ namespace u2.Caching.Test
             cacheRegistry.TryGetTask(Arg.Any<string>(), out ICacheTask _)
                 .Returns(false);
 
-            var cache = new Cache(root, null, cacheRegistry);
+            var cache = new Cache(null, cacheRegistry, root);
 
             var result = await cache.FetchAsync<TestItem>();
 
@@ -84,7 +84,7 @@ namespace u2.Caching.Test
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             cache.Fetch<TestItem>();
 
@@ -99,7 +99,7 @@ namespace u2.Caching.Test
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             var key = "key";
             cache.Fetch<TestItem>(key);
@@ -120,7 +120,7 @@ namespace u2.Caching.Test
                     x[1] = task;
                     return true;
                 });
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
             cacheStore.Has(Arg.Any<string>()).Returns(false);
 
             cache.Fetch<TestItem>();
@@ -137,7 +137,7 @@ namespace u2.Caching.Test
             cacheRegistry.TryGetTask(Arg.Any<string>(), out ICacheTask _)
                 .Returns(false);
 
-            var cache = new Cache(root, null, cacheRegistry);
+            var cache = new Cache(null, cacheRegistry, root);
 
             var result = cache.Fetch<TestItem>();
 
@@ -151,7 +151,7 @@ namespace u2.Caching.Test
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             await cache.ReloadAsync<TestItem>("key");
 
@@ -165,7 +165,7 @@ namespace u2.Caching.Test
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             await cache.ReloadAsync<TestItem>();
 
@@ -179,7 +179,7 @@ namespace u2.Caching.Test
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             cache.Reload<TestItem>("key");
 
@@ -193,7 +193,7 @@ namespace u2.Caching.Test
             var cacheStore = Substitute.For<ICacheStore>();
             var cacheRegistry = Substitute.For<ICacheRegistry>();
 
-            var cache = new Cache(root, cacheStore, cacheRegistry);
+            var cache = new Cache(cacheStore, cacheRegistry, root);
 
             cache.Reload<TestItem>();
 

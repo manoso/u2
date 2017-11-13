@@ -74,6 +74,7 @@
     <Compile Include="Extensions\ExpressionExtensions.cs" />
     <Compile Include="Contract\IContent.cs" />
     <Compile Include="Contract\ICmsModel.cs" />
+    <Compile Include="OnceToken.cs" />
     <Compile Include="RunOnce.cs" />
     <Compile Include="PropertySetter.cs" />
     <Compile Include="Registry.cs" />

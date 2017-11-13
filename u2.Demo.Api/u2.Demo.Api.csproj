@@ -440,6 +440,10 @@
       <Project>{D000D82D-EAEE-4212-AE9A-4CE90E60C6D4}</Project>
       <Name>u2.Demo.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\u2.Demo.Data\u2.Demo.Data.csproj">
+      <Project>{bb6ad3bd-5d4f-422b-8c58-e73a15937f3c}</Project>
+      <Name>u2.Demo.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\u2.Umbraco\u2.Umbraco.csproj">
       <Project>{c4a0e78c-6801-446c-aacc-c1e6d6f22be1}</Project>
       <Name>u2.Umbraco</Name>

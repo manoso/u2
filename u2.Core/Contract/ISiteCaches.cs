@@ -4,7 +4,15 @@ namespace u2.Core.Contract
 {
     public interface ISiteCaches
     {
-        void Refresh(string site = null);
-        Task RefreshAsync(string site = null);
+        ICache Default { get; }
+
+        ICache this[IRoot root]
+        {
+            get;
+            set;
+        }
+
+        void Refresh(IRoot root = null);
+        Task RefreshAsync(IRoot root = null);
     }
 }

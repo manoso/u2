@@ -8,7 +8,9 @@ using Ninject.Modules;
 using u2.Caching;
 using u2.Core;
 using u2.Core.Contract;
+using u2.Core.Extensions;
 using u2.Demo.Common.Ninject;
+using u2.Demo.Data;
 using u2.Umbraco;
 using Mapper = AutoMapper.Mapper;
 
@@ -43,16 +45,28 @@ namespace u2.Demo.Api.Ninject
             Bind<IQueryFactory>().To<UmbracoQueryFactory>().InSingletonScope();
             Bind<ICmsFetcher>().To<UmbracoFetcher>().InSingletonScope();
             Bind<IRegistry>().To<Registry>().InSingletonScope();
-            Bind<ISiteCaches>().To<SiteCaches>().InSingletonScope();
-
             Bind<ICacheStore>().To<CacheStore>();
-            Bind<IRoot>().ToMethod(context => null);
+            Bind<ICache>().To<Cache>().Named("default")
+                .WithConstructorArgument("root", x => null);
+            Bind<ISiteCaches>().To<SiteCaches>().InSingletonScope()
+                .WithConstructorArgument("cache", x => x.Kernel.Get<ICache>("default"));
+
+            var rego = Kernel?.Get<IRegistry>();
+            rego?.Register<Site>();
+
+            Bind<IRoot>().ToMethod(context =>
+            {
+                var host = HttpContext.Current.Request.Url.Host;
+                var cache = context.Kernel.Get<ISiteCaches>().Default;
+                var sites = cache.Fetch<Site>().AsList();
+                return sites.FirstOrDefault();
+            });
             Bind<ICache>().ToMethod(context =>
             {
-
                 var caches = context.Kernel.Get<ISiteCaches>();
+                var root = context.Kernel.Get<IRoot>();
 
-                return null;
+                return caches[root];
             });
 
             //Bind<IMappingEngine>().ToMethod(x => AutoMapperInstance.Current);
