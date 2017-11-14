@@ -6,7 +6,7 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 obj/
 u2.Umbraco/App_Plugins/
-u2.Demo.Api/App_Data/
+u2.Demo.Api/App_Data/*
 
 
 *.obj

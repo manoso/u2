@@ -9,7 +9,7 @@ namespace u2.Umbraco
 
     public class UmbracoFetcher : ICmsFetcher
     {
-        private const string U2Searcher = "U2Searcher";
+        private const string Searcher = "ExternalSearcher";
 
         public IEnumerable<IContent> Fetch(ICmsQuery cmsQuery)
         {
@@ -20,7 +20,7 @@ namespace u2.Umbraco
                 return null;
             }
 
-            var searcher = ExamineManager.Instance.SearchProviderCollection[U2Searcher];
+            var searcher = ExamineManager.Instance.SearchProviderCollection[Searcher];
             var searchCriteria = searcher.CreateSearchCriteria(BooleanOperation.Or);
             searchCriteria.RawQuery(query);
             var results = searcher.Search(searchCriteria);

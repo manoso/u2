@@ -11,12 +11,17 @@ namespace u2.Umbraco
     using DataType;
     public static class CmsHelper
     {
-        public static IList<T> Split<T>(this string source, char[] separators, IList<T> empty = null)
+        private static readonly char[] DefaultSeparatora = { ',' };
+
+        public static IList<T> Split<T>(this string source, char[] separators = null, IList<T> empty = null)
         {
             if (string.IsNullOrWhiteSpace(source))
             {
                 return empty;
             }
+
+            if (separators == null)
+                separators = DefaultSeparatora;
 
             var list = source
                 .Split(separators, StringSplitOptions.RemoveEmptyEntries)

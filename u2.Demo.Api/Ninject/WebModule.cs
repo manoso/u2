@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Ninject;
@@ -12,7 +11,6 @@ using u2.Core.Extensions;
 using u2.Demo.Common.Ninject;
 using u2.Demo.Data;
 using u2.Umbraco;
-using Mapper = AutoMapper.Mapper;
 
 namespace u2.Demo.Api.Ninject
 {
@@ -40,7 +38,7 @@ namespace u2.Demo.Api.Ninject
                 .Configure(conf => conf.InThreadScope()));
 
             Bind<IMapRegistry>().To<MapRegistry>().InSingletonScope();
-            Bind<IMapper>().To<Core.Mapper>().InSingletonScope();
+            Bind<IMapper>().To<Mapper>().InSingletonScope();
             Bind<ICacheRegistry>().To<CacheRegistry>().InSingletonScope();
             Bind<IQueryFactory>().To<UmbracoQueryFactory>().InSingletonScope();
             Bind<ICmsFetcher>().To<UmbracoFetcher>().InSingletonScope();
@@ -52,14 +50,15 @@ namespace u2.Demo.Api.Ninject
                 .WithConstructorArgument("cache", x => x.Kernel.Get<ICache>("default"));
 
             var rego = Kernel?.Get<IRegistry>();
-            rego?.Register<Site>();
+            rego?.Register<Site>()
+                .Map(site => site.Hosts, null, x => x.Split<string>());
 
             Bind<IRoot>().ToMethod(context =>
             {
                 var host = HttpContext.Current.Request.Url.Host;
                 var cache = context.Kernel.Get<ISiteCaches>().Default;
                 var sites = cache.Fetch<Site>().AsList();
-                return sites.FirstOrDefault();
+                return sites.FirstOrDefault(site => site.Hosts.Contains(host));
             });
             Bind<ICache>().ToMethod(context =>
             {
