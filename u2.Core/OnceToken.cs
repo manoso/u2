@@ -17,12 +17,18 @@ namespace u2.Core
         public async Task LockAsync(Action action)
         {
             await _locker.WaitAsync().ConfigureAwait(false);
-            if (!_isRun)
+            try
             {
-                action();
-                _isRun = true;
+                if (!_isRun)
+                {
+                    action();
+                    _isRun = true;
+                }
             }
-            _locker.Release();
+            finally
+            {
+                _locker.Release();
+            }
         }
 
         public void Lock(Action action)

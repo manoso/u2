@@ -17,13 +17,19 @@ namespace u2.Core
         {
             TaskCompletionSource<bool> taskCompletion = null;
             await _semaphore.WaitAsync().ConfigureAwait(false);
-            if (CanRun())
+            try
             {
-                taskCompletion = new TaskCompletionSource<bool>();
-                _task = taskCompletion.Task;
-                Reset();
+                if (CanRun())
+                {
+                    taskCompletion = new TaskCompletionSource<bool>();
+                    _task = taskCompletion.Task;
+                    Reset();
+                }
             }
-            _semaphore.Release();
+            finally
+            {
+                _semaphore.Release();
+            }
 
             if (taskCompletion != null)
             {
