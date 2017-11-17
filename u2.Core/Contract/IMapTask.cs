@@ -41,9 +41,9 @@ namespace u2.Core.Contract
         IMapTask<T> Act<TP1, TP2, TP3, TP4, TP5>(Action<T, TP1, TP2, TP3, TP4, TP5> action, string alias1, string alias2, string alias3, string alias4, string alias5);
         IMapTask<T> Act<TP1, TP2, TP3, TP4, TP5, TP6>(Action<T, TP1, TP2, TP3, TP4, TP5, TP6> action, string alias1, string alias2, string alias3, string alias4, string alias5, string alias6);
         IMapTask<T> AliasTo(string alias);
-        IMapTask<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string> funcKey = null) where TModel : class, new();
-        IMapTask<T> Fit<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string> funcKey = null, string alias = null) where TModel : class, new();
-        IMapTask<T> Fit<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string> funcKey = null, string alias = null) where TModel : class, new();
+        IMapTask<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string, bool> funcMatch = null) where TModel : class, new();
+        IMapTask<T> Fit<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string, bool> funcMatch = null, string alias = null) where TModel : class, new();
+        IMapTask<T> Fit<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string, bool> funcMatch = null, string alias = null) where TModel : class, new();
         /// <summary>
         /// To be used with All, to ignore a property doesn't need to be mapped.
         /// </summary>

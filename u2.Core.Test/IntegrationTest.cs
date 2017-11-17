@@ -28,41 +28,49 @@ namespace u2.Core.Test
             var registry = new Registry(mapRegistry, mapper, cacheRegistry, queryFactory, cmsFetcher);
 
             mapRegistry.Copy<CmsKey>()
-                .Map(x => x.Key, "id");
+                .Map(x => x.Key, "key");
             mapRegistry.Copy<Model>()
                 .Map(x => x.Name, "alias");
 
-            registry.Register<TestInfo>()
-                .Map(x => x.Key, "infoId");
+            registry.Register<TestInfo>();
 
             registry.Register<TestItem>()
-                .Map(x => x.Key, "itemId")
                 .Fit(x => x.Infos);
 
             fit(registry.Register<TestEntity>());
 
-            var fields = new Dictionary<string, string>
+            var guid1 = Guid.NewGuid().ToString("N");
+            var guid2 = Guid.NewGuid().ToString("N");
+            var guid3 = Guid.NewGuid().ToString("N");
+            var guid4 = Guid.NewGuid().ToString("N");
+            var guid5 = Guid.NewGuid().ToString("N");
+            var guid6 = Guid.NewGuid().ToString("N");
+
+            var entity = new Dictionary<string, string>
             {
+                {"key", guid1 },
                 {"alias", "test"},
                 {"id", "1000"},
                 {"list", "a,b,c"},
-                {"item", "2"},
-                {"items", "1,3"}
+                {"item", guid3},
+                {"items", guid2+","+guid4}
             };
-            var content = new UmbracoContent(fields);
+            var content = new UmbracoContent(entity);
 
             var item1 = new Dictionary<string, string>
             {
+                {"key", guid2 },
                 {"alias", "testItem1"},
                 {"itemId", "1"},
                 {"price", "10.00"},
                 {"onSale", "true"},
-                {"infos", "1,2"}
+                {"infos", guid5+","+guid6}
             };
             var content1 = new UmbracoContent(item1);
 
             var item2 = new Dictionary<string, string>
             {
+                {"key", guid3 },
                 {"alias", "testItem2"},
                 {"itemId", "2"},
                 {"price", "20.00"},
@@ -72,6 +80,7 @@ namespace u2.Core.Test
 
             var item3 = new Dictionary<string, string>
             {
+                {"key", guid4 },
                 {"alias", "testItem3"},
                 {"itemId", "3"},
                 {"price", "30.00"},
@@ -81,6 +90,7 @@ namespace u2.Core.Test
 
             var info1 = new Dictionary<string, string>
             {
+                {"key", guid5 },
                 {"alias", "testInfo1"},
                 {"infoId", "1"},
                 {"info", "info1"}
@@ -89,6 +99,7 @@ namespace u2.Core.Test
 
             var info2 = new Dictionary<string, string>
             {
+                {"key", guid6 },
                 {"alias", "testInfo2"},
                 {"infoId", "2"},
                 {"info", "info2"}
@@ -147,7 +158,7 @@ namespace u2.Core.Test
         public async Task FetchAsync_fit_single_with_key_success()
         {
 
-            var cache = Setup(map => map.Fit(x => x.Item, x => x.ItemId.ToString()));
+            var cache = Setup(map => map.Fit(x => x.Item, (x, key) => x.Key == Guid.Parse(key)));
             var entities = await cache.FetchAsync<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -160,7 +171,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_fit_single_with_key_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Item, x => x.ItemId.ToString()));
+            var cache = Setup(map => map.Fit(x => x.Item, (x, key) => x.Key == Guid.Parse(key)));
             var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -199,7 +210,7 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_fit_many_with_key_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Items, x => x.ItemId.ToString()));
+            var cache = Setup(map => map.Fit(x => x.Items, (x, key) => x.Key == Guid.Parse(key)));
             var entities = await cache.FetchAsync<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -212,7 +223,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_fit_many_with_key_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Items, x => x.ItemId.ToString()));
+            var cache = Setup(map => map.Fit(x => x.Items, (x, key) => x.Key == Guid.Parse(key)));
             var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -228,7 +239,7 @@ namespace u2.Core.Test
             var cache = Setup(map => map.Fit<TestItem>((x, y) =>
             {
                 x.List = y.ToList();
-                x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
+                x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
             }, "items"));
             var entities = await cache.FetchAsync<TestEntity>();
 
@@ -247,7 +258,7 @@ namespace u2.Core.Test
             var cache = Setup(map => map.Fit<TestItem>((x, y) =>
             {
                 x.List = y.ToList();
-                x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
+                x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
             }, "items"));
             var entities = cache.Fetch<TestEntity>();
 
@@ -266,8 +277,8 @@ namespace u2.Core.Test
             var cache = Setup(map => map.Fit<TestItem>((x, y) =>
             {
                 x.List = y.ToList();
-                x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
-            }, "items", x => x.ItemId.ToString()));
+                x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
+            }, "items", (x, key) => x.Key == Guid.Parse(key)));
             var entities = await cache.FetchAsync<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -285,8 +296,8 @@ namespace u2.Core.Test
             var cache = Setup(map => map.Fit<TestItem>((x, y) =>
             {
                 x.List = y.ToList();
-                x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
-            }, "items", x => x.ItemId.ToString()));
+                x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
+            }, "items", (x, key) => x.Key == Guid.Parse(key)));
             var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -306,8 +317,8 @@ namespace u2.Core.Test
                 {
                     x.List = y.ToList();
                     x.Items = x.List;
-                    x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
-                }, "items", x => x.ItemId.ToString()));
+                    x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
+                }, "items", (x, key) => x.Key == Guid.Parse(key)));
 
             var tasks = new Task<IEnumerable<TestEntity>>[50];
             for (var i = 0; i < tasks.Length; i++)
@@ -345,8 +356,8 @@ namespace u2.Core.Test
                 {
                     x.List = y.ToList();
                     x.Items = x.List;
-                    x.Dictionary = x.List.ToDictionary(z => z.Key, z => z);
-                }, "items", x => x.ItemId.ToString()));
+                    x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
+                }, "items", (x, key) => x.Key == Guid.Parse(key)));
 
             var arr = new IEnumerable<TestEntity>[50];
             for (var i = 0; i < arr.Length; i++)

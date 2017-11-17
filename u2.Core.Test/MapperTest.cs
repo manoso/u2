@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -22,7 +23,7 @@ namespace u2.Core.Test
             _mapper = new Mapper(_rego);
 
             _rego.Copy<CmsKey>()
-                .Map(x => x.Key, "id");
+                .Map(x => x.Key);
             _rego.Copy<Model>()
                 .Map(x => x.Name, "nodeName");
 
@@ -697,8 +698,10 @@ namespace u2.Core.Test
         [Test]
         public async Task ToAsync_Copy_Success()
         {
+            var guid = Guid.NewGuid().ToString("N");
             var fields = new Dictionary<string, string>
             {
+                {"key", guid },
                 {"id", "cmskey" },
                 {"nodeName", "a name" }
             };
@@ -708,19 +711,21 @@ namespace u2.Core.Test
             var action = await _mapper.ToAsync<TestAction>(content);
 
             Assert.IsNotNull(item);
-            Assert.That(item.Key, Is.EqualTo("cmskey"));
+            Assert.That(item.Key.ToString("N"), Is.EqualTo(guid));
             Assert.That(item.Name, Is.EqualTo("a name"));
 
             Assert.IsNotNull(action);
-            Assert.That(action.Key, Is.EqualTo("cmskey"));
+            Assert.That(action.Key.ToString("N"), Is.EqualTo(guid));
             Assert.That(action.Name, Is.Null);
         }
 
         [Test]
         public void To_Copy_Success()
         {
+            var guid = Guid.NewGuid().ToString("N");
             var fields = new Dictionary<string, string>
             {
+                {"key", guid },
                 {"id", "cmskey" },
                 {"nodeName", "a name" }
             };
@@ -730,11 +735,11 @@ namespace u2.Core.Test
             var action = _mapper.To<TestAction>(content);
 
             Assert.IsNotNull(item);
-            Assert.That(item.Key, Is.EqualTo("cmskey"));
+            Assert.That(item.Key.ToString("N"), Is.EqualTo(guid));
             Assert.That(item.Name, Is.EqualTo("a name"));
 
             Assert.IsNotNull(action);
-            Assert.That(action.Key, Is.EqualTo("cmskey"));
+            Assert.That(action.Key.ToString("N"), Is.EqualTo(guid));
             Assert.That(action.Name, Is.Null);
         }
     }

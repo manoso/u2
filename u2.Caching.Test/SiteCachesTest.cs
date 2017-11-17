@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
@@ -17,8 +18,8 @@ namespace u2.Caching.Test
 
             var siteCaches = new SiteCaches(null)
             {
-                [new TestRoot { Key = "au" }] = cacheAu,
-                [new TestRoot { Key = "nz" }] = cacheNz
+                [new TestRoot { Key = Guid.NewGuid() }] = cacheAu,
+                [new TestRoot { Key = Guid.NewGuid() }] = cacheNz
             };
 
             await siteCaches.RefreshAsync();
@@ -35,8 +36,8 @@ namespace u2.Caching.Test
 
             var siteCaches = new SiteCaches(null)
             {
-                [new TestRoot { Key = "au" }] = cacheAu,
-                [new TestRoot { Key = "nz" }] = cacheNz
+                [new TestRoot { Key = Guid.NewGuid() }] = cacheAu,
+                [new TestRoot { Key = Guid.NewGuid() }] = cacheNz
             };
 
             siteCaches.Refresh();
@@ -50,8 +51,8 @@ namespace u2.Caching.Test
         {
             var cacheAu = Substitute.For<ICache>();
             var cacheNz = Substitute.For<ICache>();
-            var au = new TestRoot { Key = "au" };
-            var nz = new TestRoot { Key = "au" };
+            var au = new TestRoot { Key = Guid.NewGuid() };
+            var nz = new TestRoot { Key = Guid.NewGuid() };
 
             var siteCaches = new SiteCaches(null)
             {
@@ -70,8 +71,8 @@ namespace u2.Caching.Test
         {
             var cacheAu = Substitute.For<ICache>();
             var cacheNz = Substitute.For<ICache>();
-            var au = new TestRoot { Key = "au" };
-            var nz = new TestRoot { Key = "au" };
+            var au = new TestRoot { Key = Guid.NewGuid() };
+            var nz = new TestRoot { Key = Guid.NewGuid() };
 
             var siteCaches = new SiteCaches(null)
             {

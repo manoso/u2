@@ -219,7 +219,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Fit<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string> funcKey = null, string alias = null)
+        public IMapTask<T> Fit<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string, bool> funcMatch = null, string alias = null)
             where TModel : class, new()
         {
             var action = expModel.ToSetter();
@@ -227,14 +227,14 @@ namespace u2.Core
             if (string.IsNullOrWhiteSpace(alias))
                 alias = expModel.ToInfo().Name;
 
-            var modelMap = new ModelMap<T, TModel>(alias, action, funcKey) as IModelMap;
+            var modelMap = new ModelMap<T, TModel>(alias, action, funcMatch) as IModelMap;
 
             ModelMaps.Add(modelMap);
 
             return this;
         }
 
-        public IMapTask<T> Fit<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string> funcKey = null, string alias = null)
+        public IMapTask<T> Fit<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string, bool> funcMatch = null, string alias = null)
             where TModel : class, new()
         {
             var action = expModel.ToSetter();
@@ -242,19 +242,19 @@ namespace u2.Core
             if (string.IsNullOrWhiteSpace(alias))
                 alias = expModel.ToInfo().Name;
 
-            var modelMap = new ModelMap<T, TModel>(alias, action, funcKey);
+            var modelMap = new ModelMap<T, TModel>(alias, action, funcMatch);
 
             ModelMaps.Add(modelMap);
 
             return this;
         }
 
-        public IMapTask<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string> funcKey = null)
+        public IMapTask<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string, bool> funcMatch = null)
             where TModel : class, new()
         {
             if (!string.IsNullOrWhiteSpace(alias) && actionModel != null)
             {
-                var modelMap = new ModelMap<T, TModel>(alias, actionModel, funcKey) as IModelMap;
+                var modelMap = new ModelMap<T, TModel>(alias, actionModel, funcMatch) as IModelMap;
                 ModelMaps.Add(modelMap);
             }
 

@@ -11,12 +11,17 @@ namespace u2.Demo.Service
 {
     public class DataService : ServiceBase, IDataService
     {
-        [Inject]
+        [Inject, Named("site")]
         public ICache Cache { get; set; }
 
-        public async Task<IEnumerable<View>> GetViews()
+        public DataService(IRegistry registry)
+            : base(registry)
         {
-            return await Cache.FetchAsync<View>();
+        }
+
+        public async Task<IEnumerable<T>> Get<T>()
+        {
+            return await Cache.FetchAsync<T>();
         }
     }
 }

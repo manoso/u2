@@ -7,10 +7,11 @@ namespace u2.Core
 {
     public abstract class ModelMap : IModelMap
     {
-        public static Func<object, string> DefaultGetKey = x => ((ICmsKey) x).Key;
+        public static Func<object, string, bool> DefaultMatchKey = (model, key) => key.EndsWith(((ICmsKey)model).Key.ToString("N"));
+        public static Func<object, string, bool> DefaultMatchId = (model, id) => id == ((ICmsModel<int>)model).Id.ToString();
 
         public Action<object, object> SetModel { get; set; }
-        public Func<object, string> GetKey { get; set; }
+        public Func<object, string, bool> IsMatch { get; set; }
 
         public string Alias { get; protected set; }
         public Type ModelType { get; protected set; }
@@ -32,13 +33,13 @@ namespace u2.Core
 
         private IEnumerable<object> ToModels(IEnumerable<string> keys, IEnumerable<object> source, IEnumerable<object> empty = null)
         {
-            if (keys == null || source == null || GetKey == null) return empty;
+            if (keys == null || source == null || IsMatch == null) return empty;
             return keys.Select(x => Find(x, source));
         }
 
         private object Find(string key, IEnumerable<object> source)
         {
-            return source.FirstOrDefault(m => GetKey(m).Equals(key));
+            return source.FirstOrDefault(m => IsMatch(m, key));
         }
     }
 
@@ -46,26 +47,26 @@ namespace u2.Core
         where T : class, new()
         where TModel : class, new()
     {
-        public ModelMap(string alias, Action<T, IEnumerable<TModel>> actionModel, Func<TModel, string> funcKey = null)
+        public ModelMap(string alias, Action<T, IEnumerable<TModel>> actionModel, Func<TModel, string, bool> funcMatch = null)
         {
             SetModel = (x, y) => actionModel((T)x, (IEnumerable<TModel>)y);
             Alias = alias.ToLowerInvariant();
             ModelType = typeof(TModel);
             IsMany = true;
             ToList = x => x.OfType<TModel>().ToList();
-            GetKey = funcKey == null
-                ? DefaultGetKey
-                : x => funcKey((TModel)x);
+            IsMatch = funcMatch == null
+                ? DefaultMatchKey
+                : (model, key) => funcMatch((TModel)model, key);
         }
 
-        public ModelMap(string alias, Action<T, TModel> actionModel, Func<TModel, string> funcKey = null)
+        public ModelMap(string alias, Action<T, TModel> actionModel, Func<TModel, string, bool> funcMatch = null)
         {
             SetModel = (x, y) => actionModel((T)x, (TModel)y);
             Alias = alias.ToLowerInvariant();
             ModelType = typeof(TModel);
-            GetKey = funcKey == null
-                ? DefaultGetKey
-                : x => funcKey((TModel)x);
+            IsMatch = funcMatch == null
+                ? DefaultMatchKey
+                : (model, key) => funcMatch((TModel)model, key);
         }
     }
 

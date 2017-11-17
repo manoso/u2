@@ -24,6 +24,11 @@ namespace u2.Caching
             set => _caches[key] = value;
         }
 
+        public bool Has(IRoot root)
+        {
+            return _caches.ContainsKey(root);
+        }
+
         public async Task RefreshAsync(IRoot root = null)
         {
             if (root == null)

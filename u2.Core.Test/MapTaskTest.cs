@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
@@ -352,7 +350,7 @@ namespace u2.Core.Test
 
             Assert.That(map.ModelMaps.Count, Is.EqualTo(1));
             Assert.That(modelMap.Alias, Is.EqualTo("item"));
-            Assert.That(modelMap.GetKey, Is.EqualTo(ModelMap.DefaultGetKey));
+            Assert.That(modelMap.IsMatch, Is.EqualTo(ModelMap.DefaultMatchKey));
             Assert.That(!modelMap.IsMany);
             modelMap.SetModel(entity, item);
             Assert.That(entity.Item, Is.EqualTo(item));
@@ -370,7 +368,7 @@ namespace u2.Core.Test
 
             Assert.That(map.ModelMaps.Count, Is.EqualTo(1));
             Assert.That(modelMap.Alias, Is.EqualTo("item-single"));
-            Assert.That(modelMap.GetKey, Is.EqualTo(ModelMap.DefaultGetKey));
+            Assert.That(modelMap.IsMatch, Is.EqualTo(ModelMap.DefaultMatchKey));
             Assert.That(!modelMap.IsMany);
             modelMap.SetModel(entity, item);
             Assert.That(entity.Item, Is.EqualTo(item));
@@ -379,10 +377,10 @@ namespace u2.Core.Test
         [Test]
         public void Fit_single_with_keyFunc()
         {
-            Func<TestItem, string> getKey = x => x.Key;
+            Func<TestItem, string, bool> matchKey = (model, key) => model.Key == Guid.Parse(key);
 
             var map = new MapTask<TestEntity>()
-                .Fit(x => x.Item, getKey);
+                .Fit(x => x.Item, matchKey);
 
             var modelMap = map.ModelMaps.First();
             var entity = new TestEntity();
@@ -390,7 +388,7 @@ namespace u2.Core.Test
 
             Assert.That(map.ModelMaps.Count, Is.EqualTo(1));
             Assert.That(modelMap.Alias, Is.EqualTo("item"));
-            Assert.That(modelMap.GetKey, Is.Not.EqualTo(getKey));
+            Assert.That(modelMap.IsMatch, Is.Not.EqualTo(matchKey));
             Assert.That(!modelMap.IsMany);
             modelMap.SetModel(entity, item);
             Assert.That(entity.Item, Is.EqualTo(item));
@@ -408,7 +406,7 @@ namespace u2.Core.Test
 
             Assert.That(map.ModelMaps.Count, Is.EqualTo(1));
             Assert.That(modelMap.Alias, Is.EqualTo("items"));
-            Assert.That(modelMap.GetKey, Is.EqualTo(ModelMap.DefaultGetKey));
+            Assert.That(modelMap.IsMatch, Is.EqualTo(ModelMap.DefaultMatchKey));
             Assert.That(modelMap.IsMany);
             modelMap.SetModel(entity, items);
             Assert.That(entity.Items, Is.EqualTo(items));
@@ -426,7 +424,7 @@ namespace u2.Core.Test
 
             Assert.That(map.ModelMaps.Count, Is.EqualTo(1));
             Assert.That(modelMap.Alias, Is.EqualTo("items-many"));
-            Assert.That(modelMap.GetKey, Is.EqualTo(ModelMap.DefaultGetKey));
+            Assert.That(modelMap.IsMatch, Is.EqualTo(ModelMap.DefaultMatchKey));
             Assert.That(modelMap.IsMany);
             modelMap.SetModel(entity, items);
             Assert.That(entity.Items, Is.EqualTo(items));
@@ -435,10 +433,10 @@ namespace u2.Core.Test
         [Test]
         public void Fit_many_with_keyFunc()
         {
-            Func<TestItem, string> getKey = x => x.Key;
+            Func<TestItem, string, bool> matchKey = (model, key) => model.Key == Guid.Parse(key);
 
             var map = new MapTask<TestEntity>()
-                .Fit(x => x.Items, getKey);
+                .Fit(x => x.Items, matchKey);
 
             var modelMap = map.ModelMaps.First();
             var entity = new TestEntity();
@@ -446,7 +444,7 @@ namespace u2.Core.Test
 
             Assert.That(map.ModelMaps.Count, Is.EqualTo(1));
             Assert.That(modelMap.Alias, Is.EqualTo("items"));
-            Assert.That(modelMap.GetKey, Is.Not.EqualTo(getKey));
+            Assert.That(modelMap.IsMatch, Is.Not.EqualTo(matchKey));
             Assert.That(modelMap.IsMany);
             modelMap.SetModel(entity, items);
             Assert.That(entity.Items, Is.EqualTo(items));
@@ -467,7 +465,7 @@ namespace u2.Core.Test
 
             Assert.That(map.ModelMaps.Count, Is.EqualTo(1));
             Assert.That(modelMap.Alias, Is.EqualTo("items"));
-            Assert.That(modelMap.GetKey, Is.EqualTo(ModelMap.DefaultGetKey));
+            Assert.That(modelMap.IsMatch, Is.EqualTo(ModelMap.DefaultMatchKey));
             Assert.That(modelMap.IsMany);
             modelMap.SetModel(entity, items);
             Assert.That(entity.List, Is.EqualTo(items));
@@ -489,13 +487,13 @@ namespace u2.Core.Test
         [Test]
         public void Fit_action_with_keyFunc()
         {
-            Func<TestItem, string> getKey = x => x.Key;
+            Func<TestItem, string, bool> matchKey = (model, key) => model.Key == Guid.Parse(key);
 
             var map = new MapTask<TestEntity>()
                 .Fit((x, y) =>
                 {
                     x.List = y.ToList();
-                }, "items", getKey);
+                }, "items", matchKey);
 
             var modelMap = map.ModelMaps.First();
             var entity = new TestEntity();
@@ -503,7 +501,7 @@ namespace u2.Core.Test
 
             Assert.That(map.ModelMaps.Count, Is.EqualTo(1));
             Assert.That(modelMap.Alias, Is.EqualTo("items"));
-            Assert.That(modelMap.GetKey, Is.Not.EqualTo(getKey));
+            Assert.That(modelMap.IsMatch, Is.Not.EqualTo(matchKey));
             Assert.That(modelMap.IsMany);
             modelMap.SetModel(entity, items);
             Assert.That(entity.List, Is.EqualTo(items));

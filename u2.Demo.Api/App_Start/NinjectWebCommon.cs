@@ -1,7 +1,11 @@
 ﻿
+using System.Web.Http;
+using System.Web.Http.Dispatcher;
+using System.Web.Mvc;
 using Ninject;
 using Ninject.Web.Common;
 using Ninject.Web.Common.WebHost;
+using Ninject.Web.WebApi;
 using u2.Demo.Api;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(NinjectWebCommon), "Start")]
@@ -61,6 +65,9 @@ namespace u2.Demo.Api
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Load(Assembly.GetExecutingAssembly());
+            // Set the resolvers for both the MVC architecture and the Web API architecture in that order
+            GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
+
         }
     }
 }

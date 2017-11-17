@@ -7,6 +7,6 @@ namespace u2.Demo.Service
 {
     public interface IDataService : ITransientScope
     {
-        Task<IEnumerable<View>> GetViews();
+        Task<IEnumerable<T>> Get<T>();
     }
 }

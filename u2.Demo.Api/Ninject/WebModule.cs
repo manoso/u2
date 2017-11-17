@@ -58,15 +58,20 @@ namespace u2.Demo.Api.Ninject
                 var host = HttpContext.Current.Request.Url.Host;
                 var cache = context.Kernel.Get<ISiteCaches>().Default;
                 var sites = cache.Fetch<Site>().AsList();
-                return sites.FirstOrDefault(site => site.Hosts.Contains(host));
+                return sites.FirstOrDefault(/*site => site.Hosts.Contains(host)*/);
             });
             Bind<ICache>().ToMethod(context =>
             {
                 var caches = context.Kernel.Get<ISiteCaches>();
                 var root = context.Kernel.Get<IRoot>();
-
+                if (!caches.Has(root))
+                {
+                    var cacheRego = Kernel?.Get<ICacheRegistry>();
+                    var cacheStore = Kernel?.Get<ICacheStore>();
+                    caches[root] = new Cache(cacheStore, cacheRego, root);
+                }
                 return caches[root];
-            });
+            }).Named("site");
 
             //Bind<IMappingEngine>().ToMethod(x => AutoMapperInstance.Current);
         }

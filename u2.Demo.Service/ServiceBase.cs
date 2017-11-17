@@ -14,16 +14,13 @@ namespace u2.Demo.Service
     {
         private static readonly OnceToken Once = new OnceToken();
 
-        [Inject]
-        public IRegistry Registry { get; set; }
-
-        protected ServiceBase()
+        protected ServiceBase(IRegistry registry)
         {
             Once.Lock(() =>
             {
-                Registry.Register<View>()
+                registry.Register<View>()
                     .Fit(x => x.Blocks);
-                Registry.Register<Block>();
+                registry.Register<Block>();
             });
         }
     }

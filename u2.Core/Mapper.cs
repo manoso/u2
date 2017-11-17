@@ -115,11 +115,6 @@ namespace u2.Core
                     val = GetContentField(x, content);
                     x.Setter?.Set(result, val);
                 }
-
-                if (x.ContentType != null)
-                {
-                    val = content.Has(x.Alias) ? content.Get(x.ContentType, x.Alias) : x.Default;
-                }
             });
 
             var fields = new Dictionary<string, object>();

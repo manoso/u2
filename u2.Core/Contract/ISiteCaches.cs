@@ -12,6 +12,7 @@ namespace u2.Core.Contract
             set;
         }
 
+        bool Has(IRoot root);
         void Refresh(IRoot root = null);
         Task RefreshAsync(IRoot root = null);
     }

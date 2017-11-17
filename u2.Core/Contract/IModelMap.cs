@@ -6,7 +6,7 @@ namespace u2.Core.Contract
     public interface IModelMap
     {
         string Alias { get; }
-        Func<object, string> GetKey { get; set; }
+        Func<object, string, bool> IsMatch { get; set; }
         bool IsMany { get; }
         Type ModelType { get; }
         Action<object, object> SetModel { get; set; }
