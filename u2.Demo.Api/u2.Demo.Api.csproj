@@ -325,6 +325,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Ninject\MapConfig.cs" />
     <Compile Include="Ninject\WebModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -437,6 +438,10 @@
     <ProjectReference Include="..\u2.Caching\u2.Caching.csproj">
       <Project>{5c409114-17e3-45bf-bf3b-82801598d953}</Project>
       <Name>u2.Caching</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\u2.Config\u2.Config.csproj">
+      <Project>{14C72218-F6B6-4980-AEBD-B4BC00536573}</Project>
+      <Name>u2.Config</Name>
     </ProjectReference>
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">
       <Project>{bdb61368-e0c4-46cc-b47c-f275cff7f339}</Project>

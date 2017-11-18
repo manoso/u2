@@ -16,13 +16,10 @@ namespace u2.Caching.Test
             var cacheAu = Substitute.For<ICache>();
             var cacheNz = Substitute.For<ICache>();
 
-            var siteCaches = new SiteCaches(null)
-            {
-                [new TestRoot { Key = Guid.NewGuid() }] = cacheAu,
-                [new TestRoot { Key = Guid.NewGuid() }] = cacheNz
-            };
+            SiteCaches.Add(new TestRoot { Key = Guid.NewGuid() }, cacheAu);
+            SiteCaches.Add(new TestRoot { Key = Guid.NewGuid() }, cacheNz);
 
-            await siteCaches.RefreshAsync();
+            await SiteCaches.RefreshAsync();
 
             await cacheAu.Received(1).ReloadAsync();
             await cacheNz.Received(1).ReloadAsync();
@@ -34,13 +31,10 @@ namespace u2.Caching.Test
             var cacheAu = Substitute.For<ICache>();
             var cacheNz = Substitute.For<ICache>();
 
-            var siteCaches = new SiteCaches(null)
-            {
-                [new TestRoot { Key = Guid.NewGuid() }] = cacheAu,
-                [new TestRoot { Key = Guid.NewGuid() }] = cacheNz
-            };
+            SiteCaches.Add(new TestRoot { Key = Guid.NewGuid() }, cacheAu);
+            SiteCaches.Add(new TestRoot { Key = Guid.NewGuid() }, cacheNz);
 
-            siteCaches.Refresh();
+            SiteCaches.Refresh();
 
             cacheAu.Received(1).ReloadAsync();
             cacheNz.Received(1).ReloadAsync();
@@ -54,13 +48,11 @@ namespace u2.Caching.Test
             var au = new TestRoot { Key = Guid.NewGuid() };
             var nz = new TestRoot { Key = Guid.NewGuid() };
 
-            var siteCaches = new SiteCaches(null)
-            {
-                [au] = cacheAu,
-                [nz] = cacheNz
-            };
+            SiteCaches.Add(au, cacheAu);
+            SiteCaches.Add(nz, cacheNz);
 
-            await siteCaches.RefreshAsync(au);
+
+            await SiteCaches.RefreshAsync(au);
 
             await cacheAu.Received(1).ReloadAsync();
             await cacheNz.DidNotReceive().ReloadAsync();
@@ -74,13 +66,10 @@ namespace u2.Caching.Test
             var au = new TestRoot { Key = Guid.NewGuid() };
             var nz = new TestRoot { Key = Guid.NewGuid() };
 
-            var siteCaches = new SiteCaches(null)
-            {
-                [au] = cacheAu,
-                [nz] = cacheNz
-            };
+            SiteCaches.Add(au, cacheAu);
+            SiteCaches.Add(nz, cacheNz);
 
-            siteCaches.Refresh(au);
+            SiteCaches.Refresh(au);
 
             cacheAu.Received(1).ReloadAsync();
             cacheNz.DidNotReceive().ReloadAsync();

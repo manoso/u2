@@ -13,9 +13,6 @@ namespace u2.Demo.Api.Controllers.Api
         [Inject]
         public IDataService DataService { get; set; }
 
-        [Inject]
-        public ISiteCaches SiteCaches { get; set; }
-
         [Route("site")]
         public async Task<IHttpActionResult> GetSite()
         {

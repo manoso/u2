@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmsKey.cs" />
+    <Compile Include="Contract\IBinder.cs" />
     <Compile Include="Contract\ICache.cs" />
     <Compile Include="Contract\ICacheRegistry.cs" />
     <Compile Include="Contract\ICacheStore.cs" />
@@ -51,7 +52,6 @@
     <Compile Include="Contract\IMedia.cs" />
     <Compile Include="Contract\IQueryFactory.cs" />
     <Compile Include="Contract\IRoot.cs" />
-    <Compile Include="Contract\ISiteCaches.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GroupAction.cs" />
     <Compile Include="Contract\ICmsKey.cs" />

@@ -1,48 +1,54 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using u2.Core;
 using u2.Core.Contract;
 
 namespace u2.Caching
 {
-    public class SiteCaches : ISiteCaches
+    public class SiteCaches
     {
         public static int DefaultCacheTime = 300;
 
-        private readonly IDictionary<IRoot, ICache> _caches = new Dictionary<IRoot, ICache>();
+        private static readonly IDictionary<IRoot, ICache> Caches = new Dictionary<IRoot, ICache>();
 
-        public ICache Default { get; }
+        public static ICache Default { get; set; }
 
-        public SiteCaches(ICache cache)
+        private static ICacheRegistry _cacheRegistry;
+
+        public static void Setup(ICacheRegistry cacheRegistry, ICacheStore cacheStore)
         {
-            Default = cache;
+            _cacheRegistry = cacheRegistry;
+            Default = new Cache(cacheStore, _cacheRegistry);
         }
 
-        public ICache this[IRoot key]
+        public static ICache Get(IRoot root)
         {
-            get => _caches[key];
-            set => _caches[key] = value;
+            return Caches[root];
         }
 
-        public bool Has(IRoot root)
+        public static void Add(IRoot root, ICache cache)
         {
-            return _caches.ContainsKey(root);
+            Caches[root] = cache;
         }
 
-        public async Task RefreshAsync(IRoot root = null)
+        public static bool Has(IRoot root)
+        {
+            return Caches.ContainsKey(root);
+        }
+
+        public static async Task RefreshAsync(IRoot root = null)
         {
             if (root == null)
             {
-                foreach (var cache in _caches.Values)
+                foreach (var cache in Caches.Values)
                 {
                     await cache.ReloadAsync().ConfigureAwait(false);
                 }
             }
             else
-                await _caches[root].ReloadAsync().ConfigureAwait(false);
+                await Caches[root].ReloadAsync().ConfigureAwait(false);
         }
 
-        public void Refresh(IRoot root = null)
+        public static void Refresh(IRoot root = null)
         {
             RefreshAsync(root).Wait();
         }

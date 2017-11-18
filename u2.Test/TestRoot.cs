@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using u2.Core.Contract;
 
 namespace u2.Test
@@ -7,5 +8,7 @@ namespace u2.Test
     {
         public Guid Key { get; set; }
         public int Id { get; set; }
+
+        public IEnumerable<string> Hosts { get; set; }
     }
 }

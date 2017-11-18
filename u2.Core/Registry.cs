@@ -24,6 +24,9 @@ namespace u2.Core
             where T : class, new()
         {
             var type = typeof(T);
+            if (_mapRegistry.Has(type))
+                return _mapRegistry[type] as IMapTask<T>;
+
             var typeMap = _mapRegistry.Register<T>();
 
             if (string.IsNullOrWhiteSpace(key))

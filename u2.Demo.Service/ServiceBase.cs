@@ -12,16 +12,8 @@ namespace u2.Demo.Service
 {
     public abstract class ServiceBase
     {
-        private static readonly OnceToken Once = new OnceToken();
+        [Inject]
+        public ICache Cache { get; set; }
 
-        protected ServiceBase(IRegistry registry)
-        {
-            Once.Lock(() =>
-            {
-                registry.Register<View>()
-                    .Fit(x => x.Blocks);
-                registry.Register<Block>();
-            });
-        }
     }
 }

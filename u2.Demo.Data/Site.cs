@@ -8,6 +8,6 @@ namespace u2.Demo.Data
         public string CountryCode { get; set; }
         public string CurrencyCode { get; set; }
 
-        public IList<string> Hosts { get; set; }
+        public IEnumerable<string> Hosts { get; set; }
     }
 }

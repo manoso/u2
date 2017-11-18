@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
 using u2.Test;
