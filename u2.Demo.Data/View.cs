@@ -8,4 +8,5 @@ namespace u2.Demo.Data
         public string Title { get; set; }
         public IEnumerable<Block> Blocks { get; set; }
     }
+
 }

@@ -1,4 +1,5 @@
 ﻿
+using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using u2.Test;
@@ -20,7 +21,7 @@ namespace u2.Core.Test
 
             Assert.That(defer, Is.EqualTo(result));
             Assert.That(defer.Maps.Count, Is.EqualTo(1));
-            Assert.That(defer.Maps["test"] is MapItem<object, string>);
+            Assert.That(defer.Maps.First() is MapItem<object, string>);
         }
 
         [Test]
@@ -35,7 +36,7 @@ namespace u2.Core.Test
 
             Assert.That(defer, Is.EqualTo(result));
             Assert.That(defer.Maps.Count, Is.EqualTo(1));
-            Assert.That(defer.Maps["test"] is MapItem<TestItem, int>);
+            Assert.That(defer.Maps.First() is MapItem<TestItem, int>);
         }
     }
 }

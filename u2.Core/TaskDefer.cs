@@ -7,11 +7,11 @@ namespace u2.Core
 {
     public class TaskDefer : ITaskDefer
     {
-        public IDictionary<string, IMapItem> Maps { get; } = new Dictionary<string, IMapItem>();
+        public IList<IMapItem> Maps { get; } = new List<IMapItem>();
 
         public ITaskDefer Attach(string alias, Func<object, string, Task> task)
         {
-            Maps.Add(alias, new MapItem<object, string>(alias)
+            Maps.Add(new MapItem<object, string>(alias)
             {
                 ActDefer = task
             });
@@ -23,7 +23,7 @@ namespace u2.Core
     {
         public ITaskDefer<T> Attach<TP>(string alias, Func<T, TP, Task> task)
         {
-            Maps.Add(alias, new MapItem<T, TP>(alias)
+            Maps.Add(new MapItem<T, TP>(alias)
             {
                 ActDefer = task
             });

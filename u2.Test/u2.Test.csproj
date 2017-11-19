@@ -44,12 +44,18 @@
     <Compile Include="TestAction.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestCacheConfig.cs" />
     <Compile Include="TestEntity.cs" />
     <Compile Include="TestItem.cs" />
+    <Compile Include="TestMapConfig.cs" />
     <Compile Include="TestMedia.cs" />
     <Compile Include="TestRoot.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\u2.Config\u2.Config.csproj">
+      <Project>{14C72218-F6B6-4980-AEBD-B4BC00536573}</Project>
+      <Name>u2.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">
       <Project>{bdb61368-e0c4-46cc-b47c-f275cff7f339}</Project>
       <Name>u2.Core</Name>

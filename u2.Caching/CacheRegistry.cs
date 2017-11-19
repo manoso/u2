@@ -23,6 +23,12 @@ namespace u2.Caching
             return task;
         }
 
+        public ICacheTask<T> Add<T>(Func<Task<IEnumerable<T>>> func, string key = null)
+        {
+            async Task<IEnumerable<T>> CacheFunc(ICache x) => await func();
+            return Add(CacheFunc, key);
+        }
+
         public bool Has<T>()
         {
             return Has(typeof(T).FullName);

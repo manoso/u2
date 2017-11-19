@@ -11,34 +11,66 @@ namespace u2.Caching.Test
     [TestFixture]
     public class CacheRegistryTest
     {
-        public ICacheRegistry CacheRegistry
+        public ICacheRegistry CacheRegistryAddHasCache
         {
             get
             {
                 var registry = new CacheRegistry();
-                registry.Add(async (x) => await Task.Run(() => new[] {new CacheItem()} as IEnumerable<CacheItem>));
+                registry.Add(async x => await Task.Run(() => new[] {new CacheItem()} as IEnumerable<CacheItem>));
+                return registry;
+            }
+        }
+
+        public ICacheRegistry CacheRegistryAddNoCache
+        {
+            get
+            {
+                var registry = new CacheRegistry();
+                registry.Add(async () => await Task.Run(() => new[] { new CacheItem() } as IEnumerable<CacheItem>));
                 return registry;
             }
         }
 
         [Test]
-        public void Add_has_success()
+        public void AddHasCache_has_success()
         {
-            Assert.That(CacheRegistry.Has<CacheItem>(), Is.True);
+            Assert.That(CacheRegistryAddHasCache.Has<CacheItem>(), Is.True);
         }
 
         [Test]
-        public void Add_has_key_success()
+        public void AddHasCache_has_key_success()
         {
             var key = typeof(CacheItem).FullName;
-            Assert.That(CacheRegistry.Has(key), Is.True);
+            Assert.That(CacheRegistryAddHasCache.Has(key), Is.True);
         }
 
         [Test]
-        public void TryGetTask_success()
+        public void AddHasCache_TryGetTask_success()
         {
             var taskKey = typeof(CacheItem).FullName;
-            var result = CacheRegistry.TryGetTask(taskKey, out ICacheTask task);
+            var result = CacheRegistryAddHasCache.TryGetTask(taskKey, out ICacheTask task);
+            Assert.That(result, Is.True);
+            Assert.That(task, Is.Not.Null);
+        }
+
+        [Test]
+        public void AddNoCache_has_success()
+        {
+            Assert.That(CacheRegistryAddNoCache.Has<CacheItem>(), Is.True);
+        }
+
+        [Test]
+        public void AddNoCache_has_key_success()
+        {
+            var key = typeof(CacheItem).FullName;
+            Assert.That(CacheRegistryAddNoCache.Has(key), Is.True);
+        }
+
+        [Test]
+        public void AddNoCache_TryGetTask_success()
+        {
+            var taskKey = typeof(CacheItem).FullName;
+            var result = CacheRegistryAddNoCache.TryGetTask(taskKey, out ICacheTask task);
             Assert.That(result, Is.True);
             Assert.That(task, Is.Not.Null);
         }

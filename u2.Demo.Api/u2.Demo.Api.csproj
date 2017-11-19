@@ -325,6 +325,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Ninject\CacheConfig.cs" />
     <Compile Include="Ninject\MapConfig.cs" />
     <Compile Include="Ninject\WebModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -454,6 +455,10 @@
     <ProjectReference Include="..\u2.Demo.Data\u2.Demo.Data.csproj">
       <Project>{bb6ad3bd-5d4f-422b-8c58-e73a15937f3c}</Project>
       <Name>u2.Demo.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\u2.Demo.Provider\u2.Demo.Provider.csproj">
+      <Project>{f73a303a-f11e-4382-8cf1-1335614e61de}</Project>
+      <Name>u2.Demo.Provider</Name>
     </ProjectReference>
     <ProjectReference Include="..\u2.Demo.Service\u2.Demo.Service.csproj">
       <Project>{a0200955-0042-43f7-b0bd-976a142c52f1}</Project>

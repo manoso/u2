@@ -45,14 +45,19 @@ namespace u2.Core
                 var alias = map.Alias;
                 taskDefer.Attach(alias, async (x, s) =>
                 {
-                    if (string.IsNullOrWhiteSpace(s) || x == null) return;
+                    if (x == null) return;
 
                     var source = await task(map.ModelType, null).ConfigureAwait(false);
 
-                    if (modelMap.IsMany)
-                        map.Match(x, s.Split(','), source);
-                    else
-                        map.Match(x, s, source);
+                    if (string.IsNullOrWhiteSpace(alias))
+                        map.Match(x, source);
+                    else if (!string.IsNullOrWhiteSpace(s))
+                    {
+                        if (modelMap.IsMany)
+                            map.Match(x, s.Split(','), source);
+                        else
+                            map.Match(x, s, source);
+                    }
                 });
             }
         }

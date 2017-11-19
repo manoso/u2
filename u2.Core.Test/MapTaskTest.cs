@@ -21,9 +21,9 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void All_success()
+        public void MapAuto_success()
         {
-            var map = new MapTask<TestItem>().All();
+            var map = new MapTask<TestItem>().MapAuto();
 
             Assert.That(map.Maps.Count, Is.EqualTo(5));
         }
@@ -133,10 +133,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Act_1()
+        public void MapAction_1()
         {
             var map = new MapTask<TestAction>()
-                .Act<int>((x, v) => x.Sum = v + 1, "value1");
+                .MapAction<int>((x, v) => x.Sum = v + 1, "value1");
 
             var action = map.GroupActions.First();
             var field = map.CmsFields.First();
@@ -152,10 +152,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Act_2()
+        public void MapAction_2()
         {
             var map = new MapTask<TestAction>()
-                .Act<int, int>((x, v1, v2) => x.Sum = v1 + v2, "value1", "value2");
+                .MapAction<int, int>((x, v1, v2) => x.Sum = v1 + v2, "value1", "value2");
 
             var action = map.GroupActions.First();
             var first = map.CmsFields.First();
@@ -174,10 +174,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Act_3()
+        public void MapAction_3()
         {
             var map = new MapTask<TestAction>()
-                .Act<int, int, int>((x, v1, v2, v3) => x.Sum = v1 + v2 + v3, "value1", "value2", "value3");
+                .MapAction<int, int, int>((x, v1, v2, v3) => x.Sum = v1 + v2 + v3, "value1", "value2", "value3");
 
             var action = map.GroupActions.First();
             var first = map.CmsFields.First();
@@ -200,10 +200,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Act_4()
+        public void MapAction_4()
         {
             var map = new MapTask<TestAction>()
-                .Act<int, int, int, int>((x, v1, v2, v3, v4) => x.Sum = v1 + v2 + v3 + v4, "value1", "value2", "value3",
+                .MapAction<int, int, int, int>((x, v1, v2, v3, v4) => x.Sum = v1 + v2 + v3 + v4, "value1", "value2", "value3",
                     "value4");
 
             var action = map.GroupActions.First();
@@ -231,10 +231,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Act_5()
+        public void MapAction_5()
         {
             var map = new MapTask<TestAction>()
-                .Act<int, int, int, int, int>((x, v1, v2, v3, v4, v5) => x.Sum = v1 + v2 + v3 + v4 + v5, "value1",
+                .MapAction<int, int, int, int, int>((x, v1, v2, v3, v4, v5) => x.Sum = v1 + v2 + v3 + v4 + v5, "value1",
                     "value2", "value3", "value4", "value5");
 
             var action = map.GroupActions.First();
@@ -266,10 +266,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Act_6()
+        public void MapAction_6()
         {
             var map = new MapTask<TestAction>()
-                .Act<int, int, int, int, int, int>((x, v1, v2, v3, v4, v5, v6) => x.Sum = v1 + v2 + v3 + v4 + v5 + v6,
+                .MapAction<int, int, int, int, int, int>((x, v1, v2, v3, v4, v5, v6) => x.Sum = v1 + v2 + v3 + v4 + v5 + v6,
                     "value1", "value2", "value3", "value4", "value5", "value6");
 
             var action = map.GroupActions.First();
@@ -305,14 +305,14 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Act_Content()
+        public void MapContent_Success()
         {
             var content = Substitute.For<IContent>();
             content.Get<int>(Arg.Any<string>()).Returns(1);
             var item = new TestAction();
 
             var map = new MapTask<TestAction>()
-                .Act((c, x) =>
+                .MapContent((c, x) =>
                 {
                     x.Agregate = "value1 = " + c.Get<int>("value1");
                 });
@@ -326,7 +326,7 @@ namespace u2.Core.Test
         public void Ignore_ok()
         {
             var map = new MapTask<TestItem>()
-                .All();
+                .MapAuto();
 
             Assert.That(map.Maps.Count, Is.EqualTo(5));
 
@@ -339,10 +339,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Fit_single()
+        public void Match_success()
         {
             var map = new MapTask<TestEntity>()
-                .Fit(x => x.Item);
+                .Match(x => x.Item);
 
             var modelMap = map.ModelMaps.First();
             var entity = new TestEntity();
@@ -357,10 +357,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Fit_single_alias()
+        public void Match_alias()
         {
             var map = new MapTask<TestEntity>()
-                .Fit(x => x.Item, alias: "item-single");
+                .Match(x => x.Item, alias: "item-single");
 
             var modelMap = map.ModelMaps.First();
             var entity = new TestEntity();
@@ -375,12 +375,12 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Fit_single_with_keyFunc()
+        public void Match_with_keyFunc()
         {
             Func<TestItem, string, bool> matchKey = (model, key) => model.Key == Guid.Parse(key);
 
             var map = new MapTask<TestEntity>()
-                .Fit(x => x.Item, matchKey);
+                .Match(x => x.Item, matchKey);
 
             var modelMap = map.ModelMaps.First();
             var entity = new TestEntity();
@@ -395,10 +395,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Fit_many()
+        public void MatchMany_success()
         {
             var map = new MapTask<TestEntity>()
-                .Fit(x => x.Items);
+                .MatchMany(x => x.Items);
 
             var modelMap = map.ModelMaps.First();
             var entity = new TestEntity();
@@ -413,10 +413,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Fit_many_alias()
+        public void MatchMany_alias()
         {
             var map = new MapTask<TestEntity>()
-                .Fit(x => x.Items, alias: "items-many");
+                .MatchMany(x => x.Items, alias: "items-many");
 
             var modelMap = map.ModelMaps.First();
             var entity = new TestEntity();
@@ -431,12 +431,12 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Fit_many_with_keyFunc()
+        public void MatchMany_with_keyFunc()
         {
             Func<TestItem, string, bool> matchKey = (model, key) => model.Key == Guid.Parse(key);
 
             var map = new MapTask<TestEntity>()
-                .Fit(x => x.Items, matchKey);
+                .MatchMany(x => x.Items, matchKey);
 
             var modelMap = map.ModelMaps.First();
             var entity = new TestEntity();
@@ -451,10 +451,10 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Fit_action()
+        public void MatchAction_success()
         {
             var map = new MapTask<TestEntity>()
-                .Fit<TestItem>((x, y) =>
+                .MatchAction<TestItem>((x, y) =>
                 {
                     x.List = y.ToList();
                 }, "items");
@@ -472,25 +472,25 @@ namespace u2.Core.Test
         }
 
         [Test]
-        public void Fit_action_not_valid()
+        public void MatchAction_not_valid()
         {
             var map = new MapTask<TestEntity>()
-                .Fit<TestItem>(null, "items")
-                .Fit<TestItem>((x, y) =>
+                .MatchAction<TestItem>(null, "items")
+                .MatchAction<TestItem>((x, y) =>
                 {
                     x.List = y.ToList();
-                }, null);
+                });
 
-            Assert.That(map.ModelMaps.Count, Is.EqualTo(0));
+            Assert.That(map.ModelMaps.Count, Is.EqualTo(1));
         }
 
         [Test]
-        public void Fit_action_with_keyFunc()
+        public void MatchAction_with_keyFunc()
         {
             Func<TestItem, string, bool> matchKey = (model, key) => model.Key == Guid.Parse(key);
 
             var map = new MapTask<TestEntity>()
-                .Fit((x, y) =>
+                .MatchAction((x, y) =>
                 {
                     x.List = y.ToList();
                 }, "items", matchKey);

@@ -139,12 +139,13 @@ namespace u2.Core
             {
                 if (defer.Defers.TryGetValue(mapTask.EntityType, out ITaskDefer typeDefer))
                 {
-                    foreach (var map in typeDefer.Maps.Select(x => x.Value))
+                    foreach (var map in typeDefer.Maps)
                     {
-                        val = content.Get(map.ContentType, map.Alias);
+                        val = string.IsNullOrWhiteSpace(map.Alias)
+                            ? null
+                            : content.Get(map.ContentType, map.Alias);
                         if (map.Defer != null)
                             await map.Defer(result, val).ConfigureAwait(false);
-
                     }
                 }
             }

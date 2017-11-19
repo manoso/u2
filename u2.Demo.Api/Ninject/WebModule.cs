@@ -34,7 +34,7 @@ namespace u2.Demo.Api.Ninject
                 .BindDefaultInterface()
                 .Configure(conf => conf.InThreadScope()));
 
-            new BindConfig(this).Config<Site, MapConfig>();
+            new BindConfig(this).Config<Site, MapConfig, CacheConfig>();
             //Bind<IMappingEngine>().ToMethod(x => AutoMapperInstance.Current);
         }
 

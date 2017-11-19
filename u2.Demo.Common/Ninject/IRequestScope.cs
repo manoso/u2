@@ -1,6 +1,6 @@
 ﻿namespace u2.Demo.Common.Ninject
 {
-    public interface IInject
+    public interface IRequestScope : IInject
     {
     }
 }

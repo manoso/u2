@@ -15,5 +15,6 @@ namespace u2.Demo.Service
         {
             return await Cache.FetchAsync<T>();
         }
+
     }
 }

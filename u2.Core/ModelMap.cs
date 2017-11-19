@@ -31,6 +31,11 @@ namespace u2.Core
             SetModel(target, model);
         }
 
+        public void Match(object target, IEnumerable<object> source)
+        {
+            SetModel(target, source);
+        }
+
         private IEnumerable<object> ToModels(IEnumerable<string> keys, IEnumerable<object> source, IEnumerable<object> empty = null)
         {
             if (keys == null || source == null || IsMatch == null) return empty;
@@ -50,7 +55,7 @@ namespace u2.Core
         public ModelMap(string alias, Action<T, IEnumerable<TModel>> actionModel, Func<TModel, string, bool> funcMatch = null)
         {
             SetModel = (x, y) => actionModel((T)x, (IEnumerable<TModel>)y);
-            Alias = alias.ToLowerInvariant();
+            Alias = alias?.ToLowerInvariant();
             ModelType = typeof(TModel);
             IsMany = true;
             ToList = x => x.OfType<TModel>().ToList();

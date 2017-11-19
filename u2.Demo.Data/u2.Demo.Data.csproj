@@ -43,6 +43,7 @@
     <Compile Include="Block.cs" />
     <Compile Include="BlockSize.cs" />
     <Compile Include="CmsModel.cs" />
+    <Compile Include="Label.cs" />
     <Compile Include="Site.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View.cs" />

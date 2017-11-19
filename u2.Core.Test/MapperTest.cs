@@ -30,37 +30,37 @@ namespace u2.Core.Test
             _rego.Register<TestEntity>()
                 .Map(x => x.Name, "contentName")
                 .Map(x => x.Infos, "list", x => x.Split<string>(new [] {','}))
-                .Fit(x => x.Items);
+                .MatchMany(x => x.Items);
             _rego.Register<TestAction>()
-                .Act<int>((x, v) =>
+                .MapAction<int>((x, v) =>
                 {
                     x.Mix = x.ActionId + v;
                 }, "value1")
-                .Act<int>((x, v1) =>
+                .MapAction<int>((x, v1) =>
                 {
                     x.Sum = v1;
                 }, "value1")
-                .Act<int, int>((x, v1, v2) =>
+                .MapAction<int, int>((x, v1, v2) =>
                 {
                     x.Sum2 = v1 + v2;
                 }, "value1", "value2")
-                .Act<int, int, short>((x, v1, v2, v3) =>
+                .MapAction<int, int, short>((x, v1, v2, v3) =>
                 {
                     x.Sum3 = v1 + v2 + v3;
                 }, "value1", "value2", "value3")
-                .Act<int, int, short, short>((x, v1, v2, v3, v4) =>
+                .MapAction<int, int, short, short>((x, v1, v2, v3, v4) =>
                 {
                     x.Sum4 = v1 + v2 + v3 + v4;
                 }, "value1", "value2", "value3", "value4")
-                .Act<int, int, short, short, int>((x, v1, v2, v3, v4, v5) =>
+                .MapAction<int, int, short, short, int>((x, v1, v2, v3, v4, v5) =>
                 {
                     x.Sum5 = v1 + v2 + v3 + v4 + v5;
                 }, "value1", "value2", "value3", "value4", "value5")
-                .Act<int, int, short, short, int, string>((x, v1, v2, v3, v4, v5, v6) =>
+                .MapAction<int, int, short, short, int, string>((x, v1, v2, v3, v4, v5, v6) =>
                 {
                     x.Sum6 = v1 + v2 + v3 + v4 + v5 + (string.IsNullOrWhiteSpace(v6) ? 0 : int.Parse(v6));
                 }, "value1", "value2", "value3", "value4", "value5", "value6")
-                .Act((c, x) =>
+                .MapContent((c, x) =>
                 {
                     x.Agregate = c.Get<string>("value1")
                                  + c.Get<string>("value2")

@@ -13,8 +13,9 @@ namespace u2.Demo.Api.Ninject
             registry.Register<Site>()
                 .Map(root => root.Hosts, null, x => x.Split<string>());
             registry.Register<View>()
-                .Fit(x => x.Blocks);
-            registry.Register<Block>();
+                .MatchMany(view => view.Blocks);
+            registry.Register<Block>()
+                .MatchAction<Label>((block, labels) => block.Labels = labels);
         }
     }
 }

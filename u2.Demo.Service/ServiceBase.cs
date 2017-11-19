@@ -15,5 +15,8 @@ namespace u2.Demo.Service
         [Inject]
         public ICache Cache { get; set; }
 
+        [Inject]
+        public ICacheRegistry CacheRegistry { get; set; }
+
     }
 }

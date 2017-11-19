@@ -35,7 +35,7 @@ namespace u2.Core.Test
             registry.Register<TestInfo>();
 
             registry.Register<TestItem>()
-                .Fit(x => x.Infos);
+                .MatchMany(x => x.Infos);
 
             fit(registry.Register<TestEntity>());
 
@@ -131,7 +131,7 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_fit_single_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Item));
+            var cache = Setup(map => map.Match(x => x.Item));
             var entities = await cache.FetchAsync<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -144,7 +144,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_fit_single_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Item));
+            var cache = Setup(map => map.Match(x => x.Item));
             var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -158,7 +158,7 @@ namespace u2.Core.Test
         public async Task FetchAsync_fit_single_with_key_success()
         {
 
-            var cache = Setup(map => map.Fit(x => x.Item, (x, key) => x.Key == Guid.Parse(key)));
+            var cache = Setup(map => map.Match(x => x.Item, (x, key) => x.Key == Guid.Parse(key)));
             var entities = await cache.FetchAsync<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -171,7 +171,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_fit_single_with_key_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Item, (x, key) => x.Key == Guid.Parse(key)));
+            var cache = Setup(map => map.Match(x => x.Item, (x, key) => x.Key == Guid.Parse(key)));
             var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -184,7 +184,7 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_fit_many_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Items));
+            var cache = Setup(map => map.MatchMany(x => x.Items));
             var entities = await cache.FetchAsync<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -197,7 +197,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_fit_many_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Items));
+            var cache = Setup(map => map.MatchMany(x => x.Items));
             var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -210,7 +210,7 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_fit_many_with_key_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Items, (x, key) => x.Key == Guid.Parse(key)));
+            var cache = Setup(map => map.MatchMany(x => x.Items, (x, key) => x.Key == Guid.Parse(key)));
             var entities = await cache.FetchAsync<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -223,7 +223,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_fit_many_with_key_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Items, (x, key) => x.Key == Guid.Parse(key)));
+            var cache = Setup(map => map.MatchMany(x => x.Items, (x, key) => x.Key == Guid.Parse(key)));
             var entities = cache.Fetch<TestEntity>();
 
             Assert.That(entities, Is.Not.Null);
@@ -236,7 +236,7 @@ namespace u2.Core.Test
         [Test]
         public async Task GetchAsync_fit_action_success()
         {
-            var cache = Setup(map => map.Fit<TestItem>((x, y) =>
+            var cache = Setup(map => map.MatchAction<TestItem>((x, y) =>
             {
                 x.List = y.ToList();
                 x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
@@ -255,7 +255,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_fit_action_success()
         {
-            var cache = Setup(map => map.Fit<TestItem>((x, y) =>
+            var cache = Setup(map => map.MatchAction<TestItem>((x, y) =>
             {
                 x.List = y.ToList();
                 x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
@@ -274,7 +274,7 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_fit_action_with_key_success()
         {
-            var cache = Setup(map => map.Fit<TestItem>((x, y) =>
+            var cache = Setup(map => map.MatchAction<TestItem>((x, y) =>
             {
                 x.List = y.ToList();
                 x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
@@ -293,7 +293,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_fit_action_with_key_success()
         {
-            var cache = Setup(map => map.Fit<TestItem>((x, y) =>
+            var cache = Setup(map => map.MatchAction<TestItem>((x, y) =>
             {
                 x.List = y.ToList();
                 x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
@@ -312,8 +312,8 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_concurrent_access_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Item)
-                .Fit<TestItem>((x, y) =>
+            var cache = Setup(map => map.Match(x => x.Item)
+                .MatchAction<TestItem>((x, y) =>
                 {
                     x.List = y.ToList();
                     x.Items = x.List;
@@ -351,8 +351,8 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_concurrent_access_success()
         {
-            var cache = Setup(map => map.Fit(x => x.Item)
-                .Fit<TestItem>((x, y) =>
+            var cache = Setup(map => map.Match(x => x.Item)
+                .MatchAction<TestItem>((x, y) =>
                 {
                     x.List = y.ToList();
                     x.Items = x.List;

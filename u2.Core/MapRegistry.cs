@@ -30,7 +30,7 @@ namespace u2.Core
             where T : class, new()
         {
             var map = new MapTask<T>();
-            map.All();
+            map.MapAuto();
 
             var type = typeof(T);
             foreach (var key in _copies.Keys)

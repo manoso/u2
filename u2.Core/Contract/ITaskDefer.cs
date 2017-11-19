@@ -6,7 +6,7 @@ namespace u2.Core.Contract
 {
     public interface ITaskDefer
     {
-        IDictionary<string, IMapItem> Maps { get; }
+        IList<IMapItem> Maps { get; }
         ITaskDefer Attach(string alias, Func<object, string, Task> task);
     }
 

@@ -30,7 +30,7 @@ namespace u2.Core
 
         public abstract object Create(object instance = null);
 
-        public IMapTask All()
+        public IMapTask MapAuto()
         {
             EntityType
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -69,7 +69,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Act<TP>(Action<T, TP> action, string alias)
+        public IMapTask<T> MapAction<TP>(Action<T, TP> action, string alias)
         {
             if (!string.IsNullOrWhiteSpace(alias))
             {
@@ -85,7 +85,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Act<TP1, TP2>(Action<T, TP1, TP2> action, string alias1, string alias2)
+        public IMapTask<T> MapAction<TP1, TP2>(Action<T, TP1, TP2> action, string alias1, string alias2)
         {
             if (!string.IsNullOrWhiteSpace(alias1) && !string.IsNullOrWhiteSpace(alias2))
             {
@@ -102,7 +102,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Act<TP1, TP2, TP3>(Action<T, TP1, TP2, TP3> action, string alias1, string alias2, string alias3)
+        public IMapTask<T> MapAction<TP1, TP2, TP3>(Action<T, TP1, TP2, TP3> action, string alias1, string alias2, string alias3)
         {
             if (!string.IsNullOrWhiteSpace(alias1) && !string.IsNullOrWhiteSpace(alias2) && !string.IsNullOrWhiteSpace(alias3))
             {
@@ -120,7 +120,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Act<TP1, TP2, TP3, TP4>(Action<T, TP1, TP2, TP3, TP4> action, string alias1, string alias2, string alias3, string alias4)
+        public IMapTask<T> MapAction<TP1, TP2, TP3, TP4>(Action<T, TP1, TP2, TP3, TP4> action, string alias1, string alias2, string alias3, string alias4)
         {
             if (!string.IsNullOrWhiteSpace(alias1) && !string.IsNullOrWhiteSpace(alias2) && !string.IsNullOrWhiteSpace(alias3) && !string.IsNullOrWhiteSpace(alias4))
             {
@@ -139,7 +139,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Act<TP1, TP2, TP3, TP4, TP5>(Action<T, TP1, TP2, TP3, TP4, TP5> action, string alias1, string alias2, string alias3, string alias4, string alias5)
+        public IMapTask<T> MapAction<TP1, TP2, TP3, TP4, TP5>(Action<T, TP1, TP2, TP3, TP4, TP5> action, string alias1, string alias2, string alias3, string alias4, string alias5)
         {
             if (!string.IsNullOrWhiteSpace(alias1) 
                 && !string.IsNullOrWhiteSpace(alias2) 
@@ -163,7 +163,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Act<TP1, TP2, TP3, TP4, TP5, TP6>(Action<T, TP1, TP2, TP3, TP4, TP5, TP6> action, string alias1, string alias2, string alias3, string alias4, string alias5, string alias6)
+        public IMapTask<T> MapAction<TP1, TP2, TP3, TP4, TP5, TP6>(Action<T, TP1, TP2, TP3, TP4, TP5, TP6> action, string alias1, string alias2, string alias3, string alias4, string alias5, string alias6)
         {
             if (!string.IsNullOrWhiteSpace(alias1)
                 && !string.IsNullOrWhiteSpace(alias2)
@@ -189,15 +189,15 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Act(Action<IContent, T> action)
+        public IMapTask<T> MapContent(Action<IContent, T> action)
         {
             Action = (x, y) => action(x, (T)y);
             return this;
         }
 
-        public new IMapTask<T> All()
+        public new IMapTask<T> MapAuto()
         {
-            base.All();
+            base.MapAuto();
             return this;
         }
 
@@ -219,22 +219,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Fit<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string, bool> funcMatch = null, string alias = null)
-            where TModel : class, new()
-        {
-            var action = expModel.ToSetter();
-
-            if (string.IsNullOrWhiteSpace(alias))
-                alias = expModel.ToInfo().Name;
-
-            var modelMap = new ModelMap<T, TModel>(alias, action, funcMatch) as IModelMap;
-
-            ModelMaps.Add(modelMap);
-
-            return this;
-        }
-
-        public IMapTask<T> Fit<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string, bool> funcMatch = null, string alias = null)
+        public IMapTask<T> Match<TModel>(Expression<Func<T, TModel>> expModel, Func<TModel, string, bool> funcMatch = null, string alias = null)
             where TModel : class, new()
         {
             var action = expModel.ToSetter();
@@ -249,10 +234,25 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Fit<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias, Func<TModel, string, bool> funcMatch = null)
+        public IMapTask<T> MatchMany<TModel>(Expression<Func<T, IEnumerable<TModel>>> expModel, Func<TModel, string, bool> funcMatch = null, string alias = null)
             where TModel : class, new()
         {
-            if (!string.IsNullOrWhiteSpace(alias) && actionModel != null)
+            var action = expModel.ToSetter();
+
+            if (string.IsNullOrWhiteSpace(alias))
+                alias = expModel.ToInfo().Name;
+
+            var modelMap = new ModelMap<T, TModel>(alias, action, funcMatch);
+
+            ModelMaps.Add(modelMap);
+
+            return this;
+        }
+
+        public IMapTask<T> MatchAction<TModel>(Action<T, IEnumerable<TModel>> actionModel, string alias = null, Func<TModel, string, bool> funcMatch = null)
+            where TModel : class, new()
+        {
+            if (actionModel != null)
             {
                 var modelMap = new ModelMap<T, TModel>(alias, actionModel, funcMatch) as IModelMap;
                 ModelMaps.Add(modelMap);

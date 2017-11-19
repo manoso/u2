@@ -13,5 +13,6 @@ namespace u2.Core.Contract
 
         void Match(object target, IEnumerable<string> keys, IEnumerable<object> source);
         void Match(object target, string key, IEnumerable<object> source);
+        void Match(object target, IEnumerable<object> source);
     }
 }
