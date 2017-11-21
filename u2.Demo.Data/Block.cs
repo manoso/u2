@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using u2.Umbraco.DataType;
 
 namespace u2.Demo.Data
 {
@@ -8,5 +9,6 @@ namespace u2.Demo.Data
         public string Description { get; set; }
 
         public IEnumerable<Label> Labels { get; set; }
+        public IEnumerable<Media> Images { get; set; }
     }
 }

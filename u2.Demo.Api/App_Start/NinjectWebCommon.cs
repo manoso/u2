@@ -1,7 +1,4 @@
-﻿
-using System.Web.Http;
-using System.Web.Http.Dispatcher;
-using System.Web.Mvc;
+﻿using System.Web.Http;
 using Ninject;
 using Ninject.Web.Common;
 using Ninject.Web.Common.WebHost;
@@ -9,13 +6,12 @@ using Ninject.Web.WebApi;
 using u2.Demo.Api;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(NinjectWebCommon), "Start")]
-[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(NinjectWebCommon), "Stop")]
+[assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(NinjectWebCommon), "Stop")]
 
 namespace u2.Demo.Api
 {
     using System;
     using System.Reflection;
-    using System.Web;
 
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 
@@ -52,7 +48,7 @@ namespace u2.Demo.Api
         {
             var kernel = new StandardKernel();
             kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
-            kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
+            //kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
 
             RegisterServices(kernel);
             return kernel;

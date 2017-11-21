@@ -215,6 +215,8 @@
   <ItemGroup>
     <Compile Include="CmsHelper.cs" />
     <Compile Include="ContentQuery.cs" />
+    <Compile Include="DataType\JsonContent.cs" />
+    <Compile Include="DataType\NestedContentcs.cs" />
     <Compile Include="MediaQuery.cs" />
     <Compile Include="UmbracoQuery.cs" />
     <Compile Include="DataType\Archetype.cs" />

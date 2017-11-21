@@ -4,6 +4,7 @@ using Ninject;
 using u2.Core.Contract;
 using u2.Demo.Data;
 using u2.Demo.Service;
+using u2.Umbraco.DataType;
 
 namespace u2.Demo.Api.Controllers.Api
 {
@@ -13,10 +14,17 @@ namespace u2.Demo.Api.Controllers.Api
         [Inject]
         public IDataService DataService { get; set; }
 
-        [Route("site")]
-        public async Task<IHttpActionResult> GetSite()
+        [Route("view")]
+        public async Task<IHttpActionResult> GetView()
         {
             var views = await DataService.Get<View>();
+            return Ok(views);
+        }
+
+        [Route("media")]
+        public async Task<IHttpActionResult> GetMedia()
+        {
+            var views = await DataService.Get<Media>();
             return Ok(views);
         }
     }

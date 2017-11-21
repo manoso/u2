@@ -2,6 +2,7 @@
 using u2.Core.Contract;
 using u2.Umbraco;
 using u2.Demo.Data;
+using u2.Umbraco.DataType;
 
 
 namespace u2.Demo.Api.Ninject
@@ -15,7 +16,9 @@ namespace u2.Demo.Api.Ninject
             registry.Register<View>()
                 .MatchMany(view => view.Blocks);
             registry.Register<Block>()
-                .MatchAction<Label>((block, labels) => block.Labels = labels);
+                .MatchAction<Label>((block, labels) => block.Labels = labels)
+                .MatchMany(block => block.Images);
+            registry.Register<Media>();
         }
     }
 }

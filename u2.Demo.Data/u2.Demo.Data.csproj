@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="Block.cs" />
     <Compile Include="BlockSize.cs" />
-    <Compile Include="CmsModel.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="Site.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,6 +55,10 @@
     <ProjectReference Include="..\u2.Demo.Common\u2.Demo.Common.csproj">
       <Project>{d000d82d-eaee-4212-ae9a-4ce90e60c6d4}</Project>
       <Name>u2.Demo.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\u2.Umbraco\u2.Umbraco.csproj">
+      <Project>{C4A0E78C-6801-446C-AACC-C1E6D6F22BE1}</Project>
+      <Name>u2.Umbraco</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

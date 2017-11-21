@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CmsKey.cs" />
+    <Compile Include="CmsModel.cs" />
     <Compile Include="Contract\IBinder.cs" />
     <Compile Include="Contract\ICache.cs" />
     <Compile Include="Contract\ICacheRegistry.cs" />
