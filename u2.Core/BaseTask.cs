@@ -29,6 +29,20 @@ namespace u2.Core
                         Default = defaultVal
                     };
         }
+
+        protected MapItem<T, TP> CreatItem<T, TP>(Expression<Func<T, TP>> property,
+            string alias = null,
+            Func<string, Func<IMapper, IMapDefer, object>> mapFunc = null,
+            TP defaultVal = default(TP))
+        {
+            return property == null
+                ? null
+                : new MapItem<T, TP>(alias, property)
+                {
+                    Map = mapFunc,
+                    Default = defaultVal
+                };
+        }
     }
 
     public class BaseTask<T> : BaseTask, IBaseTask<T>

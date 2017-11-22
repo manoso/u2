@@ -12,6 +12,7 @@ namespace u2.Core.Contract
         IDictionary<string, Type> CmsFields { get; }
         IList<IGroupAction> GroupActions { get; }
         IList<IModelMap> ModelMaps { get; }
+        IMapDefer MapDefer { get; }
 
         /// <summary>
         /// Map all public instance properties for the given object using naming convensions.
@@ -26,6 +27,8 @@ namespace u2.Core.Contract
         where T : class, new()
     {
         IMapTask<T> MapContent(Action<IContent, T> action);
+        IMapTask<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP));
+        IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, IMapDefer, object>> mapFunc = null, TP defaultVal = default(TP));
 
         /// <summary>
         /// Map a CMS property to object properties using Action.
@@ -51,6 +54,5 @@ namespace u2.Core.Contract
         /// <param name="property">Lambda expression for the object property, given the declaring object.</param>
         /// <returns></returns>
         IMapTask<T> Ignore<TO>(Expression<Func<T, TO>> property);
-        IMapTask<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP));
     }
 }

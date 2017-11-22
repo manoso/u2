@@ -112,7 +112,7 @@ namespace u2.Core
             {
                 if (content.Has(x.Alias))
                 {
-                    val = GetContentField(x, content);
+                    val = GetContentField(x, content, mapTask.MapDefer);
                     x.Setter?.Set(result, val);
                 }
             });
@@ -153,14 +153,19 @@ namespace u2.Core
             return result;
         }
 
-        private object GetContentField(IMapItem mapItem, IContent content)
+        private object GetContentField(IMapItem mapItem, IContent content, IMapDefer mapDefer)
         {
             var field = content.Get(mapItem.ContentType, mapItem.Alias);
             if (mapItem.Setter != null)
             {
                 var str = field as string;
-                if (mapItem.Converter != null && field != null)
-                    field = mapItem.Converter(str);
+                if (field != null)
+                {
+                    if (mapItem.Converter != null)
+                        field = mapItem.Converter(str);
+                    else if (mapItem.Mapper != null)
+                        field = mapItem.Mapper(str)(this, mapDefer);
+                }
             }
             return field;
         }
@@ -201,7 +206,7 @@ namespace u2.Core
             if (map.ContentType != null)
             {
                 fieldValue = content.Has(map.Alias) 
-                    ? GetContentField(map, content)
+                    ? GetContentField(map, content, mapTask.MapDefer)
                     : map.Default;
             }
 

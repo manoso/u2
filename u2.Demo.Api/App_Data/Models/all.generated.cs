@@ -8,8 +8,8 @@ using  Umbraco.Web;
 using  Umbraco.ModelsBuilder;
 using  Umbraco.ModelsBuilder.Umbraco;
 [assembly: PureLiveAssembly]
-[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "def60a804d6d1ea1")]
-[assembly:System.Reflection.AssemblyVersion("0.0.0.2")]
+[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "3bfa69704bb73084")]
+[assembly:System.Reflection.AssemblyVersion("0.0.0.4")]
 
 
 // FILE: models.generated.cs
@@ -163,6 +163,15 @@ namespace Umbraco.Web.PublishedContentModels
 		}
 
 		///<summary>
+		/// Image List: Block image list
+		///</summary>
+		[ImplementPropertyType("imageList")]
+		public IEnumerable<IPublishedContent> ImageList
+		{
+			get { return this.GetPropertyValue<IEnumerable<IPublishedContent>>("imageList"); }
+		}
+
+		///<summary>
 		/// Images: Block Images
 		///</summary>
 		[ImplementPropertyType("images")]
@@ -178,6 +187,130 @@ namespace Umbraco.Web.PublishedContentModels
 		public string Size
 		{
 			get { return this.GetPropertyValue<string>("size"); }
+		}
+	}
+
+	/// <summary>Image Grid</summary>
+	[PublishedContentModel("imageGrid")]
+	public partial class ImageGrid : PublishedContentModel
+	{
+#pragma warning disable 0109 // new is redundant
+		public new const string ModelTypeAlias = "imageGrid";
+		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
+#pragma warning restore 0109
+
+		public ImageGrid(IPublishedContent content)
+			: base(content)
+		{ }
+
+#pragma warning disable 0109 // new is redundant
+		public new static PublishedContentType GetModelContentType()
+		{
+			return PublishedContentType.Get(ModelItemType, ModelTypeAlias);
+		}
+#pragma warning restore 0109
+
+		public static PublishedPropertyType GetModelPropertyType<TValue>(Expression<Func<ImageGrid, TValue>> selector)
+		{
+			return PublishedContentModelUtility.GetModelPropertyType(GetModelContentType(), selector);
+		}
+
+		///<summary>
+		/// Background Color: Image grid background color
+		///</summary>
+		[ImplementPropertyType("backgroundColor")]
+		public string BackgroundColor
+		{
+			get { return this.GetPropertyValue<string>("backgroundColor"); }
+		}
+
+		///<summary>
+		/// Height: Image grid height
+		///</summary>
+		[ImplementPropertyType("height")]
+		public int Height
+		{
+			get { return this.GetPropertyValue<int>("height"); }
+		}
+
+		///<summary>
+		/// Images: Image grid images
+		///</summary>
+		[ImplementPropertyType("images")]
+		public IEnumerable<IPublishedContent> Images
+		{
+			get { return this.GetPropertyValue<IEnumerable<IPublishedContent>>("images"); }
+		}
+
+		///<summary>
+		/// Title: Image grid title
+		///</summary>
+		[ImplementPropertyType("title")]
+		public string Title
+		{
+			get { return this.GetPropertyValue<string>("title"); }
+		}
+
+		///<summary>
+		/// Width: Image grid width
+		///</summary>
+		[ImplementPropertyType("width")]
+		public int Width
+		{
+			get { return this.GetPropertyValue<int>("width"); }
+		}
+	}
+
+	/// <summary>Info</summary>
+	[PublishedContentModel("info")]
+	public partial class Info : PublishedContentModel
+	{
+#pragma warning disable 0109 // new is redundant
+		public new const string ModelTypeAlias = "info";
+		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
+#pragma warning restore 0109
+
+		public Info(IPublishedContent content)
+			: base(content)
+		{ }
+
+#pragma warning disable 0109 // new is redundant
+		public new static PublishedContentType GetModelContentType()
+		{
+			return PublishedContentType.Get(ModelItemType, ModelTypeAlias);
+		}
+#pragma warning restore 0109
+
+		public static PublishedPropertyType GetModelPropertyType<TValue>(Expression<Func<Info, TValue>> selector)
+		{
+			return PublishedContentModelUtility.GetModelPropertyType(GetModelContentType(), selector);
+		}
+
+		///<summary>
+		/// Caption: Info caption
+		///</summary>
+		[ImplementPropertyType("caption")]
+		public string Caption
+		{
+			get { return this.GetPropertyValue<string>("caption"); }
+		}
+
+		///<summary>
+		/// Description: Info description
+		///</summary>
+		[ImplementPropertyType("description")]
+		public string Description
+		{
+			get { return this.GetPropertyValue<string>("description"); }
+		}
+
+		///<summary>
+		/// Label: Info label
+		///</summary>
+		[ImplementPropertyType("label")]
+		public string Label
+		{
+			get { return this.GetPropertyValue<string>("label"); }
 		}
 	}
 

@@ -50,11 +50,11 @@ namespace u2.Umbraco
             //    : empty;
         }
 
-        public static IList<T> NestedContents<T>(this string source, IMapper mapper) where T : class, new()
+        public static Func<IMapper, IMapDefer, object> NestedContents<T>(this string source) where T : class, new()
         {
             var jsons = JArray.Parse(source);
             var contents = jsons.Select(json => new NestedContent(json.ToString()));
-            return mapper.To<T>(contents).ToList();
+            return (mapper, defer) => mapper.To<T>(contents, defer).ToList();
         }
 
         public static T NestedContent<T>(this string source, IMapper mapper, T empty = null) where T : class, new()

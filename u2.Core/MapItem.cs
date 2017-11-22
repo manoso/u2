@@ -11,6 +11,7 @@ namespace u2.Core
         public IPropertySetter Setter { get; set; }
         public Func<string, object> Converter { get; protected set; }
         public Func<object, object, Task> Defer { get; protected set; }
+        public Func<string, Func<IMapper, IMapDefer, object>> Mapper { get; protected set; }
 
         public string Alias { get; set; }
 
@@ -41,6 +42,18 @@ namespace u2.Core
                 if (value != null)
                 {
                     Converter = x => value(x) as object;
+                    ContentType = typeof(string);
+                }
+            }
+        }
+
+        public Func<string, Func<IMapper, IMapDefer, object>> Map
+        {
+            set
+            {
+                if (value != null)
+                {
+                    Mapper = value;
                     ContentType = typeof(string);
                 }
             }

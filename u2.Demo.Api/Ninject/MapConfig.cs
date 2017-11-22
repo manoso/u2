@@ -17,8 +17,11 @@ namespace u2.Demo.Api.Ninject
                 .MatchMany(view => view.Blocks);
             registry.Register<Block>()
                 .MatchAction<Label>((block, labels) => block.Labels = labels)
-                .MatchMany(block => block.Images);
+                .MatchMany(block => block.Images)
+                .MapFunction(block => block.ImageList, mapFunc: x => x.NestedContents<ImageList>());
             registry.Register<Media>();
+            registry.Register<ImageList>()
+                .MatchMany(list => list.Images);
         }
     }
 }

@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Block.cs" />
     <Compile Include="BlockSize.cs" />
+    <Compile Include="ImageList.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="Site.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

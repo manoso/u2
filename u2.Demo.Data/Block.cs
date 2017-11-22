@@ -10,5 +10,7 @@ namespace u2.Demo.Data
 
         public IEnumerable<Label> Labels { get; set; }
         public IEnumerable<Media> Images { get; set; }
+
+        public IEnumerable<ImageList> ImageList { get; set; }
     }
 }

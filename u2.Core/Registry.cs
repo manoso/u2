@@ -27,30 +27,29 @@ namespace u2.Core
             if (_mapRegistry.Has(type))
                 return _mapRegistry[type] as IMapTask<T>;
 
-            var typeMap = _mapRegistry.Register<T>();
+            var mapTask = _mapRegistry.Register<T>();
 
             if (string.IsNullOrWhiteSpace(key))
                 key = type.FullName;
 
-            var mapDefer = new MapDefer();
-
             _cacheRegistry.Add(async x =>
             {
                 var cache = x;
+                var mapDefer = mapTask.MapDefer;
 
-                mapDefer.Defer(typeMap, async (t, k) =>
+                mapDefer.Defer(mapTask, async (t, k) =>
                 {
                     k = string.IsNullOrWhiteSpace(k) ? t.FullName : k;
                     return await cache.FetchAsync<object>(k).ConfigureAwait(false);
                 });
-                var cmsQuery = _queryFactory.Create(cache.Root, typeMap);
+                var cmsQuery = _queryFactory.Create(cache.Root, mapTask);
                 var contents = _cmsFetcher.Fetch(cmsQuery);
                 var models = (await _mapper.ToAsync<T>(contents, mapDefer)).AsList();
 
                 return models;
             }, key);
 
-            return typeMap;
+            return mapTask;
         }
     }
 }

@@ -22,10 +22,13 @@ namespace u2.Core
 
         public Action<IContent, object> Action { get; protected set; }
 
+        public IMapDefer MapDefer { get; }
+
         protected MapTask(Type type)
         {
             EntityType = type;
             Alias = type.Name.ToLowerInvariant();
+            MapDefer = new MapDefer();
         }
 
         public abstract object Create(object instance = null);
@@ -61,6 +64,15 @@ namespace u2.Core
         }
 
         public IMapTask<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP))
+        {
+            var map = CreatItem(property, alias, mapFunc, defaultVal);
+            if (map != null)
+                AddMap(map);
+
+            return this;
+        }
+
+        public IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, IMapDefer, object>> mapFunc = null, TP defaultVal = default(TP))
         {
             var map = CreatItem(property, alias, mapFunc, defaultVal);
             if (map != null)
