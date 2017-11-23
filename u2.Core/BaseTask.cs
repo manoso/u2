@@ -32,7 +32,7 @@ namespace u2.Core
 
         protected MapItem<T, TP> CreatItem<T, TP>(Expression<Func<T, TP>> property,
             string alias = null,
-            Func<string, Func<IMapper, IMapDefer, object>> mapFunc = null,
+            Func<string, Func<IMapper, ICache, IMapDefer, object>> mapFunc = null,
             TP defaultVal = default(TP))
         {
             return property == null

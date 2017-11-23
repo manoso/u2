@@ -58,11 +58,11 @@ namespace u2.Core.Test
         {
             var map = new MapItem<TestItem, int>("Id", x => x.ItemId)
             {
-                ActDefer = async (x, y) => await Task.Run(() => x.ItemId = y)
+                ActDefer = async (cache, x, y) => await Task.Run(() => x.ItemId = y)
             };
 
             var item = new TestItem();
-            await map.Defer(item, 3);
+            await map.Defer(null, item, 3);
 
             Assert.That(item.ItemId, Is.EqualTo(3));
         }

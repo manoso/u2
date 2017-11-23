@@ -7,7 +7,9 @@ namespace u2.Core
 {
     public class MapDefer : IMapDefer
     {
-        public IDictionary<Type, ITaskDefer>  Defers { get; } = new Dictionary<Type, ITaskDefer>();
+        private bool _isInitialized;
+
+        private IDictionary<Type, ITaskDefer> Defers { get; } = new Dictionary<Type, ITaskDefer>();
 
         public ITaskDefer<T> For<T>()
             where T : class, new()
@@ -33,9 +35,28 @@ namespace u2.Core
             return defer;
         }
 
-        public void Defer(IMapTask mapTask, Func<Type, string, Task<IEnumerable<object>>> task)
+        public ITaskDefer this[IMapTask mapTask]
         {
-            if (task == null || Defers.TryGetValue(mapTask.EntityType, out ITaskDefer _))
+            get
+            {
+                if (!_isInitialized)
+                    Init(mapTask);
+
+                return Defers.TryGetValue(mapTask.EntityType, out ITaskDefer typeDefer) ? typeDefer : null;
+            }
+        }
+
+        private void Init(IMapTask mapTask)
+        {
+            async Task<IEnumerable<object>> Task(ICache taskCache, Type deferType, string alias)
+            {
+                alias = string.IsNullOrWhiteSpace(alias) ? deferType.FullName : alias;
+                return await taskCache.FetchAsync<object>(alias).ConfigureAwait(false);
+            }
+
+            _isInitialized = true;
+
+            if (Defers.TryGetValue(mapTask.EntityType, out ITaskDefer _))
                 return;
 
             var taskDefer = For(mapTask.EntityType);
@@ -43,11 +64,11 @@ namespace u2.Core
             {
                 var map = modelMap;
                 var alias = map.Alias;
-                taskDefer.Attach(alias, async (x, s) =>
+                taskDefer.Attach(alias, async (cache, x, s) =>
                 {
                     if (x == null) return;
 
-                    var source = await task(map.ModelType, null).ConfigureAwait(false);
+                    var source = await Task(cache, map.ModelType, null).ConfigureAwait(false);
 
                     if (string.IsNullOrWhiteSpace(alias))
                         map.Match(x, source);

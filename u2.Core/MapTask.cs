@@ -72,7 +72,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, IMapDefer, object>> mapFunc = null, TP defaultVal = default(TP))
+        public IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, ICache, IMapDefer, object>> mapFunc = null, TP defaultVal = default(TP))
         {
             var map = CreatItem(property, alias, mapFunc, defaultVal);
             if (map != null)

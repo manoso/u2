@@ -36,15 +36,9 @@ namespace u2.Core
             {
                 var cache = x;
                 var mapDefer = mapTask.MapDefer;
-
-                mapDefer.Defer(mapTask, async (t, k) =>
-                {
-                    k = string.IsNullOrWhiteSpace(k) ? t.FullName : k;
-                    return await cache.FetchAsync<object>(k).ConfigureAwait(false);
-                });
                 var cmsQuery = _queryFactory.Create(cache.Root, mapTask);
                 var contents = _cmsFetcher.Fetch(cmsQuery);
-                var models = (await _mapper.ToAsync<T>(contents, mapDefer)).AsList();
+                var models = (await _mapper.ToAsync<T>(cache, contents, mapDefer)).AsList();
 
                 return models;
             }, key);

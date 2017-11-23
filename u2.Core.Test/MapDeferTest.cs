@@ -17,7 +17,8 @@ namespace u2.Core.Test
             var mapDefer = new MapDefer();
 
             var result = mapDefer.For<TestItem>();
-            var target = mapDefer.Defers[typeof(TestItem)];
+            var mapTask = new MapTask<TestItem>();
+            var target = mapDefer[mapTask];
 
             Assert.That(result, Is.EqualTo(target));
         }
@@ -29,7 +30,8 @@ namespace u2.Core.Test
             var type = typeof(TestItem);
 
             var result = mapDefer.For(type);
-            var target = mapDefer.Defers[type];
+            var mapTask = new MapTask<TestItem>();
+            var target = mapDefer[mapTask];
 
             Assert.That(result, Is.EqualTo(target));
         }
@@ -42,7 +44,8 @@ namespace u2.Core.Test
 
             var current = mapDefer.For<TestItem>();
             var result = mapDefer.For(type);
-            var target = mapDefer.Defers[type];
+            var mapTask = new MapTask<TestItem>();
+            var target = mapDefer[mapTask];
 
             Assert.That(current, Is.EqualTo(target));
             Assert.That(result, Is.EqualTo(current));
@@ -57,7 +60,7 @@ namespace u2.Core.Test
 
             var mapDefer = new MapDefer();
 
-            mapDefer.Defer(mapTask, null);
+            var taskDefer = mapDefer[mapTask];
 
             mapTask.ModelMaps.Received(0);
         }
@@ -68,17 +71,12 @@ namespace u2.Core.Test
             var type = typeof(TestItem);
             var mapTask = Substitute.For<IMapTask>();
 
-            async Task<IEnumerable<object>> TaskGet(Type t, string key = null)
-            {
-                return await Task.Run(() => null as IEnumerable<object>);
-            }
-
             mapTask.EntityType.Returns(type);
 
             var mapDefer = new MapDefer();
             mapDefer.For<TestItem>();
 
-            mapDefer.Defer(mapTask, TaskGet);
+            var taskDefer = mapDefer[mapTask];
 
             mapTask.ModelMaps.Received(0);
         }
@@ -89,17 +87,13 @@ namespace u2.Core.Test
             var type = typeof(TestItem);
             var mapTask = Substitute.For<IMapTask>();
             var modelMap = Substitute.For<IModelMap>();
-            async Task<IEnumerable<object>> TaskGet(Type t, string key = null)
-            {
-                return await Task.Run(() => null as IEnumerable<object>);
-            }
 
             mapTask.EntityType.Returns(type);
             mapTask.ModelMaps.Returns(new List<IModelMap> { modelMap });
 
             var mapDefer = new MapDefer();
 
-            mapDefer.Defer(mapTask, TaskGet);
+            var taskDefer = mapDefer[mapTask];
 
             var result = mapTask.Received(1).ModelMaps;
         }

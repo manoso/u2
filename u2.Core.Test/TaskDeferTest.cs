@@ -14,7 +14,7 @@ namespace u2.Core.Test
         {
             var defer = new TaskDefer();
 
-            var result = defer.Attach("test", async (x, s) =>
+            var result = defer.Attach("test", async (cache, x, s) =>
             {
                 await Task.Run(() => {});
             });
@@ -29,7 +29,7 @@ namespace u2.Core.Test
         {
             var defer = new TaskDefer<TestItem>();
 
-            var result = defer.Attach<int>("test", async (x, s) =>
+            var result = defer.Attach<int>("test", async (cache, x, s) =>
             {
                 await Task.Run(() => { x.ItemId = s; });
             });

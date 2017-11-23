@@ -28,7 +28,7 @@ namespace u2.Core.Contract
     {
         IMapTask<T> MapContent(Action<IContent, T> action);
         IMapTask<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP));
-        IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, IMapDefer, object>> mapFunc = null, TP defaultVal = default(TP));
+        IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, ICache, IMapDefer, object>> mapFunc = null, TP defaultVal = default(TP));
 
         /// <summary>
         /// Map a CMS property to object properties using Action.
