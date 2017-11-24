@@ -11,7 +11,7 @@ namespace u2.Core
         public IPropertySetter Setter { get; set; }
         public Func<string, object> Converter { get; protected set; }
         public Func<ICache, object, object, Task> Defer { get; protected set; }
-        public Func<string, Func<IMapper, ICache, IMapDefer, object>> Mapper { get; protected set; }
+        public Func<string, Func<IMapper, ICache, Task<object>>> Mapper { get; protected set; }
 
         public string Alias { get; set; }
 
@@ -47,7 +47,7 @@ namespace u2.Core
             }
         }
 
-        public Func<string, Func<IMapper, ICache, IMapDefer, object>> Map
+        public Func<string, Func<IMapper, ICache, Task<object>>> Map
         {
             set
             {

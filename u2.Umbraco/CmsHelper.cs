@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Archetype.Models;
 using Newtonsoft.Json.Linq;
 using u2.Core.Contract;
@@ -50,22 +51,17 @@ namespace u2.Umbraco
             //    : empty;
         }
 
-        public static Func<IMapper, ICache, IMapDefer, object> NestedContents<T>(this string source) where T : class, new()
+        public static Func<IMapper, ICache, Task<object>> NestedContents<T>(this string source) where T : class, new()
         {
             var jsons = JArray.Parse(source);
             var contents = jsons.Select(json => new NestedContent(json.ToString()));
-            return (mapper, cache, defer) => mapper.To<T>(cache, contents, defer).ToList();
+            return async (mapper, cache) => (await mapper.ToAsync<T>(cache, contents)).ToList();
         }
 
-        public static T NestedContent<T>(this string source, IMapper mapper, T empty = null) where T : class, new()
+        public static Func<IMapper, ICache, Task<object>> NestedContent<T>(this string source) where T : class, new()
         {
-            //if (string.IsNullOrEmpty(source))
-                return null;
-
-            //var content = new NestedContent(source);
-            //var result = mapper.To<T>(content);
-
-            //return result;
+            var content = new NestedContent(source);
+            return async (mapper, cache) => await mapper.ToAsync<T>(cache, content);
         }
 
         public static T JsonTo<T>(this string source) where T : class, new()

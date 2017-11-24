@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using u2.Core.Contract;
 using u2.Core.Extensions;
 
@@ -22,13 +23,20 @@ namespace u2.Core
 
         public Action<IContent, object> Action { get; protected set; }
 
-        public IMapDefer MapDefer { get; }
+        private ITaskDefer _taskDefer;
+        public ITaskDefer TaskDefer
+        {
+            get
+            {
+                if (!ModelMaps.Any()) return null;
+                return _taskDefer ?? (_taskDefer = new TaskDefer(ModelMaps));
+            }
+        }
 
         protected MapTask(Type type)
         {
             EntityType = type;
             Alias = type.Name.ToLowerInvariant();
-            MapDefer = new MapDefer();
         }
 
         public abstract object Create(object instance = null);
@@ -72,7 +80,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, ICache, IMapDefer, object>> mapFunc = null, TP defaultVal = default(TP))
+        public IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, ICache, Task<object>>> mapFunc = null, TP defaultVal = default(TP))
         {
             var map = CreatItem(property, alias, mapFunc, defaultVal);
             if (map != null)

@@ -35,10 +35,9 @@ namespace u2.Core
             _cacheRegistry.Add(async x =>
             {
                 var cache = x;
-                var mapDefer = mapTask.MapDefer;
                 var cmsQuery = _queryFactory.Create(cache.Root, mapTask);
                 var contents = _cmsFetcher.Fetch(cmsQuery);
-                var models = (await _mapper.ToAsync<T>(cache, contents, mapDefer)).AsList();
+                var models = (await _mapper.ToAsync<T>(cache, contents)).AsList();
 
                 return models;
             }, key);

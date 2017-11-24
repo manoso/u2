@@ -58,7 +58,6 @@
   <ItemGroup>
     <Compile Include="BaseTaskTest.cs" />
     <Compile Include="IntegrationTest.cs" />
-    <Compile Include="MapDeferTest.cs" />
     <Compile Include="MapItemTest.cs" />
     <Compile Include="MapperTest.cs" />
     <Compile Include="MapRegistryTest.cs" />

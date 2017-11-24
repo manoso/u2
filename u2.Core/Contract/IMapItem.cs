@@ -11,7 +11,7 @@ namespace u2.Core.Contract
         object Default { get; set; }
         Func<ICache, object, object, Task> Defer { get; }
         IPropertySetter Setter { get; set; }
-        Func<string, Func<IMapper, ICache, IMapDefer, object>> Mapper { get; }
+        Func<string, Func<IMapper, ICache, Task<object>>> Mapper { get; }
 
         bool MatchAlias(string alias);
     }
@@ -20,6 +20,6 @@ namespace u2.Core.Contract
     {
         Func<ICache, T, TP, Task> ActDefer { set; }
         Func<string, TP> Convert { set; }
-        Func<string, Func<IMapper, ICache, IMapDefer, object>> Map { set; }
+        Func<string, Func<IMapper, ICache, Task<object>>> Map { set; }
     }
 }

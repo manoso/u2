@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace u2.Core.Contract
 {
@@ -12,7 +13,7 @@ namespace u2.Core.Contract
         IDictionary<string, Type> CmsFields { get; }
         IList<IGroupAction> GroupActions { get; }
         IList<IModelMap> ModelMaps { get; }
-        IMapDefer MapDefer { get; }
+        ITaskDefer TaskDefer { get; }
 
         /// <summary>
         /// Map all public instance properties for the given object using naming convensions.
@@ -28,7 +29,7 @@ namespace u2.Core.Contract
     {
         IMapTask<T> MapContent(Action<IContent, T> action);
         IMapTask<T> Map<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, TP> mapFunc = null, TP defaultVal = default(TP));
-        IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, ICache, IMapDefer, object>> mapFunc = null, TP defaultVal = default(TP));
+        IMapTask<T> MapFunction<TP>(Expression<Func<T, TP>> property, string alias = null, Func<string, Func<IMapper, ICache, Task<object>>> mapFunc = null, TP defaultVal = default(TP));
 
         /// <summary>
         /// Map a CMS property to object properties using Action.

@@ -16,48 +16,48 @@ namespace u2.Core
             _registry = registry;
         }
 
-        public object To(ICache cache, IContent content, Type type, object value = null, IMapDefer defer = null)
+        public object To(ICache cache, IContent content, Type type, object value = null)
         {
-            return ToAsync(cache, content, type, value, defer).Result;
+            return ToAsync(cache, content, type, value).Result;
         }
 
-        public T To<T>(ICache cache, IContent content, T value = null, IMapDefer defer = null)
+        public T To<T>(ICache cache, IContent content, T value = null)
             where T : class, new()
         {
-            return ToAsync(cache, content, value, defer).Result;
+            return ToAsync(cache, content, value).Result;
         }
 
-        public IEnumerable<T> To<T, TP>(ICache cache, IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, IMapDefer defer = null)
+        public IEnumerable<T> To<T, TP>(ICache cache, IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null)
             where T : class, new()
         {
-            return ToAsync(cache, contents, values, matchProp, matchAlias, defer).Result;
+            return ToAsync(cache, contents, values, matchProp, matchAlias).Result;
         }
 
-        public IEnumerable<T> To<T>(ICache cache, IEnumerable<IContent> contents, IMapDefer defer = null)
+        public IEnumerable<T> To<T>(ICache cache, IEnumerable<IContent> contents)
             where T : class, new()
         {
-            return ToAsync<T>(cache, contents, defer).Result;
+            return ToAsync<T>(cache, contents).Result;
         }
 
-        public IEnumerable<object> To(ICache cache, Type type, IEnumerable<IContent> contents, IMapDefer defer = null)
+        public IEnumerable<object> To(ICache cache, Type type, IEnumerable<IContent> contents)
         {
-            return ToAsync(cache, type, contents, defer).Result;
+            return ToAsync(cache, type, contents).Result;
         }
 
-        public async Task<object> ToAsync(ICache cache, IContent content, Type type, object value = null, IMapDefer defer = null)
+        public async Task<object> ToAsync(ICache cache, IContent content, Type type, object value = null)
         {
             var map = _registry.For(type);
-            return await Load(cache, map, content, value, defer).ConfigureAwait(false);
+            return await Load(cache, map, content, value).ConfigureAwait(false);
         }
 
-        public async Task<T> ToAsync<T>(ICache cache, IContent content, T value = null, IMapDefer defer = null)
+        public async Task<T> ToAsync<T>(ICache cache, IContent content, T value = null)
             where T: class, new ()
         {
             var map = _registry.For<T>();
-            return await Load(cache, map, content, value, defer).ConfigureAwait(false) as T;
+            return await Load(cache, map, content, value).ConfigureAwait(false) as T;
         }
 
-        public async Task<IEnumerable<T>> ToAsync<T, TP>(ICache cache, IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null, IMapDefer defer = null)
+        public async Task<IEnumerable<T>> ToAsync<T, TP>(ICache cache, IEnumerable<IContent> contents, IEnumerable<T> values = null, Func<T, TP> matchProp = null, string matchAlias = null)
             where T : class, new()
         {
             var map = _registry.For<T>();
@@ -71,33 +71,41 @@ namespace u2.Core
                 T value = null;
                 if (needMatch)
                 {
-                    value = list.FirstOrDefault(x => MatchContent(cache, map, content, matchProp(x), matchAlias));
+                    foreach (var entry in list)
+                    {
+                        var match = await MatchContent(cache, map, content, matchProp(entry), matchAlias);
+                        if (match)
+                        {
+                            value = entry;
+                            break;
+                        }
+                    }
                 }
 
-                var item = await ToAsync(cache, content, value, defer).ConfigureAwait(false);
+                var item = await ToAsync(cache, content, value).ConfigureAwait(false);
                 result.Add(item);
             }
             return result;
         }
 
-        public async Task<IEnumerable<T>> ToAsync<T>(ICache cache, IEnumerable<IContent> contents, IMapDefer defer = null)
+        public async Task<IEnumerable<T>> ToAsync<T>(ICache cache, IEnumerable<IContent> contents)
             where T : class, new()
         {
-            return await ToAsync<T, object>(cache, contents, defer: defer).ConfigureAwait(false);
+            return await ToAsync<T, object>(cache, contents).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<object>> ToAsync(ICache cache, Type type, IEnumerable<IContent> contents, IMapDefer defer = null)
+        public async Task<IEnumerable<object>> ToAsync(ICache cache, Type type, IEnumerable<IContent> contents)
         {
             var result = new List<object>();
             foreach (var content in contents)
             {
-                var item = await ToAsync(cache, content, type, null, defer).ConfigureAwait(false);
+                var item = await ToAsync(cache, content, type, null).ConfigureAwait(false);
                 result.Add(item);
             }
             return result;
         }
 
-        private async Task<object> Load(ICache cache, IMapTask mapTask, IContent content, object instance = null, IMapDefer defer = null)
+        private async Task<object> Load(ICache cache, IMapTask mapTask, IContent content, object instance = null)
         {
             if (mapTask == null || content == null) return null;
 
@@ -108,11 +116,11 @@ namespace u2.Core
             var maps = GetMaps(mapTask);
 
             object val = null;
-            maps.Each(x =>
+            maps.Each(async x =>
             {
                 if (content.Has(x.Alias))
                 {
-                    val = GetContentField(cache, x, content, mapTask.MapDefer);
+                    val = await GetContentField(cache, x, content);
                     x.Setter?.Set(result, val);
                 }
             });
@@ -135,10 +143,10 @@ namespace u2.Core
 
             mapTask.Action?.Invoke(content, result);
 
-            var typeDefer = defer?[mapTask];
-            if (typeDefer != null)
+            var defer = mapTask.TaskDefer;
+            if (defer != null)
             {
-                foreach (var map in typeDefer.Maps)
+                foreach (var map in defer.Maps)
                 {
                     val = string.IsNullOrWhiteSpace(map.Alias)
                         ? null
@@ -151,7 +159,7 @@ namespace u2.Core
             return result;
         }
 
-        private object GetContentField(ICache cache, IMapItem mapItem, IContent content, IMapDefer mapDefer)
+        private async Task<object> GetContentField(ICache cache, IMapItem mapItem, IContent content)
         {
             var field = content.Get(mapItem.ContentType, mapItem.Alias);
             if (mapItem.Setter != null)
@@ -162,7 +170,7 @@ namespace u2.Core
                     if (mapItem.Converter != null)
                         field = mapItem.Converter(str);
                     else if (mapItem.Mapper != null)
-                        field = mapItem.Mapper(str)(this, cache, mapDefer);
+                        field = await mapItem.Mapper(str)(this, cache);
                 }
             }
             return field;
@@ -184,7 +192,7 @@ namespace u2.Core
             return maps;
         }
 
-        private bool MatchContent(ICache cache, IMapTask mapTask, IContent content, object value, string alias)
+        private async Task<bool> MatchContent(ICache cache, IMapTask mapTask, IContent content, object value, string alias)
         {
             if (string.IsNullOrWhiteSpace(alias))
                 return false;
@@ -204,7 +212,7 @@ namespace u2.Core
             if (map.ContentType != null)
             {
                 fieldValue = content.Has(map.Alias) 
-                    ? GetContentField(cache, map, content, mapTask.MapDefer)
+                    ? await GetContentField(cache, map, content)
                     : map.Default;
             }
 

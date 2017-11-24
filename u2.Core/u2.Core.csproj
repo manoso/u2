@@ -62,7 +62,6 @@
     <Compile Include="Contract\IBaseTask.cs" />
     <Compile Include="Contract\IMapTask.cs" />
     <Compile Include="Contract\ITaskDefer.cs" />
-    <Compile Include="Contract\IMapDefer.cs" />
     <Compile Include="Contract\IMapItem.cs" />
     <Compile Include="Contract\IPropertySetter.cs" />
     <Compile Include="Contract\IModelMap.cs" />
@@ -82,7 +81,6 @@
     <Compile Include="BaseTask.cs" />
     <Compile Include="TaskDefer.cs" />
     <Compile Include="MapTask.cs" />
-    <Compile Include="MapDefer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mapper.cs" />
   </ItemGroup>

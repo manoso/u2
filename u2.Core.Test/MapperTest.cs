@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NSubstitute;
 using NUnit.Framework;
 using u2.Core.Contract;
 using u2.Test;
@@ -75,6 +76,7 @@ namespace u2.Core.Test
         [Test]
         public async Task ToAsync_single_success()
         {
+            var cache = Substitute.For<ICache>();
             var fields = new Dictionary<string, string>
             {
                 {"alias", "test"},
@@ -84,7 +86,7 @@ namespace u2.Core.Test
                 {"items", "1,3"}
             };
             var content = new UmbracoContent(fields);
-            var result = await _mapper.ToAsync<TestEntity>(null, content);
+            var result = await _mapper.ToAsync<TestEntity>(cache, content);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Id, Is.EqualTo(1000));
@@ -95,6 +97,7 @@ namespace u2.Core.Test
         [Test]
         public void To_single_success()
         {
+            var cache = Substitute.For<ICache>();
             var fields = new Dictionary<string, string>
             {
                 {"alias", "test"},
@@ -104,7 +107,7 @@ namespace u2.Core.Test
                 {"items", "1,3"}
             };
             var content = new UmbracoContent(fields);
-            var result = _mapper.To<TestEntity>(null, content);
+            var result = _mapper.To<TestEntity>(cache, content);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Id, Is.EqualTo(1000));
@@ -115,6 +118,7 @@ namespace u2.Core.Test
         [Test]
         public async Task ToAsync_single_with_match_success()
         {
+            var cache = Substitute.For<ICache>();
             var fields = new Dictionary<string, string>
             {
                 {"alias", "test"},
@@ -124,7 +128,7 @@ namespace u2.Core.Test
             };
             var content = new UmbracoContent(fields);
             var result = new TestEntity { Name = "name" };
-            await _mapper.ToAsync(null, content, result);
+            await _mapper.ToAsync(cache, content, result);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Id, Is.EqualTo(1000));
@@ -135,6 +139,7 @@ namespace u2.Core.Test
         [Test]
         public void To_single_with_match_success()
         {
+            var cache = Substitute.For<ICache>();
             var fields = new Dictionary<string, string>
             {
                 {"alias", "test"},
@@ -144,7 +149,7 @@ namespace u2.Core.Test
             };
             var content = new UmbracoContent(fields);
             var result = new TestEntity {Name = "name"};
-            _mapper.To(null, content, result);
+            _mapper.To(cache, content, result);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Id, Is.EqualTo(1000));
@@ -290,6 +295,7 @@ namespace u2.Core.Test
         [Test]
         public void To_many_with_match_success()
         {
+            var cache = Substitute.For<ICache>();
             var item1 = new Dictionary<string, string>
             {
                 {"alias", "testItem"},
@@ -326,7 +332,7 @@ namespace u2.Core.Test
                 new TestItem {ItemId = 3, Name = "three"},
             };
 
-            _mapper.To(null, itemContents, items, x => x.ItemId, "itemId").ToList();
+            _mapper.To(cache, itemContents, items, x => x.ItemId, "itemId").ToList();
 
             Assert.That(items, Is.Not.Null);
             Assert.That(items.Count, Is.EqualTo(3));
