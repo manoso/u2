@@ -1,8 +1,8 @@
 ﻿using u2.Config.Contract;
 using u2.Core.Contract;
-using u2.Umbraco;
 using u2.Demo.Data;
 using u2.Umbraco.DataType;
+using u2.Umbraco.DataType.Media;
 
 
 namespace u2.Demo.Api.Ninject
@@ -18,8 +18,13 @@ namespace u2.Demo.Api.Ninject
             registry.Register<Block>()
                 .MatchAction<Label>((block, labels) => block.Labels = labels)
                 .MatchMany(block => block.Images)
-                .MapFunction(block => block.ImageList, mapFunc: x => x.NestedContents<ImageList>());
-            registry.Register<Media>();
+                .MapFunction(block => block.ImageList, mapFunc: x => x.ToNestedContents<ImageList>());
+            registry.Register<Media>()
+                .Map(media => media.UmbracoFile, mapFunc: x=> x.JsonTo<Image>())
+                .MapContent((content, media) =>
+                {
+                    var entity = content;
+                });
             registry.Register<ImageList>()
                 .MatchMany(list => list.Images);
         }

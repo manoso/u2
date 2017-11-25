@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using u2.Umbraco.DataType;
+using u2.Umbraco.DataType.Media;
 
 namespace u2.Demo.Data
 {

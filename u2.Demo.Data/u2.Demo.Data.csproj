@@ -57,10 +57,13 @@
       <Project>{d000d82d-eaee-4212-ae9a-4ce90e60c6d4}</Project>
       <Name>u2.Demo.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\u2.Umbraco\u2.Umbraco.csproj">
-      <Project>{C4A0E78C-6801-446C-AACC-C1E6D6F22BE1}</Project>
-      <Name>u2.Umbraco</Name>
+    <ProjectReference Include="..\u2.Umbraco.DataType\u2.Umbraco.DataType.csproj">
+      <Project>{20797258-0485-43c1-a39d-ffdcbe74f830}</Project>
+      <Name>u2.Umbraco.DataType</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

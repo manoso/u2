@@ -1,5 +1,3 @@
-using u2.Core.Contract;
-
 namespace u2.Umbraco
 {
     public class MediaQuery : UmbracoQuery

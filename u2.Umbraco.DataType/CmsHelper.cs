@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Archetype.Models;
 using Newtonsoft.Json.Linq;
 using u2.Core.Contract;
+using u2.Umbraco.DataType.Archetype;
 
-namespace u2.Umbraco
+namespace u2.Umbraco.DataType
 {
-    using DataType;
     public static class CmsHelper
     {
         private static readonly char[] DefaultSeparatora = { ',' };
@@ -38,45 +37,18 @@ namespace u2.Umbraco
                 .ToList();
         }
 
-        public static IList<T> Archetype<T>(this string source, IMapper mapper, IList<T> empty = null) where T : class, new()
+        public static Func<IMapper, ICache, Task<object>> ToArchetypes<T>(this string source, IList<T> empty = null) where T : class, new()
         {
-            if (string.IsNullOrEmpty(source))
-                return empty;
-
-            var model = JsonConvert.DeserializeObject<ArchetypeModel>(source);
-
-            return empty;
-            //return model.Fieldsets.Any()
-            //    ? model.Fieldsets.Select(x => mapper.To<T>(new Archetype(x))).ToList()
-            //    : empty;
+            var model = string.IsNullOrWhiteSpace(source) ? null : JsonConvert.DeserializeObject<Model>(source);
+            var contents = model?.FieldSets.Select(fieldSet => new ArchetypeContent(fieldSet));
+            return async (mapper, cache) => contents == null ? empty : (await mapper.ToAsync<T>(cache, contents)).ToList();
         }
 
-        public static Func<IMapper, ICache, Task<object>> NestedContents<T>(this string source) where T : class, new()
+        public static Func<IMapper, ICache, Task<object>> ToNestedContents<T>(this string source, IList<T> empty = null) where T : class, new()
         {
-            var jsons = JArray.Parse(source);
-            var contents = jsons.Select(json => new NestedContent(json.ToString()));
-            return async (mapper, cache) => (await mapper.ToAsync<T>(cache, contents)).ToList();
-        }
-
-        public static Func<IMapper, ICache, Task<object>> NestedContent<T>(this string source) where T : class, new()
-        {
-            var content = new NestedContent(source);
-            return async (mapper, cache) => await mapper.ToAsync<T>(cache, content);
-        }
-
-        public static T JsonTo<T>(this string source) where T : class, new()
-        {
-            if (string.IsNullOrEmpty(source))
-                return null;
-
-            try
-            {
-                return JsonConvert.DeserializeObject<T>(source);
-            }
-            catch
-            {
-                return null;
-            }
+            var jsons = string.IsNullOrWhiteSpace(source) ? null : JArray.Parse(source);
+            var contents = jsons?.Select(json => new NestedContent(json.ToString()));
+            return async (mapper, cache) => contents == null ? empty : (await mapper.ToAsync<T>(cache, contents)).ToList();
         }
 
         public static IList<T> ListIt<T>(this T item)

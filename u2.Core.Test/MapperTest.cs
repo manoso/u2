@@ -7,6 +7,7 @@ using NUnit.Framework;
 using u2.Core.Contract;
 using u2.Test;
 using u2.Umbraco;
+using u2.Umbraco.DataType;
 
 namespace u2.Core.Test
 {

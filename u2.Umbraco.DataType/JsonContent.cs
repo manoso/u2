@@ -6,17 +6,11 @@ using u2.Core.Contract;
 
 namespace u2.Umbraco.DataType
 {
-    internal abstract class JsonContent : IContent
+    public abstract class JsonContent : IContent
     {
-        private readonly Dictionary<string, string> _fields;
+        protected Dictionary<string, string> Fields;
 
         public abstract string Alias { get; }
-
-        protected JsonContent(string json)
-        {
-            _fields = JsonConvert.DeserializeObject<Dictionary<string, string>>(json)
-                .ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
-        }
 
         public virtual T Get<T>(string alias)
         {
@@ -30,14 +24,14 @@ namespace u2.Umbraco.DataType
 
         public virtual object Get(Type type, string alias)
         {
-            return _fields.TryGetValue(alias.ToLowerInvariant(), out string source)
+            return Fields.TryGetValue(alias.ToLowerInvariant(), out string source)
                 ? source.Convert(type)
                 : null;
         }
 
         public virtual bool Has(string alias)
         {
-            return _fields.ContainsKey(alias.ToLowerInvariant());
+            return Fields.ContainsKey(alias.ToLowerInvariant());
         }
     }
 }
