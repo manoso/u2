@@ -73,7 +73,7 @@ namespace u2.Core
                 {
                     foreach (var entry in list)
                     {
-                        var match = await MatchContent(cache, map, content, matchProp(entry), matchAlias);
+                        var match = await MatchContent(cache, map, content, matchProp(entry), matchAlias).ConfigureAwait(false);
                         if (match)
                         {
                             value = entry;
@@ -120,7 +120,7 @@ namespace u2.Core
             {
                 if (content.Has(x.Alias))
                 {
-                    val = await GetContentField(cache, x, content);
+                    val = await GetContentField(cache, x, content).ConfigureAwait(false);
                     x.Setter?.Set(result, val);
                 }
             });
@@ -170,7 +170,7 @@ namespace u2.Core
                     if (mapItem.Converter != null)
                         field = mapItem.Converter(str);
                     else if (mapItem.Mapper != null)
-                        field = await mapItem.Mapper(str)(this, cache);
+                        field = await mapItem.Mapper(str)(this, cache).ConfigureAwait(false);
                 }
             }
             return field;
@@ -212,7 +212,7 @@ namespace u2.Core
             if (map.ContentType != null)
             {
                 fieldValue = content.Has(map.Alias) 
-                    ? await GetContentField(cache, map, content)
+                    ? await GetContentField(cache, map, content).ConfigureAwait(false)
                     : map.Default;
             }
 

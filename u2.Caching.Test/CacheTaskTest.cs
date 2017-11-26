@@ -12,7 +12,7 @@ namespace u2.Caching.Test
     [TestFixture]
     public class CacheTaskTest
     {
-        private readonly Func<ICache, Task<IEnumerable<CacheItem>>> _task = async x => await Task.Run(() => CacheItems);
+        private readonly Func<ICache, Task<IEnumerable<CacheItem>>> _task = async x => await Task.Run(() => CacheItems).ConfigureAwait(false);
 
         [Test]
         public async Task Run_concurrent_run_single_result_success()
@@ -31,7 +31,7 @@ namespace u2.Caching.Test
                 tasks[i] = GetFirstAsync(task);
             }
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
 
             var result = tasks[0].Result;
             for (var i = 1; i < tasks.Length; i++)
@@ -55,7 +55,7 @@ namespace u2.Caching.Test
 
             var cache = Substitute.For<ICache>();
 
-            await task.Run(cache);
+            await task.Run(cache).ConfigureAwait(false);
             var items = task.CacheItems;
             var lookups = items["Lookup_CacheItem_LookupKey"] as ILookup<string, CacheItem>;
             var all = items[taskKey] as IEnumerable<CacheItem>;
@@ -84,9 +84,9 @@ namespace u2.Caching.Test
 
             var cache = Substitute.For<ICache>();
 
-            await task.Run(cache);
+            await task.Run(cache).ConfigureAwait(false);
             var before = GetFirst(task);
-            await task.Reload(cache);
+            await task.Reload(cache).ConfigureAwait(false);
             var after = GetFirst(task);
 
             Assert.That(before.Id, Is.Not.EqualTo(after.Id));
@@ -95,7 +95,7 @@ namespace u2.Caching.Test
         private async Task<T> GetFirstAsync<T>(ICacheTask<T> task) where T: class
         {
             var cache = Substitute.For<ICache>();
-            await task.Run(cache);
+            await task.Run(cache).ConfigureAwait(false);
             return ((IEnumerable<T>)task.CacheItems.First().Value).First();
         }
 

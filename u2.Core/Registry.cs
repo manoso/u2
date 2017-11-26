@@ -37,7 +37,7 @@ namespace u2.Core
                 var cache = x;
                 var cmsQuery = _queryFactory.Create(cache.Root, mapTask);
                 var contents = _cmsFetcher.Fetch(cmsQuery);
-                var models = (await _mapper.ToAsync<T>(cache, contents)).AsList();
+                var models = (await _mapper.ToAsync<T>(cache, contents).ConfigureAwait(false)).AsList();
 
                 return models;
             }, key);

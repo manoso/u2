@@ -19,10 +19,10 @@ namespace u2.Caching.Test
             SiteCaches.Add(new TestRoot { Key = Guid.NewGuid() }, cacheAu);
             SiteCaches.Add(new TestRoot { Key = Guid.NewGuid() }, cacheNz);
 
-            await SiteCaches.RefreshAsync();
+            await SiteCaches.RefreshAsync().ConfigureAwait(false);
 
-            await cacheAu.Received(1).ReloadAsync();
-            await cacheNz.Received(1).ReloadAsync();
+            await cacheAu.Received(1).ReloadAsync().ConfigureAwait(false);
+            await cacheNz.Received(1).ReloadAsync().ConfigureAwait(false);
         }
 
         [Test]
@@ -52,10 +52,10 @@ namespace u2.Caching.Test
             SiteCaches.Add(nz, cacheNz);
 
 
-            await SiteCaches.RefreshAsync(au);
+            await SiteCaches.RefreshAsync(au).ConfigureAwait(false);
 
-            await cacheAu.Received(1).ReloadAsync();
-            await cacheNz.DidNotReceive().ReloadAsync();
+            await cacheAu.Received(1).ReloadAsync().ConfigureAwait(false);
+            await cacheNz.DidNotReceive().ReloadAsync().ConfigureAwait(false);
         }
 
         [Test]

@@ -19,7 +19,7 @@ namespace u2.Caching.Test
 
             var cache = new Cache(cacheStore, cacheRegistry, root);
 
-            await cache.FetchAsync<TestItem>();
+            await cache.FetchAsync<TestItem>().ConfigureAwait(false);
 
             var key = typeof(TestItem).FullName;
             cacheRegistry.Received(1).TryGetTask(key, out ICacheTask _);
@@ -35,7 +35,7 @@ namespace u2.Caching.Test
             var cache = new Cache(cacheStore, cacheRegistry, root);
 
             var key = "key";
-            await cache.FetchAsync<TestItem>(key);
+            await cache.FetchAsync<TestItem>(key).ConfigureAwait(false);
 
             cacheRegistry.Received(1).TryGetTask(key, out ICacheTask _);
         }
@@ -56,9 +56,9 @@ namespace u2.Caching.Test
             var cache = new Cache(cacheStore, cacheRegistry, root);
             cacheStore.Has(Arg.Any<string>()).Returns(false);
 
-            await cache.FetchAsync<TestItem>();
+            await cache.FetchAsync<TestItem>().ConfigureAwait(false);
 
-            await task.Received(1).Run(cache, Arg.Any<Action<string, object>>());
+            await task.Received(1).Run(cache, Arg.Any<Action<string, object>>()).ConfigureAwait(false);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace u2.Caching.Test
 
             var cache = new Cache(null, cacheRegistry, root);
 
-            var result = await cache.FetchAsync<TestItem>();
+            var result = await cache.FetchAsync<TestItem>().ConfigureAwait(false);
 
             Assert.That(result, Is.Null);
         }
@@ -153,9 +153,9 @@ namespace u2.Caching.Test
 
             var cache = new Cache(cacheStore, cacheRegistry, root);
 
-            await cache.ReloadAsync<TestItem>("key");
+            await cache.ReloadAsync<TestItem>("key").ConfigureAwait(false);
 
-            await cacheRegistry.Received(1).ReloadAsync<TestItem>(cache, "key");
+            await cacheRegistry.Received(1).ReloadAsync<TestItem>(cache, "key").ConfigureAwait(false);
         }
 
         [Test]
@@ -167,9 +167,9 @@ namespace u2.Caching.Test
 
             var cache = new Cache(cacheStore, cacheRegistry, root);
 
-            await cache.ReloadAsync<TestItem>();
+            await cache.ReloadAsync<TestItem>().ConfigureAwait(false);
 
-            await cacheRegistry.Received(1).ReloadAsync<TestItem>(cache, Arg.Any<string>());
+            await cacheRegistry.Received(1).ReloadAsync<TestItem>(cache, Arg.Any<string>()).ConfigureAwait(false);
         }
 
         [Test]
@@ -183,7 +183,7 @@ namespace u2.Caching.Test
 
             cache.Reload<TestItem>("key");
 
-            await cacheRegistry.Received(1).ReloadAsync<TestItem>(cache, "key");
+            await cacheRegistry.Received(1).ReloadAsync<TestItem>(cache, "key").ConfigureAwait(false);
         }
 
         [Test]
@@ -197,7 +197,7 @@ namespace u2.Caching.Test
 
             cache.Reload<TestItem>();
 
-            await cacheRegistry.Received(1).ReloadAsync<TestItem>(cache, Arg.Any<string>());
+            await cacheRegistry.Received(1).ReloadAsync<TestItem>(cache, Arg.Any<string>()).ConfigureAwait(false);
         }
     }
 }

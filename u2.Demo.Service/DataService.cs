@@ -11,9 +11,14 @@ namespace u2.Demo.Service
 {
     public class DataService : ServiceBase, IDataService
     {
-        public async Task<IEnumerable<T>> Get<T>()
+        public async Task<IEnumerable<T>> GetAsync<T>()
         {
-            return await Cache.FetchAsync<T>();
+            return await Cache.FetchAsync<T>().ConfigureAwait(false);
+        }
+
+        public IEnumerable<T> Get<T>()
+        {
+            return Cache.Fetch<T>();
         }
 
     }

@@ -16,7 +16,7 @@ namespace u2.Caching.Test
             get
             {
                 var registry = new CacheRegistry();
-                registry.Add(async x => await Task.Run(() => new[] {new CacheItem()} as IEnumerable<CacheItem>));
+                registry.Add(async x => await Task.Run(() => new[] {new CacheItem()} as IEnumerable<CacheItem>).ConfigureAwait(false));
                 return registry;
             }
         }
@@ -26,7 +26,7 @@ namespace u2.Caching.Test
             get
             {
                 var registry = new CacheRegistry();
-                registry.Add(async () => await Task.Run(() => new[] { new CacheItem() } as IEnumerable<CacheItem>));
+                registry.Add(async () => await Task.Run(() => new[] { new CacheItem() } as IEnumerable<CacheItem>).ConfigureAwait(false));
                 return registry;
             }
         }
@@ -81,7 +81,7 @@ namespace u2.Caching.Test
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
             var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task);
-            await cacheRegistry.ReloadAsync(Arg.Any<ICache>());
+            await cacheRegistry.ReloadAsync(Arg.Any<ICache>()).ConfigureAwait(false);
 
             task.Received(1);
         }
@@ -103,7 +103,7 @@ namespace u2.Caching.Test
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
             var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task, "test");
-            await cacheRegistry.ReloadAsync(Arg.Any<ICache>());
+            await cacheRegistry.ReloadAsync(Arg.Any<ICache>()).ConfigureAwait(false);
 
             task.Received(1);
         }

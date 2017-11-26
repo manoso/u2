@@ -41,14 +41,14 @@ namespace u2.Umbraco.DataType
         {
             var model = string.IsNullOrWhiteSpace(source) ? null : JsonConvert.DeserializeObject<Model>(source);
             var contents = model?.FieldSets.Select(fieldSet => new ArchetypeContent(fieldSet));
-            return async (mapper, cache) => contents == null ? empty : (await mapper.ToAsync<T>(cache, contents)).ToList();
+            return async (mapper, cache) => contents == null ? empty : (await mapper.ToAsync<T>(cache, contents).ConfigureAwait(false)).ToList();
         }
 
         public static Func<IMapper, ICache, Task<object>> ToNestedContents<T>(this string source, IList<T> empty = null) where T : class, new()
         {
             var jsons = string.IsNullOrWhiteSpace(source) ? null : JArray.Parse(source);
             var contents = jsons?.Select(json => new NestedContent(json.ToString()));
-            return async (mapper, cache) => contents == null ? empty : (await mapper.ToAsync<T>(cache, contents)).ToList();
+            return async (mapper, cache) => contents == null ? empty : (await mapper.ToAsync<T>(cache, contents).ConfigureAwait(false)).ToList();
         }
 
         public static IList<T> ListIt<T>(this T item)

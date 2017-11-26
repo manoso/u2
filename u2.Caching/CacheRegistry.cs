@@ -25,7 +25,7 @@ namespace u2.Caching
 
         public ICacheTask<T> Add<T>(Func<Task<IEnumerable<T>>> func, string key = null)
         {
-            async Task<IEnumerable<T>> CacheFunc(ICache x) => await func();
+            async Task<IEnumerable<T>> CacheFunc(ICache x) => await func().ConfigureAwait(false);
             return Add(CacheFunc, key);
         }
 

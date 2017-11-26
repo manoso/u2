@@ -15,7 +15,7 @@ namespace u2.Demo.Provider
                 {
                     new Label {Text = "label 1", Key = Guid.NewGuid()},
                     new Label {Text = "label 2", Key = Guid.NewGuid()}
-                });
+                }).ConfigureAwait(false);
         }
     }
 }

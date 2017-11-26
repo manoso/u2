@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using u2.Core;
 using u2.Test;
-using u2.Umbraco.DataType;
 
 namespace u2.Umbraco.DataType.Test
 {
@@ -112,7 +111,7 @@ fieldsets: [
 
             rego.Register<TestItem>();
 
-            var result = await source.ToArchetypes<TestItem>()(mapper, null) as IList<TestItem>;
+            var result = await source.ToArchetypes<TestItem>()(mapper, null).ConfigureAwait(false) as IList<TestItem>;
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
@@ -131,7 +130,7 @@ fieldsets: [
 
             rego.Register<TestItem>();
 
-            var result = await source.ToArchetypes<TestItem>()(mapper, null) as IList<TestItem>;
+            var result = await source.ToArchetypes<TestItem>()(mapper, null).ConfigureAwait(false) as IList<TestItem>;
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(0));
@@ -141,7 +140,7 @@ fieldsets: [
         public async Task ToArchetypes_source_empty_return_null()
         {
             var source = string.Empty;
-            var result = await source.ToArchetypes<TestItem>()(null, null) as IList<TestItem>;
+            var result = await source.ToArchetypes<TestItem>()(null, null).ConfigureAwait(false) as IList<TestItem>;
 
             Assert.That(result, Is.Null);
         }
@@ -151,7 +150,7 @@ fieldsets: [
         {
             var source = string.Empty;
             var defaultValue = new List<TestItem>();
-            var result = (await source.ToArchetypes(defaultValue)(null, null)) as IList<TestItem>;
+            var result = await source.ToArchetypes(defaultValue)(null, null).ConfigureAwait(false) as IList<TestItem>;
 
             Assert.That(result, Is.EqualTo(defaultValue));
         }
@@ -179,7 +178,7 @@ fieldsets: [
 
             rego.Register<TestItem>();
 
-            var result = await source.ToNestedContents<TestItem>()(mapper, null) as IList<TestItem>;
+            var result = await source.ToNestedContents<TestItem>()(mapper, null).ConfigureAwait(false) as IList<TestItem>;
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
@@ -198,7 +197,7 @@ fieldsets: [
 
             rego.Register<TestItem>();
 
-            var result = await source.ToNestedContents<TestItem>()(mapper, null) as IList<TestItem>;
+            var result = await source.ToNestedContents<TestItem>()(mapper, null).ConfigureAwait(false) as IList<TestItem>;
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(0));
@@ -208,7 +207,7 @@ fieldsets: [
         public async Task ToNestedContents_source_empty_return_null()
         {
             var source = string.Empty;
-            var result = await source.ToNestedContents<TestItem>()(null, null) as IList<TestItem>;
+            var result = await source.ToNestedContents<TestItem>()(null, null).ConfigureAwait(false) as IList<TestItem>;
 
             Assert.That(result, Is.Null);
         }
@@ -218,7 +217,7 @@ fieldsets: [
         {
             var source = string.Empty;
             var defaultValue = new List<TestItem>();
-            var result = (await source.ToNestedContents(defaultValue)(null, null)) as IList<TestItem>;
+            var result = await source.ToNestedContents(defaultValue)(null, null).ConfigureAwait(false) as IList<TestItem>;
 
             Assert.That(result, Is.EqualTo(defaultValue));
         }

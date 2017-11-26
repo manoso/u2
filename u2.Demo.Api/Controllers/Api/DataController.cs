@@ -13,17 +13,17 @@ namespace u2.Demo.Api.Controllers.Api
         [Inject]
         public IDataService DataService { get; set; }
 
-        [Route("view")]
-        public async Task<IHttpActionResult> GetView()
+        [Route("view/async")]
+        public async Task<IHttpActionResult> GetViewAsync()
         {
-            var views = await DataService.Get<View>();
+            var views = await DataService.GetAsync<View>().ConfigureAwait(false);
             return Ok(views);
         }
 
-        [Route("media")]
-        public async Task<IHttpActionResult> GetMedia()
+        [Route("view")]
+        public IHttpActionResult GetView()
         {
-            var views = await DataService.Get<Media>();
+            var views = DataService.Get<View>();
             return Ok(views);
         }
     }

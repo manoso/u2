@@ -132,7 +132,7 @@ namespace u2.Core.Test
         public async Task FetchAsync_fit_single_success()
         {
             var cache = Setup(map => map.Match(x => x.Item));
-            var entities = await cache.FetchAsync<TestEntity>();
+            var entities = await cache.FetchAsync<TestEntity>().ConfigureAwait(false);
 
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
@@ -159,7 +159,7 @@ namespace u2.Core.Test
         {
 
             var cache = Setup(map => map.Match(x => x.Item, (x, key) => x.Key == Guid.Parse(key)));
-            var entities = await cache.FetchAsync<TestEntity>();
+            var entities = await cache.FetchAsync<TestEntity>().ConfigureAwait(false);
 
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
@@ -185,7 +185,7 @@ namespace u2.Core.Test
         public async Task FetchAsync_fit_many_success()
         {
             var cache = Setup(map => map.MatchMany(x => x.Items));
-            var entities = await cache.FetchAsync<TestEntity>();
+            var entities = await cache.FetchAsync<TestEntity>().ConfigureAwait(false);
 
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
@@ -211,7 +211,7 @@ namespace u2.Core.Test
         public async Task FetchAsync_fit_many_with_key_success()
         {
             var cache = Setup(map => map.MatchMany(x => x.Items, (x, key) => x.Key == Guid.Parse(key)));
-            var entities = await cache.FetchAsync<TestEntity>();
+            var entities = await cache.FetchAsync<TestEntity>().ConfigureAwait(false);
 
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
@@ -241,7 +241,7 @@ namespace u2.Core.Test
                 x.List = y.ToList();
                 x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
             }, "items"));
-            var entities = await cache.FetchAsync<TestEntity>();
+            var entities = await cache.FetchAsync<TestEntity>().ConfigureAwait(false);
 
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
@@ -279,7 +279,7 @@ namespace u2.Core.Test
                 x.List = y.ToList();
                 x.Dictionary = x.List.ToDictionary(z => z.Key.ToString(), z => z);
             }, "items", (x, key) => x.Key == Guid.Parse(key)));
-            var entities = await cache.FetchAsync<TestEntity>();
+            var entities = await cache.FetchAsync<TestEntity>().ConfigureAwait(false);
 
             Assert.That(entities, Is.Not.Null);
             Assert.That(entities.Count(), Is.EqualTo(1));
@@ -324,7 +324,7 @@ namespace u2.Core.Test
             for (var i = 0; i < tasks.Length; i++)
                 tasks[i] = cache.FetchAsync<TestEntity>();
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
 
             foreach (var task in tasks)
             {
@@ -403,12 +403,12 @@ namespace u2.Core.Test
                 new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
                 new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
                 new CacheItem {LookupKey = 2, LookupKeyOther = "1"}
-            });
+            }).ConfigureAwait(false);
 
             cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther).Span(300);
 
-            var result = await cache.FetchAsync(lookup);
-            var resultOther = await cache.FetchAsync(lookupOther);
+            var result = await cache.FetchAsync(lookup).ConfigureAwait(false);
+            var resultOther = await cache.FetchAsync(lookupOther).ConfigureAwait(false);
             var item = result["2"].First();
             var itemOther = resultOther["1"].First();
 
@@ -440,7 +440,7 @@ namespace u2.Core.Test
                 new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
                 new CacheItem {LookupKey = 1, LookupKeyOther = "2"},
                 new CacheItem {LookupKey = 2, LookupKeyOther = "1"}
-            });
+            }).ConfigureAwait(false);
 
             cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther).Span(300);
 
@@ -475,12 +475,12 @@ namespace u2.Core.Test
                 new TestItem {ItemId = 1},
                 new TestItem {ItemId = 3},
                 new TestItem {ItemId = 2}
-            });
+            }).ConfigureAwait(false);
             cacheRegistry.Add(Task)
                 .Span(300)
                 .OnSave(x => x.OrderBy(y => y.ItemId));
 
-            var result = (await cache.FetchAsync<TestItem>()).ToList();
+            var result = (await cache.FetchAsync<TestItem>().ConfigureAwait(false)).ToList();
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.First().ItemId, Is.EqualTo(1));
@@ -500,7 +500,7 @@ namespace u2.Core.Test
                 new TestItem {ItemId = 1},
                 new TestItem {ItemId = 3},
                 new TestItem {ItemId = 2}
-            });
+            }).ConfigureAwait(false);
             cacheRegistry.Add(Task)
                 .Span(300)
                 .OnSave(x => x.OrderBy(y => y.ItemId));
