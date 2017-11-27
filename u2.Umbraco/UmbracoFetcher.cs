@@ -1,4 +1,5 @@
 ﻿using u2.Core.Contract;
+using u2.Umbraco.Contract;
 
 namespace u2.Umbraco
 {
@@ -9,7 +10,11 @@ namespace u2.Umbraco
 
     public class UmbracoFetcher : ICmsFetcher
     {
-        private const string Searcher = "ExternalSearcher";
+        private readonly IUmbracoConfig _config;
+        public UmbracoFetcher(IUmbracoConfig config)
+        {
+            _config = config;
+        }
 
         public IEnumerable<IContent> Fetch(ICmsQuery cmsQuery)
         {
@@ -20,7 +25,7 @@ namespace u2.Umbraco
                 return null;
             }
 
-            var searcher = ExamineManager.Instance.SearchProviderCollection[Searcher];
+            var searcher = ExamineManager.Instance.SearchProviderCollection[_config.Searcher];
             var searchCriteria = searcher.CreateSearchCriteria(BooleanOperation.Or);
             searchCriteria.RawQuery(query);
             var results = searcher.Search(searchCriteria);

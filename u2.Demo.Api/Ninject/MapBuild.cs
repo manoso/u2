@@ -1,4 +1,4 @@
-﻿using u2.Config.Contract;
+﻿using u2.Fixture.Contract;
 using u2.Core.Contract;
 using u2.Demo.Data;
 using u2.Umbraco.DataType;
@@ -7,9 +7,9 @@ using u2.Umbraco.DataType.Media;
 
 namespace u2.Demo.Api.Ninject
 {
-    public class MapConfig : IMapConfig
+    public class MapBuild : IMapBuild
     {
-        public void Config(IRegistry registry)
+        public void Setup(IRegistry registry)
         {
             registry.Register<Site>()
                 .Map(root => root.Hosts, null, x => x.Split<string>());

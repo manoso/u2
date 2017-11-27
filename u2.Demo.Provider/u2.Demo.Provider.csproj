@@ -49,9 +49,9 @@
       <Project>{5c409114-17e3-45bf-bf3b-82801598d953}</Project>
       <Name>u2.Caching</Name>
     </ProjectReference>
-    <ProjectReference Include="..\u2.Config\u2.Config.csproj">
+    <ProjectReference Include="..\u2.Fixture\u2.Fixture.csproj">
       <Project>{14c72218-f6b6-4980-aebd-b4bc00536573}</Project>
-      <Name>u2.Config</Name>
+      <Name>u2.Fixture</Name>
     </ProjectReference>
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">
       <Project>{bdb61368-e0c4-46cc-b47c-f275cff7f339}</Project>

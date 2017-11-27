@@ -1,12 +1,9 @@
-using u2.Config.Contract;
-using u2.Core.Contract;
+using u2.Caching.Contract;
 
 namespace u2.Test
 {
     public class TestCacheConfig : ICacheConfig
     {
-        public void Config(ICacheRegistry registry)
-        {
-        }
+        public int CacheInSeconds { get; } = 3;
     }
 }

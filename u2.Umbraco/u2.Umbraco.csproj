@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentQuery.cs" />
+    <Compile Include="Contract\IUmbracoConfig.cs" />
     <Compile Include="MediaQuery.cs" />
     <Compile Include="UmbracoQuery.cs" />
     <Compile Include="ExamineVisitor.cs" />

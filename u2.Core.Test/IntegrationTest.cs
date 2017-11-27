@@ -20,7 +20,7 @@ namespace u2.Core.Test
             var mapRegistry = new MapRegistry();
             var mapper = new Mapper(mapRegistry);
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry();
+            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var cache = new Cache(cacheStore, cacheRegistry, root);
             var queryFactory = Substitute.For<IQueryFactory>();
@@ -392,7 +392,7 @@ namespace u2.Core.Test
         public async Task FetchAsync_lookup_test()
         {
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry();
+            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
             var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
@@ -429,7 +429,7 @@ namespace u2.Core.Test
         public void Fetch_lookup_test()
         {
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry();
+            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
             var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
@@ -466,7 +466,7 @@ namespace u2.Core.Test
         public async Task FetchAsync_OnSave_test()
         {
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry();
+            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var cache = new Cache(cacheStore, cacheRegistry, root);
 
@@ -491,7 +491,7 @@ namespace u2.Core.Test
         public void Fetch_OnSave_test()
         {
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry();
+            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var cache = new Cache(cacheStore, cacheRegistry, root);
 

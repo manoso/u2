@@ -4,10 +4,10 @@ using System.Web;
 using Ninject;
 using Ninject.Extensions.Conventions;
 using Ninject.Modules;
-using u2.Config;
 using u2.Core.Contract;
 using u2.Demo.Common.Ninject;
 using u2.Demo.Data;
+using u2.Fixture;
 
 namespace u2.Demo.Api.Ninject
 {
@@ -34,8 +34,7 @@ namespace u2.Demo.Api.Ninject
                 .BindDefaultInterface()
                 .Configure(conf => conf.InThreadScope()));
 
-            new BindConfig(this).Config<Site, MapConfig, CacheConfig>();
-            //Bind<IMappingEngine>().ToMethod(x => AutoMapperInstance.Current);
+            new BindConfig(this).Config<Site, UmbracoConfig, CacheConfig, MapBuild, CacheBuild>();
         }
 
         public void Add<TContract, TImplement>(bool isSingleton = false, Func<TImplement> func = null)

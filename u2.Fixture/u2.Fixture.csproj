@@ -7,8 +7,8 @@
     <ProjectGuid>{14C72218-F6B6-4980-AEBD-B4BC00536573}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>u2.Config</RootNamespace>
-    <AssemblyName>u2.Config</AssemblyName>
+    <RootNamespace>u2.Fixture</RootNamespace>
+    <AssemblyName>u2.Fixture</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,8 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BindConfig.cs" />
-    <Compile Include="Contract\ICacheConfig.cs" />
-    <Compile Include="Contract\IMapConfig.cs" />
+    <Compile Include="Contract\IBuild.cs" />
+    <Compile Include="Contract\ICacheBuild.cs" />
+    <Compile Include="Contract\IMapBuild.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

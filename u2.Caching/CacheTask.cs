@@ -16,7 +16,7 @@ namespace u2.Caching
         public ICacheTask<T> Span(int seconds)
         {
             if (seconds > 0)
-                CacheInSecs = seconds;
+                CacheInSeconds = seconds;
             return this;
         }
 
@@ -50,7 +50,7 @@ namespace u2.Caching
             {
                 return () =>
                 {
-                    if (CacheInSecs > 0)
+                    if (CacheInSeconds > 0)
                         Timestamp = DateTime.UtcNow;
                 };
             }
@@ -87,19 +87,19 @@ namespace u2.Caching
 
     public abstract class CacheTask : RunOnce<ICache>, ICacheTask
     {
-        protected int CacheInSecs = 300;
+        public int CacheInSeconds { get; set; } = 300;
 
         public string TaskKey { get; set; }
 
         public IDictionary<string, object> CacheItems { get; } = new Dictionary<string, object>();
 
-        public bool IsExpired => CacheInSecs <= 0 || Timestamp.AddSeconds(CacheInSecs) <= DateTime.UtcNow;
+        public bool IsExpired => CacheInSeconds <= 0 || Timestamp.AddSeconds(CacheInSeconds) <= DateTime.UtcNow;
 
         protected DateTime Timestamp;
 
         public async Task Reload(ICache cache)
         {
-            Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSecs);
+            Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSeconds);
             await Load(cache).ConfigureAwait(false);
         }
 
