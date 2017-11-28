@@ -12,8 +12,17 @@ namespace u2.Umbraco.DataType
 {
     public static class CmsHelper
     {
-        private static readonly char[] DefaultSeparatora = { ',' };
+        private static readonly char[] DefaultSeparator = { ',' };
 
+        /// <summary>
+        /// Extension method to split string content field into a list of T objects using the given separators.
+        /// Returns a list of T objects converted from the splitted strings.
+        /// </summary>
+        /// <typeparam name="T">Indicate the type is converting to.</typeparam>
+        /// <param name="source">The string value read from the content field.</param>
+        /// <param name="separators">Separators used to split the string, if null, defalut separator ',' is used.</param>
+        /// <param name="empty">The value to be returned if string parameter source is null or empty. Default is null.</param>
+        /// <returns></returns>
         public static IList<T> Split<T>(this string source, char[] separators = null, IList<T> empty = null)
         {
             if (string.IsNullOrWhiteSpace(source))
@@ -22,7 +31,7 @@ namespace u2.Umbraco.DataType
             }
 
             if (separators == null)
-                separators = DefaultSeparatora;
+                separators = DefaultSeparator;
 
             var list = source
                 .Split(separators, StringSplitOptions.RemoveEmptyEntries)
@@ -37,6 +46,14 @@ namespace u2.Umbraco.DataType
                 .ToList();
         }
 
+        /// <summary>
+        /// Extension method to return a map function to convert a Archetype field into a list of T objects.
+        /// Returns an async map function take IMapper and ICache as input parameters and IList of T as the output object.
+        /// </summary>
+        /// <typeparam name="T">Indicate the type is converting to.</typeparam>
+        /// <param name="source">The string value read from the Archetype field.</param>
+        /// <param name="empty">The value to be returned if string parameter source is null or empty. Default is null.</param>
+        /// <returns></returns>
         public static Func<IMapper, ICache, Task<object>> ToArchetypes<T>(this string source, IList<T> empty = null) where T : class, new()
         {
             var model = string.IsNullOrWhiteSpace(source) ? null : JsonConvert.DeserializeObject<Model>(source);
@@ -44,6 +61,14 @@ namespace u2.Umbraco.DataType
             return async (mapper, cache) => contents == null ? empty : (await mapper.ToAsync<T>(cache, contents).ConfigureAwait(false)).ToList();
         }
 
+        /// <summary>
+        /// Extension method to return a map function to convert a NestedContent field into a list of T objects.
+        /// Returns an async map function take IMapper and ICache as input parameters and IList of T as the output object.
+        /// </summary>
+        /// <typeparam name="T">Indicate the type is converting to.</typeparam>
+        /// <param name="source">The string value read from the NestedContent field.</param>
+        /// <param name="empty">The value to be returned if string parameter source is null or empty. Default is null.</param>
+        /// <returns></returns>
         public static Func<IMapper, ICache, Task<object>> ToNestedContents<T>(this string source, IList<T> empty = null) where T : class, new()
         {
             var jsons = string.IsNullOrWhiteSpace(source) ? null : JArray.Parse(source);
@@ -51,11 +76,25 @@ namespace u2.Umbraco.DataType
             return async (mapper, cache) => contents == null ? empty : (await mapper.ToAsync<T>(cache, contents).ConfigureAwait(false)).ToList();
         }
 
+        /// <summary>
+        /// Extension method to convert a single T object into a IList of T.
+        /// Returns a IList of T object with the given T object as the only item.
+        /// </summary>
+        /// <typeparam name="T">Indicate the type of the object.</typeparam>
+        /// <param name="item">The T object to convert.</param>
+        /// <returns></returns>
         public static IList<T> ListIt<T>(this T item)
         {
             return new List<T> { item };
         }
 
+        /// <summary>
+        /// Extension method to convert string content field into a given type object.
+        /// Returns an object of the given type.
+        /// </summary>
+        /// <param name="source">The string value read from the content field.</param>
+        /// <param name="type">Indicate the type that the string is converting to.</param>
+        /// <returns></returns>
         public static object Convert(this string source, Type type)
         {
             if (type == typeof(Guid) && TryParseGuid(source, out var guid))
@@ -73,6 +112,13 @@ namespace u2.Umbraco.DataType
             return converter.ConvertFromString(source);
         }
 
+        /// <summary>
+        /// Extension method to parse the string representation of a Udi Key to the equivalent Guid struct.
+        /// Returns a boolean result indicating whether the parse is successful.
+        /// </summary>
+        /// <param name="source">The string representation of a Udi Key.</param>
+        /// <param name="guid">Output reference of the Guid struct.</param>
+        /// <returns></returns>
         public static bool TryParseGuid(this string source, out Guid guid)
         {
             var index = source.LastIndexOf("/", StringComparison.CurrentCultureIgnoreCase);
@@ -81,7 +127,12 @@ namespace u2.Umbraco.DataType
             return Guid.TryParse(source, out guid);
         }
 
-
+        /// <summary>
+        /// Extension method to convert a ImageCropper field into a IDictionary of crop urls.
+        /// Returns a IDictionary of crop urls.
+        /// </summary>
+        /// <param name="source">The string value read from the ImageCropper field.</param>
+        /// <returns></returns>
         public static IDictionary<string, string> ToCrops(this string source)
         {
             if (string.IsNullOrEmpty(source))
@@ -92,6 +143,14 @@ namespace u2.Umbraco.DataType
             return model?.CropUrls;
         }
 
+        /// <summary>
+        /// Extension method to convert a json field into a T object.
+        /// Returns the T object.
+        /// </summary>
+        /// <typeparam name="T">Indicate the type is converting to.</typeparam>
+        /// <param name="source">The string value read from the json field.</param>
+        /// <param name="empty">The value to be returned if string parameter source is null or empty. Default is null.</param>
+        /// <returns></returns>
         public static T JsonTo<T>(this string source, T empty = null) where T : class, new()
         {
             if (string.IsNullOrEmpty(source))

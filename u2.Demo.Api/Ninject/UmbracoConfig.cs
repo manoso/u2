@@ -4,6 +4,6 @@ namespace u2.Demo.Api.Ninject
 {
     public class UmbracoConfig : IUmbracoConfig
     {
-        public string Searcher { get; } = "ExternalSearcher";
+        public string ExamineSearcher { get; } = "ExternalSearcher";
     }
 }

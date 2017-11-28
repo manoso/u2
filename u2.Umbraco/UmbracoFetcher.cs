@@ -25,7 +25,7 @@ namespace u2.Umbraco
                 return null;
             }
 
-            var searcher = ExamineManager.Instance.SearchProviderCollection[_config.Searcher];
+            var searcher = ExamineManager.Instance.SearchProviderCollection[_config.ExamineSearcher];
             var searchCriteria = searcher.CreateSearchCriteria(BooleanOperation.Or);
             searchCriteria.RawQuery(query);
             var results = searcher.Search(searchCriteria);

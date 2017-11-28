@@ -4,6 +4,6 @@ namespace u2.Test
 {
     public class TestUmbracoConfig : IUmbracoConfig
     {
-        public string Searcher { get; } = "ExternalSearcher";
+        public string ExamineSearcher { get; } = "ExternalSearcher";
     }
 }
