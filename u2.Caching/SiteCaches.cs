@@ -16,8 +16,11 @@ namespace u2.Caching
 
         public static void Setup(ICacheRegistry cacheRegistry, ICacheStore cacheStore)
         {
-            _cacheRegistry = cacheRegistry;
-            Default = new Cache(cacheStore, _cacheRegistry);
+            if (Default == null)
+            {
+                _cacheRegistry = cacheRegistry;
+                Default = new Cache(cacheStore, _cacheRegistry);
+            }
         }
 
         public static ICache Get(IRoot root)

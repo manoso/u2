@@ -12,7 +12,7 @@ namespace u2.Demo.Api.Ninject
         public void Setup(IRegistry registry)
         {
             registry.Register<Site>()
-                .Map(root => root.Hosts, null, x => x.Split<string>());
+                .Map(root => root.Hosts, mapFunc: x => x.Split<string>());
             registry.Register<View>()
                 .MatchMany(view => view.Blocks);
             registry.Register<Block>()

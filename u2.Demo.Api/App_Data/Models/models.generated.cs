@@ -19,7 +19,7 @@ using Umbraco.ModelsBuilder;
 using Umbraco.ModelsBuilder.Umbraco;
 
 [assembly: PureLiveAssembly]
-[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "3bfa69704bb73084")]
+[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "c8da6f485281d38a")]
 [assembly:System.Reflection.AssemblyVersion("0.0.0.1")]
 
 namespace Umbraco.Web.PublishedContentModels
@@ -65,6 +65,15 @@ namespace Umbraco.Web.PublishedContentModels
 		public string CurrencyCode
 		{
 			get { return this.GetPropertyValue<string>("currencyCode"); }
+		}
+
+		///<summary>
+		/// Hosts: Host list
+		///</summary>
+		[ImplementPropertyType("hosts")]
+		public string Hosts
+		{
+			get { return this.GetPropertyValue<string>("hosts"); }
 		}
 	}
 

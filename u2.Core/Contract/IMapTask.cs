@@ -24,6 +24,10 @@ namespace u2.Core.Contract
         object Create(object instance = null);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IMapTask<T> : IMapTask
         where T : class, new()
     {

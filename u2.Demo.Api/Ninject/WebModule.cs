@@ -38,6 +38,7 @@ namespace u2.Demo.Api.Ninject
         }
 
         public void Add<TContract, TImplement>(bool isSingleton = false, Func<TImplement> func = null)
+            where TContract: class
             where TImplement: TContract
         {
             var binding = func == null

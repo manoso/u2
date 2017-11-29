@@ -3,7 +3,6 @@ using u2.Caching;
 using u2.Caching.Contract;
 using u2.Core;
 using u2.Core.Contract;
-using u2.Core.Extensions;
 using u2.Fixture.Contract;
 using u2.Umbraco;
 using u2.Umbraco.Contract;
@@ -39,20 +38,24 @@ namespace u2.Fixture
             _binder.Add<ICacheBuild, TCacheBuild>(true);
 
             var rego = _binder.Get<IRegistry>();
-            var mapConfig = _binder.Get<IMapBuild>();
-            mapConfig.Setup(rego);
+            var mapBuild = _binder.Get<IMapBuild>();
+            mapBuild.Setup(rego);
             var cacheRego = _binder.Get<ICacheRegistry>();
-            var cacheConfig = _binder.Get<ICacheBuild>();
-            cacheConfig.Setup(cacheRego);
+            var cacheBuild = _binder.Get<ICacheBuild>();
+            cacheBuild.Setup(cacheRego);
 
             _binder.Add<IRoot, TRoot>(func: () =>
             {
-                var host = _binder.Host;
-                var cacheStore = _binder.Get<ICacheStore>();
-                SiteCaches.Setup(cacheRego, cacheStore);
                 var cache = SiteCaches.Default;
-                var sites = cache.Fetch<TRoot>().AsList();
-                return sites.FirstOrDefault(/*site => site.Hosts.Contains(host)*/);
+                if (cache == null)
+                {
+                    var cacheStore = _binder.Get<ICacheStore>();
+                    SiteCaches.Setup(cacheRego, cacheStore);
+                    cache = SiteCaches.Default;
+                }
+                var host = _binder.Host;
+                var sites = cache.Fetch<TRoot>()?.ToList();
+                return sites?.FirstOrDefault(site => site.Hosts?.Contains(host) ?? false) ?? sites?.FirstOrDefault();
             });
 
             _binder.Add<ICache, Cache>(func: () =>
