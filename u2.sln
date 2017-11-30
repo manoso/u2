@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Core", "u2.Core\u2.Core.csproj", "{BDB61368-E0C4-46CC-B47C-F275CFF7F339}"
 EndProject
@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Demo.Service", "u2.Demo.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Fixture", "u2.Fixture\u2.Fixture.csproj", "{14C72218-F6B6-4980-AEBD-B4BC00536573}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Fixture.Test", "u2.Fixture.Test\u2.Config.Test.csproj", "{41241C37-D04D-45B2-8BFD-0A239F9A3593}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Fixture.Test", "u2.Fixture.Test\u2.Fixture.Test.csproj", "{41241C37-D04D-45B2-8BFD-0A239F9A3593}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u2.Demo.Provider", "u2.Demo.Provider\u2.Demo.Provider.csproj", "{F73A303A-F11E-4382-8CF1-1335614E61DE}"
 EndProject
