@@ -31,11 +31,13 @@ namespace u2.Fixture
             _binder.Add<IQueryFactory, UmbracoQueryFactory>(true);
             _binder.Add<ICmsFetcher, UmbracoFetcher>(true);
             _binder.Add<IRegistry, Registry>(true);
-            _binder.Add<ICacheStore, CacheStore>();
+            //_binder.Add<ICacheStore, CacheStore>();
+            _binder.Add<ISiteCaches, SiteCaches>(true);
             _binder.Add<IUmbracoConfig, TUmbracoConfig>(true);
             _binder.Add<ICacheConfig, TCacheConfig>(true);
             _binder.Add<IMapBuild, TMapBuild>(true);
             _binder.Add<ICacheBuild, TCacheBuild>(true);
+            //_binder.Add(_binder);
 
             var rego = _binder.Get<IRegistry>();
             var mapBuild = _binder.Get<IMapBuild>();
@@ -43,30 +45,22 @@ namespace u2.Fixture
             var cacheRego = _binder.Get<ICacheRegistry>();
             var cacheBuild = _binder.Get<ICacheBuild>();
             cacheBuild.Setup(cacheRego);
+            var siteCaches = _binder.Get<ISiteCaches>();
 
             _binder.Add<IRoot, TRoot>(func: () =>
             {
-                var cache = SiteCaches.Default;
-                if (cache == null)
-                {
-                    var cacheStore = _binder.Get<ICacheStore>();
-                    SiteCaches.Setup(cacheRego, cacheStore);
-                    cache = SiteCaches.Default;
-                }
+                var cache = siteCaches.Default;
                 var host = _binder.Host;
                 var sites = cache.Fetch<TRoot>()?.ToList();
-                return sites?.FirstOrDefault(site => site.Hosts?.Contains(host) ?? false) ?? sites?.FirstOrDefault();
+                var root = sites?.FirstOrDefault(site => site.Hosts?.Contains(host) ?? false) ?? sites?.FirstOrDefault();
+                return root;
             });
 
             _binder.Add<ICache, Cache>(func: () =>
             {
                 var root = _binder.Get<IRoot>();
-                if (!SiteCaches.Has(root))
-                {
-                    var cacheStore = _binder.Get<ICacheStore>();
-                    SiteCaches.Add(root, new Cache(cacheStore, cacheRego, root));
-                }
-                return SiteCaches.Get(root) as Cache;
+                var cache = siteCaches.Get(root) as Cache;
+                return cache;
             });
         }
     }

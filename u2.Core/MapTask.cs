@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using u2.Core.Contract;
 using u2.Core.Extensions;
@@ -11,6 +12,8 @@ namespace u2.Core
 {
     public abstract class MapTask : BaseTask, IMapTask
     {
+        private readonly OnceToken _once = new OnceToken();
+
         public string Alias { get; protected set; }
 
         public Type EntityType { get; protected set; }
@@ -29,7 +32,14 @@ namespace u2.Core
             get
             {
                 if (!ModelMaps.Any()) return null;
-                return _taskDefer ?? (_taskDefer = new TaskDefer(ModelMaps));
+                if (_taskDefer == null)
+                {
+                    _once.Lock(() =>
+                    {
+                        _taskDefer = new TaskDefer(ModelMaps);
+                    });
+                }
+                return _taskDefer;
             }
         }
 

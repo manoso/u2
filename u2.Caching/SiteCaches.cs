@@ -1,57 +1,67 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using u2.Core.Contract;
 
 namespace u2.Caching
 {
-    public class SiteCaches
+    public class SiteCaches : ISiteCaches
     {
-        public static int DefaultCacheTime = 300;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        private static readonly IDictionary<IRoot, ICache> Caches = new Dictionary<IRoot, ICache>();
+        private readonly IDictionary<Guid, ICache> _caches = new Dictionary<Guid, ICache>();
 
-        public static ICache Default { get; set; }
+        private readonly ICacheRegistry _cacheRegistry;
 
-        private static ICacheRegistry _cacheRegistry;
+        private readonly Func<string, ICacheStore> _getStore;
 
-        public static void Setup(ICacheRegistry cacheRegistry, ICacheStore cacheStore)
+        public SiteCaches(ICacheRegistry cacheRegistry)
         {
-            if (Default == null)
+            _cacheRegistry = cacheRegistry;
+            _getStore = name => new CacheStore(name);
+            var cacheStore = _getStore(null);
+            Default = new Cache(cacheStore, _cacheRegistry);
+        }
+
+        public ICache Default { get; }
+
+        public ICache Get(IRoot root)
+        {
+            var key = root.Key;
+            if (!_caches.TryGetValue(key, out var result))
             {
-                _cacheRegistry = cacheRegistry;
-                Default = new Cache(cacheStore, _cacheRegistry);
+                try
+                {
+                    _semaphore.Wait();
+                    if (!_caches.TryGetValue(key, out result))
+                    {
+                        var cacheStore = _getStore(key.ToString("N"));
+                        result = _caches[key] = new Cache(cacheStore, _cacheRegistry, root);
+                    }
+                }
+                finally
+                {
+                    _semaphore.Release();
+                }
             }
+            return result;
         }
 
-        public static ICache Get(IRoot root)
-        {
-            return Caches[root];
-        }
-
-        public static void Add(IRoot root, ICache cache)
-        {
-            Caches[root] = cache;
-        }
-
-        public static bool Has(IRoot root)
-        {
-            return Caches.ContainsKey(root);
-        }
-
-        public static async Task RefreshAsync(IRoot root = null)
+        public async Task RefreshAsync(IRoot root = null)
         {
             if (root == null)
             {
-                foreach (var cache in Caches.Values)
+                foreach (var cache in _caches.Values)
                 {
                     await cache.ReloadAsync().ConfigureAwait(false);
                 }
             }
             else
-                await Caches[root].ReloadAsync().ConfigureAwait(false);
+                await _caches[root.Key].ReloadAsync().ConfigureAwait(false);
         }
 
-        public static void Refresh(IRoot root = null)
+        public void Refresh(IRoot root = null)
         {
             RefreshAsync(root).Wait();
         }

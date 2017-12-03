@@ -532,7 +532,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50342</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://api.demo</IISUrl>
+          <IISUrl>http://api.demo.au</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -6,16 +6,21 @@ namespace u2.Caching
 {
     public class CacheStore : ICacheStore
     {
-        private static readonly MemoryCache Cache = MemoryCache.Default;
+        private readonly MemoryCache _cache;
+
+        public CacheStore(string name = null)
+        {
+            _cache = string.IsNullOrWhiteSpace(name) ? MemoryCache.Default : new MemoryCache(name);
+        }
 
         public object Get(string key)
         {
-            return Cache[key];
+            return _cache[key];
         }
 
         public void Save(string key, object item)
         {
-            Cache.Set(key,
+            _cache.Set(key,
                 item,
                 new CacheItemPolicy
                 {
@@ -26,12 +31,12 @@ namespace u2.Caching
 
         public void Clear(string key)
         {
-            Cache.Remove(key);
+            _cache.Remove(key);
         }
 
         public bool Has(string key)
         {
-            return Cache.Contains(key);
+            return _cache.Contains(key);
         }
     }
 }

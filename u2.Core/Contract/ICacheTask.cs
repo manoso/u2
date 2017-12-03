@@ -8,8 +8,6 @@ namespace u2.Core.Contract
     {
         string TaskKey { get; }
 
-        IDictionary<string, object> CacheItems { get; }
-
         bool IsExpired { get; }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,9 +12,9 @@ namespace u2.Core
 
         protected abstract Func<bool> CanRun { get; }
         protected abstract Action Reset { get; }
-        protected abstract Func<T, Task> RunTask { get; }
+        protected abstract Func<T, Task<IDictionary<string, object>>> RunTask { get; }
 
-        protected async Task RunAsync(T parameter, Action done = null)
+        protected async Task RunAsync(T parameter, Action<IDictionary<string, object>> done = null)
         {
             TaskCompletionSource<bool> taskCompletion = null;
             await _semaphore.WaitAsync().ConfigureAwait(false);
@@ -33,8 +34,8 @@ namespace u2.Core
 
             if (taskCompletion != null)
             {
-                await RunTask(parameter).ConfigureAwait(false);
-                done?.Invoke();
+                var result = await RunTask(parameter).ConfigureAwait(false);
+                done?.Invoke(result);
                 taskCompletion.SetResult(true);
             }
 

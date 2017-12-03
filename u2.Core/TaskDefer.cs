@@ -9,7 +9,6 @@ namespace u2.Core
     {
         public IList<IMapItem> Maps { get; } = new List<IMapItem>();
 
-
         private void Attach(string alias, Func<ICache, object, string, Task> task)
         {
             Maps.Add(new MapItem<object, string>(alias)

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Http;
 using Ninject;
+using u2.Caching;
 using u2.Demo.Data;
 using u2.Demo.Service;
 using u2.Umbraco.DataType.Media;
@@ -12,6 +13,9 @@ namespace u2.Demo.Api.Controllers.Api
     {
         [Inject]
         public IDataService DataService { get; set; }
+
+        [Inject]
+        public ISiteCaches SiteCaches { get; set; }
 
         [Route("view/async")]
         public async Task<IHttpActionResult> GetViewAsync()

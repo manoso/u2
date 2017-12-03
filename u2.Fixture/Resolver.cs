@@ -27,6 +27,7 @@ namespace u2.Fixture
             var queryFactory = new UmbracoQueryFactory();
             var umbracoFetcher = new UmbracoFetcher(umbracoConfig);
             var registry = new Registry(mapRegistry, mapper, cacheRegistry, queryFactory, umbracoFetcher);
+            var siteCaches = new SiteCaches(cacheRegistry);
 
             _singletons = new Dictionary<Type, object>
             {
@@ -40,13 +41,7 @@ namespace u2.Fixture
 
             _rootFunc = () =>
             {
-                var cache = SiteCaches.Default;
-                if (cache == null)
-                {
-                    var cacheStore = new CacheStore();
-                    SiteCaches.Setup(cacheRegistry, cacheStore);
-                    cache = SiteCaches.Default;
-                }
+                var cache = siteCaches.Default;
                 var host = HttpContext.Current?.Request.Url.Host ?? string.Empty;
                 var sites = cache.Fetch<TRoot>()?.ToList();
                 return sites?.FirstOrDefault(site => site.Hosts?.Contains(host) ?? false) ?? sites?.FirstOrDefault();
@@ -55,12 +50,7 @@ namespace u2.Fixture
             _cacheFunc = () =>
             {
                 var root = _rootFunc();
-                if (!SiteCaches.Has(root))
-                {
-                    var cacheStore = new CacheStore();
-                    SiteCaches.Add(root, new Cache(cacheStore, cacheRegistry, root));
-                }
-                return SiteCaches.Get(root) as Cache;
+                return siteCaches.Get(root) as Cache;
             };
 
             mapBuild.Setup(registry);

@@ -56,11 +56,13 @@ namespace u2.Caching
             }
         }
 
-        protected override Func<ICache, Task> RunTask => Load;
+        protected override Func<ICache, Task<IDictionary<string, object>>> RunTask => Load;
 
-        protected override async Task Load(ICache cache)
+        protected override async Task<IDictionary<string, object>> Load(ICache cache)
         {
             IList<T> items = null;
+            var result = new Dictionary<string, object>();
+
             if (_task != null)
             {
                 var data = await _task(cache).ConfigureAwait(false);
@@ -70,7 +72,7 @@ namespace u2.Caching
                     data = _onSave?.Invoke(data) ?? data;
 
                     items = data.ToList();
-                    CacheItems[TaskKey] = items;
+                    result[TaskKey] = items;
                 }
             }
 
@@ -79,9 +81,11 @@ namespace u2.Caching
                 foreach (var lookup in CacheLookups)
                 {
                     var data = items.ToLookup(lookup.GetLookupKey);
-                    CacheItems[lookup.CacheKey] = data;
+                    result[lookup.CacheKey] = data;
                 }
             }
+
+            return result;
         }
     }
 
@@ -90,8 +94,6 @@ namespace u2.Caching
         public int CacheInSeconds { get; set; } = 300;
 
         public string TaskKey { get; set; }
-
-        public IDictionary<string, object> CacheItems { get; } = new Dictionary<string, object>();
 
         public bool IsExpired => CacheInSeconds <= 0 || Timestamp.AddSeconds(CacheInSeconds) <= DateTime.UtcNow;
 
@@ -106,15 +108,15 @@ namespace u2.Caching
         public async Task Run(ICache cache, Action<string, object> save = null)
         {
             var done = save == null
-                ? null as Action
-                : () =>
+                ? null as Action<IDictionary<string, object>>
+                : data =>
                 {
-                    foreach (var cacheItem in CacheItems)
+                    foreach (var cacheItem in data)
                         save(cacheItem.Key, cacheItem.Value);
                 };
             await RunAsync(cache, done).ConfigureAwait(false);
         }
 
-        protected abstract Task Load(ICache cache);
+        protected abstract Task<IDictionary<string, object>> Load(ICache cache);
     }
 }

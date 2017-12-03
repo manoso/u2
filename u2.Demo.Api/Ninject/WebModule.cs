@@ -44,7 +44,6 @@ namespace u2.Demo.Api.Ninject
             var binding = func == null
                 ? Bind<TContract>().To<TImplement>()
                 : Bind<TContract>().ToMethod(context => func());
-
             if (isSingleton)
                 binding.InSingletonScope();
         }
