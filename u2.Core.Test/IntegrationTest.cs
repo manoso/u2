@@ -20,7 +20,7 @@ namespace u2.Core.Test
             var mapRegistry = new MapRegistry();
             var mapper = new Mapper(mapRegistry);
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
+            var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
             var cache = new Cache(cacheStore, cacheRegistry, root);
             var queryFactory = Substitute.For<IQueryFactory>();
@@ -392,7 +392,7 @@ namespace u2.Core.Test
         public async Task FetchAsync_lookup_test()
         {
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
+            var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
             var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
@@ -405,7 +405,7 @@ namespace u2.Core.Test
                 new CacheItem {LookupKey = 2, LookupKeyOther = "1"}
             }).ConfigureAwait(false);
 
-            cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther).Span(300);
+            cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther);
 
             var result = await cache.FetchAsync(lookup).ConfigureAwait(false);
             var resultOther = await cache.FetchAsync(lookupOther).ConfigureAwait(false);
@@ -429,7 +429,7 @@ namespace u2.Core.Test
         public void Fetch_lookup_test()
         {
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
+            var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
             var lookupOther = new CacheLookup<CacheItem>().Add(x => x.LookupKeyOther);
@@ -442,7 +442,7 @@ namespace u2.Core.Test
                 new CacheItem {LookupKey = 2, LookupKeyOther = "1"}
             }).ConfigureAwait(false);
 
-            cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther).Span(300);
+            cacheRegistry.Add(Task).Lookup(lookup).Lookup(lookupOther);
 
             var result = cache.Fetch(lookup);
             var resultOther = cache.Fetch(lookupOther);
@@ -466,7 +466,7 @@ namespace u2.Core.Test
         public async Task FetchAsync_OnSave_test()
         {
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
+            var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
             var cache = new Cache(cacheStore, cacheRegistry, root);
 
@@ -477,7 +477,6 @@ namespace u2.Core.Test
                 new TestItem {ItemId = 2}
             }).ConfigureAwait(false);
             cacheRegistry.Add(Task)
-                .Span(300)
                 .OnSave(x => x.OrderBy(y => y.ItemId));
 
             var result = (await cache.FetchAsync<TestItem>().ConfigureAwait(false)).ToList();
@@ -491,7 +490,7 @@ namespace u2.Core.Test
         public void Fetch_OnSave_test()
         {
             var root = Substitute.For<IRoot>();
-            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
+            var cacheRegistry = new CacheRegistry();
             var cacheStore = new CacheStore();
             var cache = new Cache(cacheStore, cacheRegistry, root);
 
@@ -502,7 +501,6 @@ namespace u2.Core.Test
                 new TestItem {ItemId = 2}
             }).ConfigureAwait(false);
             cacheRegistry.Add(Task)
-                .Span(300)
                 .OnSave(x => x.OrderBy(y => y.ItemId));
 
             var result = cache.Fetch<TestItem>().ToList();

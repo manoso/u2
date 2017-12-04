@@ -7,5 +7,7 @@ namespace u2.Demo.Data
     {
         public int Id { get; set; }
         public Guid Key { get; set; }
+
+        public string Name { get; set; }
     }
 }

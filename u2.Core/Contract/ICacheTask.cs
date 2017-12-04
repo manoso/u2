@@ -8,8 +8,6 @@ namespace u2.Core.Contract
     {
         string TaskKey { get; }
 
-        bool IsExpired { get; }
-
         /// <summary>
         /// Expired the cache tasks' timestamp, so the subsequent request is re-evaluated and data is reloaded.
         /// </summary>
@@ -21,9 +19,7 @@ namespace u2.Core.Contract
     public interface ICacheTask<T> : ICacheTask
     {
         IList<ICacheLookup<T>> CacheLookups { get; }
-        ICacheTask<T> Span(int seconds);
         ICacheTask<T> Lookup(ICacheLookup<T> cacheLookup);
         ICacheTask<T> OnSave(Func<IEnumerable<T>, IEnumerable<T>> func);
-
     }
 }

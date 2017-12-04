@@ -13,13 +13,6 @@ namespace u2.Caching
 
         private readonly Func<ICache, Task<IEnumerable<T>>> _task;
 
-        public ICacheTask<T> Span(int seconds)
-        {
-            if (seconds > 0)
-                CacheInSeconds = seconds;
-            return this;
-        }
-
         public ICacheTask<T> Lookup(ICacheLookup<T> cacheLookup)
         {
             CacheLookups.Add(cacheLookup);
@@ -37,23 +30,6 @@ namespace u2.Caching
         {
             _onSave = func;
             return this;
-        }
-
-        protected override Func<bool> CanRun
-        {
-            get { return () => IsExpired; }
-        } 
-
-        protected override Action Reset
-        {
-            get
-            {
-                return () =>
-                {
-                    if (CacheInSeconds > 0)
-                        Timestamp = DateTime.UtcNow;
-                };
-            }
         }
 
         protected override Func<ICache, Task<IDictionary<string, object>>> RunTask => Load;
@@ -91,17 +67,10 @@ namespace u2.Caching
 
     public abstract class CacheTask : RunOnce<ICache>, ICacheTask
     {
-        public int CacheInSeconds { get; set; } = 300;
-
         public string TaskKey { get; set; }
-
-        public bool IsExpired => CacheInSeconds <= 0 || Timestamp.AddSeconds(CacheInSeconds) <= DateTime.UtcNow;
-
-        protected DateTime Timestamp;
 
         public async Task Reload(ICache cache)
         {
-            Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSeconds);
             await Load(cache).ConfigureAwait(false);
         }
 

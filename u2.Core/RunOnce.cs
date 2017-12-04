@@ -8,23 +8,21 @@ namespace u2.Core
     public abstract class RunOnce<T>
     {
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-        private Task<bool> _task;
+        private readonly IDictionary<T, Task<bool>> _tasks = new Dictionary<T, Task<bool>>();
 
-        protected abstract Func<bool> CanRun { get; }
-        protected abstract Action Reset { get; }
         protected abstract Func<T, Task<IDictionary<string, object>>> RunTask { get; }
 
         protected async Task RunAsync(T parameter, Action<IDictionary<string, object>> done = null)
         {
             TaskCompletionSource<bool> taskCompletion = null;
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            Task<bool> task;
             try
             {
-                if (CanRun())
+                await _semaphore.WaitAsync().ConfigureAwait(false);
+                if (!_tasks.TryGetValue(parameter, out task))
                 {
                     taskCompletion = new TaskCompletionSource<bool>();
-                    _task = taskCompletion.Task;
-                    Reset();
+                    task = _tasks[parameter] = taskCompletion.Task;
                 }
             }
             finally
@@ -39,7 +37,7 @@ namespace u2.Core
                 taskCompletion.SetResult(true);
             }
 
-            await _task.ConfigureAwait(false);
+            await task.ConfigureAwait(false);
         }
     }
 }

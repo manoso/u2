@@ -7,7 +7,7 @@ namespace u2.Demo.Data
     {
         public string CountryCode { get; set; }
         public string CurrencyCode { get; set; }
-
+        public string CacheName { get; set; }
         public IEnumerable<string> Hosts { get; set; }
     }
 }

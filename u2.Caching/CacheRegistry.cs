@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using u2.Caching.Contract;
 using u2.Core.Contract;
 
 namespace u2.Caching
@@ -9,13 +8,6 @@ namespace u2.Caching
     public class CacheRegistry : ICacheRegistry
     {
         private readonly IDictionary<string, ICacheTask> _tasks = new Dictionary<string, ICacheTask>();
-
-        private readonly ICacheConfig _config;
-
-        public CacheRegistry(ICacheConfig config)
-        {
-            _config = config;
-        }
 
         public ICacheTask<T> Add<T>(Func<ICache, Task<IEnumerable<T>>> func, string key = null)
         {
@@ -26,9 +18,6 @@ namespace u2.Caching
             {
                 TaskKey = key
             };
-
-            if (_config != null)
-                task.Span(_config.CacheInSeconds);
 
             _tasks.Add(key, task);
             return task;

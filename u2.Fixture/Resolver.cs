@@ -23,7 +23,7 @@ namespace u2.Fixture
         {
             var mapRegistry = new MapRegistry();
             var mapper = new Mapper(mapRegistry);
-            var cacheRegistry = new CacheRegistry(cacheConfig);
+            var cacheRegistry = new CacheRegistry();
             var queryFactory = new UmbracoQueryFactory();
             var umbracoFetcher = new UmbracoFetcher(umbracoConfig);
             var registry = new Registry(mapRegistry, mapper, cacheRegistry, queryFactory, umbracoFetcher);

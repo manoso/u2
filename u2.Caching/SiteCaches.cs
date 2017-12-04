@@ -36,7 +36,7 @@ namespace u2.Caching
                     _semaphore.Wait();
                     if (!_caches.TryGetValue(key, out result))
                     {
-                        var cacheStore = _getStore(key.ToString("N"));
+                        var cacheStore = _getStore(root.CacheName);
                         result = _caches[key] = new Cache(cacheStore, _cacheRegistry, root);
                     }
                 }

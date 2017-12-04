@@ -15,7 +15,7 @@ namespace u2.Caching.Test
         {
             get
             {
-                var registry = new CacheRegistry(new TestCacheConfig());
+                var registry = new CacheRegistry();
                 registry.Add(async x => await Task.Run(() => new[] {new CacheItem()} as IEnumerable<CacheItem>).ConfigureAwait(false));
                 return registry;
             }
@@ -25,7 +25,7 @@ namespace u2.Caching.Test
         {
             get
             {
-                var registry = new CacheRegistry(new TestCacheConfig());
+                var registry = new CacheRegistry();
                 registry.Add(async () => await Task.Run(() => new[] { new CacheItem() } as IEnumerable<CacheItem>).ConfigureAwait(false));
                 return registry;
             }
@@ -79,7 +79,7 @@ namespace u2.Caching.Test
         public async Task ReloadAsync_no_key()
         {
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
-            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
+            var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task);
             await cacheRegistry.ReloadAsync(Arg.Any<ICache>()).ConfigureAwait(false);
 
@@ -90,7 +90,7 @@ namespace u2.Caching.Test
         public void Reload_no_key()
         {
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
-            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
+            var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task);
             cacheRegistry.Reload(Arg.Any<ICache>());
 
@@ -101,7 +101,7 @@ namespace u2.Caching.Test
         public async Task ReloadAsync_with_key()
         {
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
-            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
+            var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task, "test");
             await cacheRegistry.ReloadAsync(Arg.Any<ICache>()).ConfigureAwait(false);
 
@@ -112,7 +112,7 @@ namespace u2.Caching.Test
         public void Reload_with_key()
         {
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
-            var cacheRegistry = new CacheRegistry(new TestCacheConfig());
+            var cacheRegistry = new CacheRegistry();
             cacheRegistry.Add(task, "test");
             cacheRegistry.Reload(Arg.Any<ICache>());
 
