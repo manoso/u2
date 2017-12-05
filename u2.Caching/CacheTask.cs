@@ -13,6 +13,13 @@ namespace u2.Caching
 
         private readonly Func<ICache, Task<IEnumerable<T>>> _task;
 
+        public ICacheTask<T> Span(int seconds)
+        {
+            if (seconds > 0)
+                CacheInSeconds = seconds;
+            return this;
+        }
+
         public ICacheTask<T> Lookup(ICacheLookup<T> cacheLookup)
         {
             CacheLookups.Add(cacheLookup);
@@ -30,6 +37,21 @@ namespace u2.Caching
         {
             _onSave = func;
             return this;
+        }
+
+        protected override Func<ICache, bool> CanRun => IsExpired;
+
+        protected override Action<ICache> Reset
+        {
+            get
+            {
+                return x =>
+                {
+                    var info = GetInfo(x);
+                    if (CacheInSeconds > 0)
+                        info.Timestamp = DateTime.UtcNow;
+                };
+            }
         }
 
         protected override Func<ICache, Task<IDictionary<string, object>>> RunTask => Load;
@@ -67,10 +89,43 @@ namespace u2.Caching
 
     public abstract class CacheTask : RunOnce<ICache>, ICacheTask
     {
+        public int CacheInSeconds { get; set; } = 300;
+
         public string TaskKey { get; set; }
+
+        public bool IsExpired(ICache cache)
+        {
+            var info = GetInfo(cache);
+            return CacheInSeconds <= 0 || info.Timestamp.AddSeconds(CacheInSeconds) <= DateTime.UtcNow;
+        }
+
+        private readonly IDictionary<ICache, TaskInfo> _taskInfos = new Dictionary<ICache, TaskInfo>();
+
+        protected override Task<bool> GetTask(ICache cache)
+        {
+            return GetInfo(cache).Task;
+        }
+
+        protected override void SetTask(ICache cache, Task<bool> task)
+        {
+            var info = GetInfo(cache);
+            info.Task = task;
+            info.Timestamp = DateTime.MinValue;
+        }
+
+        protected TaskInfo GetInfo(ICache cache)
+        {
+            if (!_taskInfos.TryGetValue(cache, out var info))
+            {
+                info = _taskInfos[cache] = new TaskInfo();
+            }
+            return info;
+        }
 
         public async Task Reload(ICache cache)
         {
+            var info = GetInfo(cache);
+            info.Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSeconds);
             await Load(cache).ConfigureAwait(false);
         }
 

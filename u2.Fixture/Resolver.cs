@@ -19,11 +19,11 @@ namespace u2.Fixture
         private static Func<ICache> _cacheFunc;
 
         public static void Init<TRoot>(ICacheConfig cacheConfig, IUmbracoConfig umbracoConfig, IMapBuild mapBuild, ICacheBuild cacheBuild)
-            where TRoot: class, IRoot
+            where TRoot : class, IRoot
         {
             var mapRegistry = new MapRegistry();
             var mapper = new Mapper(mapRegistry);
-            var cacheRegistry = new CacheRegistry();
+            var cacheRegistry = new CacheRegistry(cacheConfig);
             var queryFactory = new UmbracoQueryFactory();
             var umbracoFetcher = new UmbracoFetcher(umbracoConfig);
             var registry = new Registry(mapRegistry, mapper, cacheRegistry, queryFactory, umbracoFetcher);
@@ -57,18 +57,18 @@ namespace u2.Fixture
             cacheBuild.Setup(cacheRegistry);
         }
 
-        public static T Get<T>() 
+        public static T Get<T>()
             where T : class
         {
             var type = typeof(T);
             return (
                 type == typeof(ICache)
-                ? _cacheFunc()
-                : type == typeof(IRoot)
-                    ? _rootFunc()
-                    : _singletons.TryGetValue(type, out var value)
-                        ? value
-                        : null
+                    ? _cacheFunc()
+                    : type == typeof(IRoot)
+                        ? _rootFunc()
+                        : _singletons.TryGetValue(type, out var value)
+                            ? value
+                            : null
             ) as T;
         }
     }
