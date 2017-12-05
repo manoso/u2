@@ -77,13 +77,11 @@ namespace u2.Caching
 
         private async Task<object> TaskFetchAsync(ICacheTask task, string cacheKey)
         {
-            var value = _store.Get(cacheKey);
-            if (value == null)
-            {
+            if (!_store.Has(cacheKey) || task.IsExpired(this))
                 await task.Run(this, (k, v) => _store.Save(k, v)).ConfigureAwait(false);
-                value = _store.Get(cacheKey);
-            }
-            return value;
+
+            return _store.Get(cacheKey);
+
         }
     }
 }
