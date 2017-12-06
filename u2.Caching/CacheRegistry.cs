@@ -22,10 +22,7 @@ namespace u2.Caching
             if (string.IsNullOrWhiteSpace(key))
                 key = typeof(T).FullName;
 
-            var task = new CacheTask<T>(func)
-            {
-                TaskKey = key
-            };
+            var task = new CacheTask<T>(func, key);
 
             if (_config != null)
                 task.Span(_config.CacheInSeconds);

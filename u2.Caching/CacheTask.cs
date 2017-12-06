@@ -29,9 +29,12 @@ namespace u2.Caching
 
         private Func<IEnumerable<T>, IEnumerable<T>> _onSave;
 
-        public CacheTask(Func<ICache, Task<IEnumerable<T>>> task)
+        public CacheTask(Func<ICache, Task<IEnumerable<T>>> task, string key = null)
         {
             _task = task;
+            if (string.IsNullOrWhiteSpace(key))
+                key = typeof(T).FullName;
+            TaskKey = key;
         }
 
         public ICacheTask<T> OnSave(Func<IEnumerable<T>, IEnumerable<T>> func)
@@ -92,7 +95,7 @@ namespace u2.Caching
     {
         public int CacheInSeconds { get; set; } = 300;
 
-        public string TaskKey { get; set; }
+        public string TaskKey { get; protected set; }
 
         public bool IsExpired(ICache cache)
         {
@@ -128,17 +131,21 @@ namespace u2.Caching
             var info = GetInfo(cache);
             if (CacheInSeconds > 0)
                 info.Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSeconds);
-            await Load(cache).ConfigureAwait(false);
+            await Run(cache).ConfigureAwait(false);
         }
 
         public async Task Run(ICache cache, Action<string, object> save = null)
         {
-            var done = save == null
+            var info = GetInfo(cache);
+            if (info.Save == null && save != null)
+                info.Save = save;
+
+            var done = info.Save == null
                 ? null as Action<IDictionary<string, object>>
                 : data =>
                 {
                     foreach (var cacheItem in data)
-                        save(cacheItem.Key, cacheItem.Value);
+                        info.Save(cacheItem.Key, cacheItem.Value);
                 };
             await RunAsync(cache, done).ConfigureAwait(false);
         }

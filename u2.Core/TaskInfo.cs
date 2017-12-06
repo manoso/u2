@@ -7,6 +7,6 @@ namespace u2.Core
     {
         public Task<bool> Task { get; set; }
         public DateTime Timestamp { get; set; }
-
+        public Action<string, object> Save { get; set; }
     }
 }
