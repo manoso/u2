@@ -4,6 +4,9 @@ using Ninject.Web.Common;
 using Ninject.Web.Common.WebHost;
 using Ninject.Web.WebApi;
 using u2.Demo.Api;
+using u2.Demo.Api.Ninject;
+using u2.Demo.Data;
+using u2.Fixture;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(NinjectWebCommon), "Stop")]
@@ -63,7 +66,7 @@ namespace u2.Demo.Api
             kernel.Load(Assembly.GetExecutingAssembly());
             // Set the resolvers for both the MVC architecture and the Web API architecture in that order
             GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
-
+            Context.Init<Site>(new CacheConfig(), new UmbracoConfig(), new MapBuild(), new ResolverCacheBuild());
         }
     }
 }

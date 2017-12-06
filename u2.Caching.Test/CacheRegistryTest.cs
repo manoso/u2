@@ -79,9 +79,10 @@ namespace u2.Caching.Test
         public async Task ReloadAsync_no_key()
         {
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
+            var cache = Substitute.For<ICache>();
             var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             cacheRegistry.Add(task);
-            await cacheRegistry.ReloadAsync(Arg.Any<ICache>()).ConfigureAwait(false);
+            await cacheRegistry.ReloadAsync(cache).ConfigureAwait(false);
 
             task.Received(1);
         }
@@ -90,9 +91,10 @@ namespace u2.Caching.Test
         public void Reload_no_key()
         {
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
+            var cache = Substitute.For<ICache>();
             var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             cacheRegistry.Add(task);
-            cacheRegistry.Reload(Arg.Any<ICache>());
+            cacheRegistry.Reload(cache);
 
             task.Received(1);
         }
@@ -101,9 +103,10 @@ namespace u2.Caching.Test
         public async Task ReloadAsync_with_key()
         {
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
+            var cache = Substitute.For<ICache>();
             var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             cacheRegistry.Add(task, "test");
-            await cacheRegistry.ReloadAsync(Arg.Any<ICache>()).ConfigureAwait(false);
+            await cacheRegistry.ReloadAsync(cache).ConfigureAwait(false);
 
             task.Received(1);
         }
@@ -112,9 +115,10 @@ namespace u2.Caching.Test
         public void Reload_with_key()
         {
             var task = Substitute.For<Func<ICache, Task<IEnumerable<TestItem>>>>();
+            var cache = Substitute.For<ICache>();
             var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             cacheRegistry.Add(task, "test");
-            cacheRegistry.Reload(Arg.Any<ICache>());
+            cacheRegistry.Reload(cache);
 
             task.Received(1);
         }

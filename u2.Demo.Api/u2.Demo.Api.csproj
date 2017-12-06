@@ -325,12 +325,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Api\DataController.cs" />
+    <Compile Include="Controllers\Api\OtherController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Ninject\CacheBuild.cs" />
     <Compile Include="Ninject\CacheConfig.cs" />
     <Compile Include="Ninject\MapBuild.cs" />
+    <Compile Include="Ninject\ResolverCacheBuild.cs" />
     <Compile Include="Ninject\UmbracoConfig.cs" />
     <Compile Include="Ninject\WebModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

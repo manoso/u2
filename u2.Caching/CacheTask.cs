@@ -15,8 +15,9 @@ namespace u2.Caching
 
         public ICacheTask<T> Span(int seconds)
         {
-            if (seconds > 0)
-                CacheInSeconds = seconds;
+            if (seconds < 0)
+                seconds = 0;
+            CacheInSeconds = seconds;
             return this;
         }
 
@@ -125,7 +126,8 @@ namespace u2.Caching
         public async Task Reload(ICache cache)
         {
             var info = GetInfo(cache);
-            info.Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSeconds);
+            if (CacheInSeconds > 0)
+                info.Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSeconds);
             await Load(cache).ConfigureAwait(false);
         }
 

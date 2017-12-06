@@ -10,15 +10,15 @@ using u2.Test;
 namespace u2.Config.Test
 {
     [TestFixture]
-    public class ResolverTest
+    public class ContextTest
     {
         [Test]
         public void Get_singleton_success()
         {
-            Resolver.Init<TestRoot>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            Context.Init<TestRoot>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
 
-            var first = Resolver.Get<IMapRegistry>();
-            var second = Resolver.Get<IMapRegistry>();
+            var first = Context.MapRegistry;
+            var second = Context.MapRegistry;
 
             Assert.AreEqual(first, second);
         }
