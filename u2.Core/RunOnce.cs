@@ -27,19 +27,18 @@ namespace u2.Core
                     SetTask(parameter, taskCompletion.Task);
                     Reset(parameter);
                 }
+
+                if (taskCompletion != null)
+                {
+                    var result = await RunTask(parameter).ConfigureAwait(false);
+                    done?.Invoke(result);
+                    taskCompletion.SetResult(true);
+                }
             }
             finally
             {
                 _semaphore.Release();
             }
-
-            if (taskCompletion != null)
-            {
-                var result = await RunTask(parameter).ConfigureAwait(false);
-                done?.Invoke(result);
-                taskCompletion.SetResult(true);
-            }
-
             await GetTask(parameter).ConfigureAwait(false);
         }
     }

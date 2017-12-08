@@ -117,37 +117,44 @@ namespace u2.Caching
             info.Timestamp = DateTime.MinValue;
         }
 
-        protected TaskInfo GetInfo(ICache cache)
+        protected TaskInfo GetInfo(ICache cache, bool isReadonly = false)
         {
-            if (!_taskInfos.TryGetValue(cache, out var info))
+            if (!_taskInfos.TryGetValue(cache, out var info) && !isReadonly)
             {
-                info = _taskInfos[cache] = new TaskInfo();
+                _taskInfos[cache] = info = new TaskInfo();
             }
             return info;
         }
 
         public async Task Reload(ICache cache)
         {
-            var info = GetInfo(cache);
-            if (CacheInSeconds > 0)
+            var info = GetInfo(cache, true);
+            if (CacheInSeconds > 0 && info != null)
                 info.Timestamp = DateTime.UtcNow.AddSeconds(-CacheInSeconds);
             await Run(cache).ConfigureAwait(false);
         }
 
         public async Task Run(ICache cache, Action<string, object> save = null)
         {
-            var info = GetInfo(cache);
-            if (info.Save == null && save != null)
-                info.Save = save;
-
-            var done = info.Save == null
-                ? null as Action<IDictionary<string, object>>
-                : data =>
+            void Done(IDictionary<string, object> data)
+            {
+                var info = GetInfo(cache);
+                if (info != null)
                 {
+                    if (save != null)
+                        info.Save = save;
+                    else if (info.Save != null)
+                        save = info.Save;
+                }
+
+                if (save != null)
+                { 
                     foreach (var cacheItem in data)
-                        info.Save(cacheItem.Key, cacheItem.Value);
-                };
-            await RunAsync(cache, done).ConfigureAwait(false);
+                        save(cacheItem.Key, cacheItem.Value);
+                }
+            }
+
+            await RunAsync(cache, Done).ConfigureAwait(false);
         }
 
         protected abstract Task<IDictionary<string, object>> Load(ICache cache);

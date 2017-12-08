@@ -1,7 +1,7 @@
 ﻿using System;
 using u2.Core.Contract;
 
-namespace u2.Demo.Data
+namespace u2.Core
 {
     public class CmsModel : ICmsModel<int>
     {

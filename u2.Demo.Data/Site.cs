@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using u2.Core;
 using u2.Core.Contract;
 
 namespace u2.Demo.Data
