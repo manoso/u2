@@ -43,8 +43,8 @@ namespace u2.Fixture
             {
                 var cache = SiteCaches.Default;
                 var host = HttpContext.Current?.Request.Url.Host ?? string.Empty;
-                var sites = cache.Fetch<TRoot>()?.ToList();
-                return sites?.FirstOrDefault(site => site.Hosts?.Contains(host) ?? false) ?? sites?.FirstOrDefault();
+                var roots = cache.Fetch<TRoot>()?.ToList();
+                return roots?.FirstOrDefault(site => site.Hosts?.Contains(host) ?? false) ?? roots?.FirstOrDefault();
             };
 
             _cacheFunc = () =>

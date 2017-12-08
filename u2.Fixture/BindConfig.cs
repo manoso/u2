@@ -31,13 +31,11 @@ namespace u2.Fixture
             _binder.Add<IQueryFactory, UmbracoQueryFactory>(true);
             _binder.Add<ICmsFetcher, UmbracoFetcher>(true);
             _binder.Add<IRegistry, Registry>(true);
-            //_binder.Add<ICacheStore, CacheStore>();
             _binder.Add<ISiteCaches, SiteCaches>(true);
             _binder.Add<IUmbracoConfig, TUmbracoConfig>(true);
             _binder.Add<ICacheConfig, TCacheConfig>(true);
             _binder.Add<IMapBuild, TMapBuild>(true);
             _binder.Add<ICacheBuild, TCacheBuild>(true);
-            //_binder.Add(_binder);
 
             var rego = _binder.Get<IRegistry>();
             var mapBuild = _binder.Get<IMapBuild>();

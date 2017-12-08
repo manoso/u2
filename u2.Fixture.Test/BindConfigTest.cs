@@ -31,7 +31,6 @@ namespace u2.Config.Test
             binder.Received(1).Add<IQueryFactory, UmbracoQueryFactory>(true);
             binder.Received(1).Add<ICmsFetcher, UmbracoFetcher>(true);
             binder.Received(1).Add<IRegistry, Registry>(true);
-            binder.Received(1).Add<ICacheStore, CacheStore>();
             binder.Received(1).Add<IUmbracoConfig, TestUmbracoConfig>(true);
             binder.Received(1).Add<ICacheConfig, TestCacheConfig>(true);
             binder.Received(1).Add<IMapBuild, TestMapBuild>(true);

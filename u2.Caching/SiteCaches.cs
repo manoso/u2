@@ -58,7 +58,7 @@ namespace u2.Caching
                 }
             }
             else
-                await _caches[root.Key].ReloadAsync().ConfigureAwait(false);
+                await Get(root).ReloadAsync().ConfigureAwait(false);
         }
 
         public void Refresh(IRoot root = null)
