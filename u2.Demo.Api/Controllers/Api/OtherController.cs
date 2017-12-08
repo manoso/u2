@@ -28,5 +28,13 @@ namespace u2.Demo.Api.Controllers.Api
             var views = Context.Cache.Fetch<View>();
             return Ok(views);
         }
+
+        [Route("reload")]
+        [HttpGet]
+        public async Task<IHttpActionResult> Reload()
+        {
+            await Context.Cache.ReloadAsync();
+            return Ok();
+        }
     }
 }

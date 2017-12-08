@@ -105,18 +105,6 @@ namespace u2.Caching
 
         private readonly IDictionary<ICache, TaskInfo> _taskInfos = new Dictionary<ICache, TaskInfo>();
 
-        protected override Task<bool> GetTask(ICache cache)
-        {
-            return GetInfo(cache).Task;
-        }
-
-        protected override void SetTask(ICache cache, Task<bool> task)
-        {
-            var info = GetInfo(cache);
-            info.Task = task;
-            info.Timestamp = DateTime.MinValue;
-        }
-
         protected TaskInfo GetInfo(ICache cache, bool isReadonly = false)
         {
             if (!_taskInfos.TryGetValue(cache, out var info) && !isReadonly)
