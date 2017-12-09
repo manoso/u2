@@ -230,7 +230,7 @@ namespace u2.Core
             return this;
         }
 
-        public IMapTask<T> Ignore<TO>(Expression<Func<T, TO>> property)
+        public IMapTask<T> Ignore<TP>(Expression<Func<T, TP>> property)
         {
             if (property != null)
             {
@@ -238,11 +238,21 @@ namespace u2.Core
 
                 if (info != null)
                 {
-                    var found = Maps.FirstOrDefault(x => x.Alias == info.Name.ToLowerInvariant());
-
-                    if (found != null)
-                        Maps.Remove(found);
+                    Ignore(info.Name);
                 }
+            }
+
+            return this;
+        }
+
+        public IMapTask<T> Ignore(string alias)
+        {
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                var found = Maps.FirstOrDefault(x => x.Alias == alias.ToLowerInvariant());
+
+                if (found != null)
+                    Maps.Remove(found);
             }
 
             return this;

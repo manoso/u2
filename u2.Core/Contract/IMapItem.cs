@@ -57,14 +57,28 @@ namespace u2.Core.Contract
     }
 
     /// <summary>
-    /// 
+    /// The generic metadata type to define the mapping of a CMS content field.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="TP"></typeparam>
+    /// <typeparam name="T">The model type the CMS content maps to.</typeparam>
+    /// <typeparam name="TP">The property type of the the model type that a cmd content field maps to.</typeparam>
     public interface IMapItem<out T, TP> : IMapItem
     {
+        /// <summary>
+        /// Set the Defer func. The setter converts the func into Func{ICache, object, object, Task} with a wrapper,
+        /// and is accessible through <see cref="IMapItem.Defer"/>'s getter.
+        /// </summary>
         Func<ICache, T, TP, Task> ActDefer { set; }
+
+        /// <summary>
+        /// Set the converter function. The setter converts the func into Func{string, object} with a wrapper,
+        /// and is accessible through <see cref="IMapItem.Converter"/>'s getter.
+        /// </summary>
         Func<string, TP> Convert { set; }
+
+        /// <summary>
+        /// Set the mapping function. The setter converts the func into Func{string, Func{IMapper, ICache, Task{object}}} with a wrapper,
+        /// and is accessible through <see cref="IMapItem.Mapper"/>'s getter.
+        /// </summary>
         Func<string, Func<IMapper, ICache, Task<object>>> Map { set; }
     }
 }
