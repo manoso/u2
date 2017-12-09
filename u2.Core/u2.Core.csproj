@@ -56,7 +56,6 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GroupAction.cs" />
     <Compile Include="Contract\ICmsKey.cs" />
-    <Compile Include="Contract\IDataPool.cs" />
     <Compile Include="Contract\IMapRegistry.cs" />
     <Compile Include="Contract\IMapper.cs" />
     <Compile Include="Contract\IBaseTask.cs" />

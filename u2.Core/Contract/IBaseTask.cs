@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 namespace u2.Core.Contract
 {
     /// <summary>
-    /// A base interface for IMapTask.
+    /// The base type for IMapTask.
     /// </summary>
     public interface IBaseTask
     {
@@ -22,7 +22,7 @@ namespace u2.Core.Contract
     }
 
     /// <summary>
-    /// A base interface for IMapTask{T}.
+    /// The base type for IMapTask{T}.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IBaseTask<T> : IBaseTask

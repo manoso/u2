@@ -1,7 +1,7 @@
 ﻿namespace u2.Umbraco.Contract
 {
     /// <summary>
-    /// Umbraco configuration interface
+    /// Umbraco configuration type
     /// A implementation of this interface need to read the actual value from a configuration source like web.config or db etc.
     /// </summary>
     public interface IUmbracoConfig

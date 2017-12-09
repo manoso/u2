@@ -1,7 +1,7 @@
 ﻿namespace u2.Caching.Contract
 {
     /// <summary>
-    /// Cache configuration interface
+    /// Cache configuration type
     /// A implementation of this interface need to read the actual value from a configuration source like web.config or db etc.
     /// </summary>
     public interface ICacheConfig

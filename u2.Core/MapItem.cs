@@ -8,15 +8,15 @@ namespace u2.Core
 {
     public class MapItem : IMapItem
     {
+        public string Alias { get; set; }
+        public object Default { get; set; }
+        public Type ContentType { get; set; }
         public IPropertySetter Setter { get; set; }
+
         public Func<string, object> Converter { get; protected set; }
         public Func<ICache, object, object, Task> Defer { get; protected set; }
         public Func<string, Func<IMapper, ICache, Task<object>>> Mapper { get; protected set; }
 
-        public string Alias { get; set; }
-
-        public object Default { get; set; }
-        public Type ContentType { get; set; }
 
         public MapItem(PropertyInfo info)
         {

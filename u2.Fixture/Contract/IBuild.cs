@@ -1,7 +1,7 @@
 ﻿namespace u2.Fixture.Contract
 {
     /// <summary>
-    /// Base interface to build up a registry.
+    /// Base type to build up a registry.
     /// </summary>
     /// <typeparam name="T">Indicates the registry type.</typeparam>
     public interface IBuild<in T>
