@@ -103,9 +103,9 @@ namespace u2.Caching
             return CacheInSeconds <= 0 || info.Timestamp.AddSeconds(CacheInSeconds) <= DateTime.UtcNow;
         }
 
-        private readonly IDictionary<ICache, TaskInfo> _taskInfos = new Dictionary<ICache, TaskInfo>();
+        private readonly IDictionary<ICache, ITaskInfo> _taskInfos = new Dictionary<ICache, ITaskInfo>();
 
-        protected TaskInfo GetInfo(ICache cache, bool isReadonly = false)
+        protected ITaskInfo GetInfo(ICache cache, bool isReadonly = false)
         {
             if (!_taskInfos.TryGetValue(cache, out var info) && !isReadonly)
             {

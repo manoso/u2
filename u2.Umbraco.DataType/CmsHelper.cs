@@ -10,6 +10,9 @@ using u2.Umbraco.DataType.Archetype;
 
 namespace u2.Umbraco.DataType
 {
+    /// <summary>
+    /// CMS helper methods.
+    /// </summary>
     public static class CmsHelper
     {
         private static readonly char[] DefaultSeparator = { ',' };

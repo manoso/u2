@@ -11,22 +11,67 @@ using u2.Umbraco.Contract;
 
 namespace u2.Fixture
 {
+    /// <summary>
+    /// Static u2 context. Use it if there is no IoC, otherwise use IoC to inject the instances.
+    /// </summary>
     public static class Context
     {
         private static Func<IRoot> _rootFunc;
         private static Func<ICache> _cacheFunc;
 
+        /// <summary>
+        /// Get the map registry instance.
+        /// </summary>
         public static IMapRegistry MapRegistry { get; private set; }
+
+        /// <summary>
+        /// Get the mapper instance.
+        /// </summary>
         public static IMapper Mapper { get; private set; }
+
+        /// <summary>
+        /// Get the cache registry instance.
+        /// </summary>
         public static ICacheRegistry CacheRegistry { get; private set; }
+
+        /// <summary>
+        /// Get the query factory instance.
+        /// </summary>
         public static IQueryFactory QueryFactory { get; private set; }
+
+        /// <summary>
+        /// Get the cms fetcher instance.
+        /// </summary>
         public static ICmsFetcher CmsFetcher { get; private set; }
+
+        /// <summary>
+        /// Get the registry instance.
+        /// </summary>
         public static IRegistry Registry { get; private set; }
+
+        /// <summary>
+        /// Get the site caches instance.
+        /// </summary>
         public static ISiteCaches SiteCaches { get; private set; }
 
+        /// <summary>
+        /// Get the cache for the current context.
+        /// </summary>
         public static ICache Cache => _cacheFunc();
+
+        /// <summary>
+        /// Get the root for the current context.
+        /// </summary>
         public static IRoot Root => _rootFunc();
 
+        /// <summary>
+        /// Call once to initialize the context.
+        /// </summary>
+        /// <typeparam name="TRoot">The CMS root model type.</typeparam>
+        /// <param name="cacheConfig">The cache config instance.</param>
+        /// <param name="umbracoConfig">The umbraco config instance.</param>
+        /// <param name="mapBuild">The map build instance.</param>
+        /// <param name="cacheBuild">The cache build instance.</param>
         public static void Init<TRoot>(ICacheConfig cacheConfig, IUmbracoConfig umbracoConfig, IMapBuild mapBuild, ICacheBuild cacheBuild)
             where TRoot : class, IRoot
         {

@@ -9,15 +9,30 @@ using u2.Umbraco.Contract;
 
 namespace u2.Fixture
 {
+    /// <summary>
+    /// The configuration type for IoC containers to setup the bindings for u2.
+    /// </summary>
     public class BindConfig
     {
         private readonly IBinder _binder;
 
+        /// <summary>
+        /// Constructor with a binder argument.
+        /// </summary>
+        /// <param name="binder">The binder. Normally IBinder is implemented as part of an IoC binding module that has access to the IoC container instance.</param>
         public BindConfig(IBinder binder)
         {
             _binder = binder;
         }
 
+        /// <summary>
+        /// The config method to setup the bidings.
+        /// </summary>
+        /// <typeparam name="TRoot">The CMS root model type.</typeparam>
+        /// <typeparam name="TUmbracoConfig">The umbraco config type.</typeparam>
+        /// <typeparam name="TCacheConfig">The cache config type.</typeparam>
+        /// <typeparam name="TMapBuild">The map build type.</typeparam>
+        /// <typeparam name="TCacheBuild">The cache build type.</typeparam>
         public void Config<TRoot, TUmbracoConfig, TCacheConfig, TMapBuild, TCacheBuild>() 
             where TRoot : class, IRoot, new ()
             where TUmbracoConfig : class, IUmbracoConfig

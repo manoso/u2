@@ -8,9 +8,9 @@ namespace u2.Core
 {
     public class PropertySetter : IPropertySetter
     {
-        public Action<object, object> Set { get; set; }
+        public Action<object, object> Set { get; protected set; }
 
-        public string Name { get; set; }
+        public string Name { get; protected set; }
 
         public PropertySetter() { }
 

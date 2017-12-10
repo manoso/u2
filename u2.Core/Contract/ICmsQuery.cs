@@ -15,9 +15,9 @@ namespace u2.Core.Contract
     }
 
     /// <summary>
-    /// Using lambda expression to define a Lucene query for a given CMS type.
+    /// Using lambda expression to define a Lucene query for a given CMS model type.
     /// </summary>
-    /// <typeparam name="T">The CMS type the Lucene query is for.</typeparam>
+    /// <typeparam name="T">The model type the Lucene query is for.</typeparam>
     public interface ICmsQuery<T> : ICmsQuery
         where T : class, new()
     {
