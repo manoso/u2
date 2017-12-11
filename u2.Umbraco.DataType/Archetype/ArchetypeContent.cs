@@ -2,7 +2,7 @@
 
 namespace u2.Umbraco.DataType.Archetype
 {
-    public class ArchetypeContent : JsonContent
+    public class ArchetypeContent : BaseContent
     {
         public ArchetypeContent(FieldSet fieldSet)
         {

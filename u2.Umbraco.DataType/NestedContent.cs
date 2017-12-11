@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace u2.Umbraco.DataType
 {
-    internal class NestedContent : JsonContent
+    internal class NestedContent : BaseContent
     {
         public NestedContent(string json)
         {

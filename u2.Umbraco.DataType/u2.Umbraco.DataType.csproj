@@ -51,7 +51,6 @@
     <Compile Include="Media\FocalPoint.cs" />
     <Compile Include="Media\Image.cs" />
     <Compile Include="ImageCropper.cs" />
-    <Compile Include="JsonContent.cs" />
     <Compile Include="Media\Media.cs" />
     <Compile Include="NestedContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +62,10 @@
     <ProjectReference Include="..\u2.Core\u2.Core.csproj">
       <Project>{bdb61368-e0c4-46cc-b47c-f275cff7f339}</Project>
       <Name>u2.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\u2.Umbraco\u2.Umbraco.csproj">
+      <Project>{C4A0E78C-6801-446C-AACC-C1E6D6F22BE1}</Project>
+      <Name>u2.Umbraco</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

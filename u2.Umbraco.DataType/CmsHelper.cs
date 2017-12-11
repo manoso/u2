@@ -92,45 +92,6 @@ namespace u2.Umbraco.DataType
         }
 
         /// <summary>
-        /// Extension method to convert string content field into a given type object.
-        /// Returns an object of the given type.
-        /// </summary>
-        /// <param name="source">The string value read from the content field.</param>
-        /// <param name="type">Indicate the type that the string is converting to.</param>
-        /// <returns></returns>
-        public static object Convert(this string source, Type type)
-        {
-            if (type == typeof(Guid) && TryParseGuid(source, out var guid))
-            {
-                return guid;
-            }
-
-            if (type == typeof(string))
-            {
-                return source;
-            }
-
-            var converter = TypeDescriptor.GetConverter(type);
-
-            return converter.ConvertFromString(source);
-        }
-
-        /// <summary>
-        /// Extension method to parse the string representation of a Udi Key to the equivalent Guid struct.
-        /// Returns a boolean result indicating whether the parse is successful.
-        /// </summary>
-        /// <param name="source">The string representation of a Udi Key.</param>
-        /// <param name="guid">Output reference of the Guid struct.</param>
-        /// <returns></returns>
-        public static bool TryParseGuid(this string source, out Guid guid)
-        {
-            var index = source.LastIndexOf("/", StringComparison.CurrentCultureIgnoreCase);
-            if (index >= 0)
-                source = source.Substring(index + 1);
-            return Guid.TryParse(source, out guid);
-        }
-
-        /// <summary>
         /// Extension method to convert a ImageCropper field into a IDictionary of crop urls.
         /// Returns a IDictionary of crop urls.
         /// </summary>
