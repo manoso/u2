@@ -2,6 +2,9 @@
 
 namespace u2.Umbraco.DataType.Archetype
 {
+    /// <summary>
+    /// Archetype content, similar to Umbraco content, can be mapped to model types.
+    /// </summary>
     public class ArchetypeContent : BaseContent
     {
         public ArchetypeContent(FieldSet fieldSet)

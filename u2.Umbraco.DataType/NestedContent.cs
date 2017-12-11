@@ -4,7 +4,10 @@ using Newtonsoft.Json;
 
 namespace u2.Umbraco.DataType
 {
-    internal class NestedContent : BaseContent
+    /// <summary>
+    /// Nested content, similar to Umbraco content, can be mapped to model types.
+    /// </summary>
+    public class NestedContent : BaseContent
     {
         public NestedContent(string json)
         {

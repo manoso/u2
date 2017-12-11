@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace u2.Umbraco
 {
+    /// <summary>
+    /// Content metadata type contains field data from a umbraco content node.
+    /// </summary>
     public class UmbracoContent : BaseContent
     {
         private const string Raw = "__raw_";

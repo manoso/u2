@@ -12,7 +12,7 @@ using u2.Umbraco.Contract;
 namespace u2.Fixture
 {
     /// <summary>
-    /// Static u2 context. Use it if there is no IoC, otherwise use IoC to inject the instances.
+    /// Static u2 context. Use it if no IoC, otherwise use IoC to inject the instances.
     /// </summary>
     public static class Context
     {

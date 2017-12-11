@@ -33,6 +33,11 @@ namespace u2.Umbraco
             return Fields.ContainsKey(alias.ToLowerInvariant());
         }
 
+        /// <summary>
+        /// Given the field alias, return the field value as string.
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <returns></returns>
         protected virtual string GetValue(string alias)
         {
             return Fields.TryGetValue(alias, out string value) ? value : null;
