@@ -33,6 +33,7 @@ namespace u2.Umbraco
 
         public override bool Has(string alias)
         {
+            alias = alias.ToLowerInvariant();
             return Fields != null && Fields.Count > 0 &&
                    (
                        Fields.ContainsKey(alias) ||

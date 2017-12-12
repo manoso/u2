@@ -58,7 +58,7 @@ namespace u2.Umbraco
             if (string.IsNullOrWhiteSpace(source))
                 return null;
 
-            if (type == typeof(Guid))
+            if (type == typeof(Guid) || type == typeof(Guid?))
             {
                 TryParseGuid(source, out var guid);
                 return guid;

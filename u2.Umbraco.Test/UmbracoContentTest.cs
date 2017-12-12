@@ -72,6 +72,36 @@ namespace u2.Umbraco.Test
         }
 
         [Test]
+        public void Get_nullable_Guid_value()
+        {
+            var guid = Guid.NewGuid();
+            var fields = new Dictionary<string, string>
+            {
+                { "Key", guid.ToString() },
+            };
+
+            var content = new UmbracoContent(fields);
+
+            var key = content.Get<Guid?>("key");
+            Assert.That(key, Is.EqualTo(guid));
+        }
+
+        [Test]
+        public void Get_nullable_Guid_returns_default()
+        {
+            var guid = Guid.NewGuid();
+            var fields = new Dictionary<string, string>
+            {
+                { "Key", guid.ToString().Substring(10) },
+            };
+
+            var content = new UmbracoContent(fields);
+
+            var key = content.Get<Guid?>("key");
+            Assert.That(key, Is.EqualTo(Guid.Empty));
+        }
+
+        [Test]
         public void Get_int_value_empty_returns_default()
         {
             var fields = new Dictionary<string, string>
