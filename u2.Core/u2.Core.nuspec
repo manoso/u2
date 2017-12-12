@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>u2.Core</id>
+    <version>1.0.0.0</version>
+    <title>u2.Core</title>
+    <authors>Manoso</authors>
+    <owners>Manoso</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <projectUrl>https://github.com/manoso/u2</projectUrl>
+    <iconUrl></iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>A high performance content-object mapper for Umbraco. u2 support both sync and async. u2 uses Examine and Lucene query directly and has build-in caching, which makes it extremely fast.  u2 uses  a convention-based matching algorithm to auto match up content fields to object properties and fluent APIs to define costume mappings. u2 supports both IoC integration and stand-alone usages. u2 is interface based and highly flexible. u2 is designed to be Web API and MVC controller friendly. This is the core module.</description>
+    <releaseNotes>Initial stable release.</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>Umbraco Examine Mapper Mapping Fluent Sync Async</tags>
+  </metadata>
+</package>
