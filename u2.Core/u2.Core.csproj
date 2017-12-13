@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseContent.cs" />
     <Compile Include="CmsKey.cs" />
     <Compile Include="CmsModel.cs" />
     <Compile Include="Contract\IBinder.cs" />

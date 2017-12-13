@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using u2.Core.Contract;
 
-namespace u2.Umbraco
+namespace u2.Core
 {
     public abstract class BaseContent : IContent
     {
