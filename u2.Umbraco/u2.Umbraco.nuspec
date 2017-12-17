@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>u2.Umbraco</id>
+    <version>1.0.1.1</version>
+    <title>u2.Umbraco</title>
+    <authors>Manoso</authors>
+    <owners>Manoso</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <projectUrl>https://github.com/manoso/u2</projectUrl>
+    <iconUrl>https://github.com/manoso/u2/blob/develop/Resources/u2.png?raw=true</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>A high performance content-object mapper for Umbraco. u2 support both sync and async. u2 uses Examine and Lucene query directly and has build-in caching, which makes it extremely fast.  u2 uses  a convention-based matching algorithm to auto match up content fields to object properties and fluent APIs to define costume mappings. u2 supports both IoC integration and stand-alone usages. u2 is interface based and highly flexible. u2 is designed to be Web API and MVC controller friendly. This is the umbraco module.</description>
+    <summary>A high performance content-object mapper for Umbraco. u2 support both sync and async. u2 uses Examine and Lucene query directly and has build-in caching, which makes it extremely fast.  u2 uses  a convention-based matching algorithm to auto match up content fields to object properties and fluent APIs to define costume mappings. u2 supports both IoC integration and stand-alone usages. u2 is interface based and highly flexible. u2 is designed to be Web API and MVC controller friendly. This is the umbraco module.</summary>
+    <releaseNotes>Move content base to u2.Core.</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>Umbraco Examine Mapper Mapping Fluent Sync Async Cache</tags>
+    <dependencies>
+      <dependency id="u2.Core" version="1.0.1" />
+      <dependency id="Examine" version="0.1.80" />
+      <dependency id="Newtonsoft.Json" version="6.0.1" />	  
+    </dependencies>
+	</metadata>
+  <files>
+    <file src="bin\Debug45\u2.Umbraco.dll" target="lib\net45" />
+    <file src="bin\Debug45\u2.Umbraco.pdb" target="lib\net45" />
+    <file src="bin\Debug46\u2.Umbraco.dll" target="lib\net46" />
+    <file src="bin\Debug46\u2.Umbraco.pdb" target="lib\net46" />
+  </files>
+</package>
