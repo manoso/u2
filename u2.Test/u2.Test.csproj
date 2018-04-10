@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>u2.Test</RootNamespace>
     <AssemblyName>u2.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +50,15 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug47|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug47\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET47</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,14 +80,10 @@
     <Compile Include="TestItem.cs" />
     <Compile Include="TestMapBuild.cs" />
     <Compile Include="TestMedia.cs" />
-    <Compile Include="TestRoot.cs" />
+    <Compile Include="TestSite.cs" />
     <Compile Include="TestUmbracoConfig.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\u2.Caching\u2.Caching.csproj">
-      <Project>{5C409114-17E3-45BF-BF3B-82801598D953}</Project>
-      <Name>u2.Caching</Name>
-    </ProjectReference>
     <ProjectReference Include="..\u2.Fixture\u2.Fixture.csproj">
       <Project>{14C72218-F6B6-4980-AEBD-B4BC00536573}</Project>
       <Name>u2.Fixture</Name>

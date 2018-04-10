@@ -13,7 +13,7 @@ namespace u2.Core.Contract
         /// <summary>
         /// The root node of a site in CMS.
         /// </summary>
-        IRoot Root { get; }
+        ISite Site { get; }
 
         /// <summary>
         /// Fetch all objects of T type from cache.

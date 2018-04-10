@@ -1,6 +1,4 @@
 ﻿using System.Linq;
-using u2.Caching;
-using u2.Caching.Contract;
 using u2.Core;
 using u2.Core.Contract;
 using u2.Fixture.Contract;
@@ -34,7 +32,7 @@ namespace u2.Fixture
         /// <typeparam name="TMapBuild">The map build type.</typeparam>
         /// <typeparam name="TCacheBuild">The cache build type.</typeparam>
         public void Config<TRoot, TUmbracoConfig, TCacheConfig, TMapBuild, TCacheBuild>() 
-            where TRoot : class, IRoot, new ()
+            where TRoot : class, ISite, new ()
             where TUmbracoConfig : class, IUmbracoConfig
             where TCacheConfig : class, ICacheConfig
             where TMapBuild : class, IMapBuild
@@ -60,7 +58,7 @@ namespace u2.Fixture
             cacheBuild.Setup(cacheRego);
             var siteCaches = _binder.Get<ISiteCaches>();
 
-            _binder.Add<IRoot, TRoot>(func: () =>
+            _binder.Add<ISite, TRoot>(func: () =>
             {
                 var cache = siteCaches.Default;
                 var host = _binder.Host;
@@ -71,7 +69,7 @@ namespace u2.Fixture
 
             _binder.Add<ICache, Cache>(func: () =>
             {
-                var root = _binder.Get<IRoot>();
+                var root = _binder.Get<ISite>();
                 var cache = siteCaches.Get(root) as Cache;
                 return cache;
             });

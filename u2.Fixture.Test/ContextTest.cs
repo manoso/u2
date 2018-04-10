@@ -15,7 +15,7 @@ namespace u2.Config.Test
         [Test]
         public void Get_singleton_success()
         {
-            Context.Init<TestRoot>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
 
             var first = Context.MapRegistry;
             var second = Context.MapRegistry;
@@ -26,22 +26,22 @@ namespace u2.Config.Test
         [Test]
         public void Get_root_function_same_success()
         {
-            var root1 = new TestRoot
+            var root1 = new TestSite
             {
                 Id = 1,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root1" },
-                CacheName = "one"
+                SiteName = "one"
             };
-            var root2 = new TestRoot
+            var root2 = new TestSite
             {
                 Id = 2,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root2" },
-                CacheName = "two"
+                SiteName = "two"
             };
 
-            async Task<IEnumerable<TestRoot>> GetRoots(ICache cache)
+            async Task<IEnumerable<TestSite>> GetRoots(ICache cache)
             {
                 return await Task.Run(() =>
                     new[]
@@ -50,15 +50,15 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestRoot>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
             Context.CacheRegistry.Add(GetRoots);
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root2", ""),
                 new HttpResponse(null)
             );
-            var first = Context.Root;
-            var second = Context.Root;
+            var first = Context.Site;
+            var second = Context.Site;
 
             Assert.AreEqual(first, second);
             Assert.AreEqual(first.Id, 2);
@@ -67,22 +67,22 @@ namespace u2.Config.Test
         [Test]
         public void Get_root_function_different_success()
         {
-            var root1 = new TestRoot
+            var root1 = new TestSite
             {
                 Id = 1,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root1" },
-                CacheName = "one"
+                SiteName = "one"
             };
-            var root2 = new TestRoot
+            var root2 = new TestSite
             {
                 Id = 2,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root2" },
-                CacheName = "two"
+                SiteName = "two"
             };
 
-            async Task<IEnumerable<TestRoot>> GetRoots(ICache cache)
+            async Task<IEnumerable<TestSite>> GetRoots(ICache cache)
             {
                 return await Task.Run(() =>
                     new[]
@@ -91,20 +91,20 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestRoot>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
             Context.CacheRegistry.Add(GetRoots);
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root1", ""),
                 new HttpResponse(null)
             );
-            var first = Context.Root;
+            var first = Context.Site;
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root2", ""),
                 new HttpResponse(null)
             );
-            var second = Context.Root;
+            var second = Context.Site;
 
             Assert.AreNotEqual(first, second);
             Assert.AreEqual(first.Id, 1);
@@ -114,22 +114,22 @@ namespace u2.Config.Test
         [Test]
         public void Get_cache_function_same_success()
         {
-            var root1 = new TestRoot
+            var root1 = new TestSite
             {
                 Id = 1,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root1" },
-                CacheName = "one"
+                SiteName = "one"
             };
-            var root2 = new TestRoot
+            var root2 = new TestSite
             {
                 Id = 2,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root2" },
-                CacheName = "two"
+                SiteName = "two"
             };
 
-            async Task<IEnumerable<TestRoot>> GetRoots(ICache cache)
+            async Task<IEnumerable<TestSite>> GetRoots(ICache cache)
             {
                 return await Task.Run(() =>
                     new[]
@@ -138,7 +138,7 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestRoot>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
             Context.CacheRegistry.Add(GetRoots);
 
             var cache1 = Context.SiteCaches.Get(root1);
@@ -159,22 +159,22 @@ namespace u2.Config.Test
         [Test]
         public void Get_cache_function_different_success()
         {
-            var root1 = new TestRoot
+            var root1 = new TestSite
             {
                 Id = 1,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root1" },
-                CacheName = "one"
+                SiteName = "one"
             };
-            var root2 = new TestRoot
+            var root2 = new TestSite
             {
                 Id = 2,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root2" },
-                CacheName = "two"
+                SiteName = "two"
             };
 
-            async Task<IEnumerable<TestRoot>> GetRoots(ICache cache)
+            async Task<IEnumerable<TestSite>> GetRoots(ICache cache)
             {
                 return await Task.Run(() =>
                     new[]
@@ -183,7 +183,7 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestRoot>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
             Context.CacheRegistry.Add(GetRoots);
 
             HttpContext.Current = new HttpContext(
@@ -209,22 +209,22 @@ namespace u2.Config.Test
         [Test]
         public void Get_root_function_no_match_return_first_success()
         {
-            var root1 = new TestRoot
+            var root1 = new TestSite
             {
                 Id = 1,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root1" },
-                CacheName = "one"
+                SiteName = "one"
             };
-            var root2 = new TestRoot
+            var root2 = new TestSite
             {
                 Id = 2,
                 Key = Guid.NewGuid(),
                 Hosts = new List<string> { "root2" },
-                CacheName = "two"
+                SiteName = "two"
             };
 
-            async Task<IEnumerable<TestRoot>> GetRoots(ICache cache)
+            async Task<IEnumerable<TestSite>> GetRoots(ICache cache)
             {
                 return await Task.Run(() =>
                     new[]
@@ -233,15 +233,15 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestRoot>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
             Context.CacheRegistry.Add(GetRoots);
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root", ""),
                 new HttpResponse(null)
             );
-            var first = Context.Root;
-            var second = Context.Root;
+            var first = Context.Site;
+            var second = Context.Site;
 
             Assert.AreEqual(first, second);
             Assert.AreEqual(first.Id, 1);

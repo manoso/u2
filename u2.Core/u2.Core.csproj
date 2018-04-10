@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>u2.Core</RootNamespace>
     <AssemblyName>u2.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,9 +50,20 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug47|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug47\</OutputPath>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <DefineConstants>TRACE;DEBUG;NET47</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -61,10 +73,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseContent.cs" />
+    <Compile Include="Cache.cs" />
+    <Compile Include="CacheLookup.cs" />
+    <Compile Include="CacheRegistry.cs" />
+    <Compile Include="CacheStore.cs" />
+    <Compile Include="CacheTask.cs" />
     <Compile Include="CmsKey.cs" />
     <Compile Include="CmsModel.cs" />
     <Compile Include="Contract\IBinder.cs" />
     <Compile Include="Contract\ICache.cs" />
+    <Compile Include="Contract\ICacheConfig.cs" />
     <Compile Include="Contract\ICacheRegistry.cs" />
     <Compile Include="Contract\ICacheStore.cs" />
     <Compile Include="Contract\ICacheTask.cs" />
@@ -73,7 +91,8 @@
     <Compile Include="Contract\ICacheLookup.cs" />
     <Compile Include="Contract\IMedia.cs" />
     <Compile Include="Contract\IQueryFactory.cs" />
-    <Compile Include="Contract\IRoot.cs" />
+    <Compile Include="Contract\ISite.cs" />
+    <Compile Include="Contract\ISiteCaches.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="GroupAction.cs" />
     <Compile Include="Contract\ICmsKey.cs" />
@@ -100,6 +119,7 @@
     <Compile Include="PropertySetter.cs" />
     <Compile Include="Registry.cs" />
     <Compile Include="BaseTask.cs" />
+    <Compile Include="SiteCaches.cs" />
     <Compile Include="TaskDefer.cs" />
     <Compile Include="MapTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

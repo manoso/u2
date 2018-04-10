@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 using NUnit.Framework;
-using u2.Core;
 using u2.Test;
 
 namespace u2.Umbraco.Test

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Web;
-using u2.Caching;
-using u2.Caching.Contract;
 using u2.Core;
 using u2.Core.Contract;
 using u2.Fixture.Contract;
@@ -16,7 +14,7 @@ namespace u2.Fixture
     /// </summary>
     public static class Context
     {
-        private static Func<IRoot> _rootFunc;
+        private static Func<ISite> _rootFunc;
         private static Func<ICache> _cacheFunc;
 
         /// <summary>
@@ -62,7 +60,7 @@ namespace u2.Fixture
         /// <summary>
         /// Get the root for the current context.
         /// </summary>
-        public static IRoot Root => _rootFunc();
+        public static ISite Site => _rootFunc();
 
         /// <summary>
         /// Call once to initialize the context.
@@ -73,7 +71,7 @@ namespace u2.Fixture
         /// <param name="mapBuild">The map build instance.</param>
         /// <param name="cacheBuild">The cache build instance.</param>
         public static void Init<TRoot>(ICacheConfig cacheConfig, IUmbracoConfig umbracoConfig, IMapBuild mapBuild, ICacheBuild cacheBuild)
-            where TRoot : class, IRoot
+            where TRoot : class, ISite
         {
             MapRegistry = new MapRegistry();
             Mapper = new Mapper(MapRegistry);

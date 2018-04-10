@@ -11,7 +11,7 @@ namespace u2.Umbraco.Test
         [Test]
         public void Create_media_success()
         {
-            var root = new TestRoot {Id = 1};
+            var root = new TestSite {Id = 1};
             var factory = new UmbracoQueryFactory();
             var task = Substitute.For<IMapTask<TestMedia>>();
 
@@ -23,7 +23,7 @@ namespace u2.Umbraco.Test
         [Test]
         public void Create_content_success()
         {
-            var root = new TestRoot { Id = 1 };
+            var root = new TestSite { Id = 1 };
             var factory = new UmbracoQueryFactory();
             var task = Substitute.For<IMapTask<TestItem>>();
 

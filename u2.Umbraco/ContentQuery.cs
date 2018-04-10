@@ -23,7 +23,7 @@ namespace u2.Umbraco
         public ContentQuery(string rootId, string alias)
         {
             Alias = alias;
-            _rootId = typeof(IRoot).IsAssignableFrom(typeof(T)) ? string.Empty : rootId;
+            _rootId = typeof(ISite).IsAssignableFrom(typeof(T)) ? string.Empty : rootId;
         }
     }
 }

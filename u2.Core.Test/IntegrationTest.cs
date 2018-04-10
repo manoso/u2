@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
-using u2.Caching;
 using u2.Core.Contract;
 using u2.Test;
 using u2.Umbraco;
@@ -19,7 +18,7 @@ namespace u2.Core.Test
         {
             var mapRegistry = new MapRegistry();
             var mapper = new Mapper(mapRegistry);
-            var root = Substitute.For<IRoot>();
+            var root = Substitute.For<ISite>();
             var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var cache = new Cache(cacheStore, cacheRegistry, root);
@@ -391,7 +390,7 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_lookup_test()
         {
-            var root = Substitute.For<IRoot>();
+            var root = Substitute.For<ISite>();
             var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
@@ -428,7 +427,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_lookup_test()
         {
-            var root = Substitute.For<IRoot>();
+            var root = Substitute.For<ISite>();
             var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var lookup = new CacheLookup<CacheItem>().Add(x => x.LookupKey);
@@ -465,7 +464,7 @@ namespace u2.Core.Test
         [Test]
         public async Task FetchAsync_OnSave_test()
         {
-            var root = Substitute.For<IRoot>();
+            var root = Substitute.For<ISite>();
             var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var cache = new Cache(cacheStore, cacheRegistry, root);
@@ -490,7 +489,7 @@ namespace u2.Core.Test
         [Test]
         public void Fetch_OnSave_test()
         {
-            var root = Substitute.For<IRoot>();
+            var root = Substitute.For<ISite>();
             var cacheRegistry = new CacheRegistry(new TestCacheConfig());
             var cacheStore = new CacheStore();
             var cache = new Cache(cacheStore, cacheRegistry, root);

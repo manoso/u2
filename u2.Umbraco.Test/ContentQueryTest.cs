@@ -22,7 +22,7 @@ namespace u2.Umbraco.Test
         public void Query_root()
         {
             const string rootId = "1";
-            var query = new ContentQuery<TestRoot>(rootId, "testRoot");
+            var query = new ContentQuery<TestSite>(rootId, "testRoot");
             var result = query.Query;
 
             Assert.That(result, Is.EqualTo(@"+__IndexType:content +__Path:\-1,* +__NodeTypeAlias:testRoot"));

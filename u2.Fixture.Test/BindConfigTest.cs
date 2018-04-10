@@ -1,8 +1,6 @@
 ﻿using System;
 using NSubstitute;
 using NUnit.Framework;
-using u2.Caching;
-using u2.Caching.Contract;
 using u2.Fixture.Contract;
 using u2.Core;
 using u2.Core.Contract;
@@ -23,7 +21,7 @@ namespace u2.Config.Test
             var binder = Substitute.For<IBinder>();
 
             var config = new BindConfig(binder);
-            config.Config<TestRoot, TestUmbracoConfig, TestCacheConfig, TestMapBuild, TestCacheBuild>();
+            config.Config<TestSite, TestUmbracoConfig, TestCacheConfig, TestMapBuild, TestCacheBuild>();
 
             binder.Received(1).Add<IMapRegistry, MapRegistry>(true);
             binder.Received(1).Add<IMapper, Mapper>(true);
@@ -35,7 +33,7 @@ namespace u2.Config.Test
             binder.Received(1).Add<ICacheConfig, TestCacheConfig>(true);
             binder.Received(1).Add<IMapBuild, TestMapBuild>(true);
             binder.Received(1).Add<ICacheBuild, TestCacheBuild>(true);
-            binder.Received(1).Add<IRoot, TestRoot>(false, Arg.Any<Func<TestRoot>>());
+            binder.Received(1).Add<ISite, TestSite>(false, Arg.Any<Func<TestSite>>());
             binder.Received(1).Add<ICache, Cache>(false, Arg.Any<Func<Cache>>());
 
             binder.Received(1).Get<IRegistry>();

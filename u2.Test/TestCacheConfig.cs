@@ -1,4 +1,4 @@
-using u2.Caching.Contract;
+using u2.Core.Contract;
 
 namespace u2.Test
 {
