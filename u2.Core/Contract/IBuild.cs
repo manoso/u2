@@ -1,4 +1,4 @@
-﻿namespace u2.Fixture.Contract
+﻿namespace u2.Core.Contract
 {
     /// <summary>
     /// Base type to build up a registry.

@@ -80,8 +80,9 @@
     <Compile Include="CacheTask.cs" />
     <Compile Include="CmsKey.cs" />
     <Compile Include="CmsModel.cs" />
-    <Compile Include="Contract\IBinder.cs" />
+    <Compile Include="Contract\IBuild.cs" />
     <Compile Include="Contract\ICache.cs" />
+    <Compile Include="Contract\ICacheBuild.cs" />
     <Compile Include="Contract\ICacheConfig.cs" />
     <Compile Include="Contract\ICacheRegistry.cs" />
     <Compile Include="Contract\ICacheStore.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Contract\ICmsFetcher.cs" />
     <Compile Include="Contract\ICmsQuery.cs" />
     <Compile Include="Contract\ICacheLookup.cs" />
+    <Compile Include="Contract\IMapBuild.cs" />
     <Compile Include="Contract\IMedia.cs" />
     <Compile Include="Contract\IQueryFactory.cs" />
     <Compile Include="Contract\ISite.cs" />

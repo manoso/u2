@@ -7,7 +7,7 @@ _ReSharper*/
 obj/
 u2.Umbraco/App_Plugins/
 u2.Demo.Api/App_Data/*
-
+.vs/*
 
 *.obj
 *.exe

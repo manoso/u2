@@ -1,4 +1,3 @@
-using u2.Fixture.Contract;
 using u2.Core.Contract;
 
 namespace u2.Test

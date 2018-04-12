@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentQuery.cs" />
+    <Compile Include="UmbracoContext.cs" />
     <Compile Include="Contract\IUmbracoConfig.cs" />
     <Compile Include="DataType\Archetype\ArchetypeContent.cs" />
     <Compile Include="DataType\Archetype\FieldSet.cs" />

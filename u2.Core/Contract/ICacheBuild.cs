@@ -1,6 +1,4 @@
-﻿using u2.Core.Contract;
-
-namespace u2.Fixture.Contract
+﻿namespace u2.Core.Contract
 {
     /// <summary>
     /// Build a registry of caching by types.

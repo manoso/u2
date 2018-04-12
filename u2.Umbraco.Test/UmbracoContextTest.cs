@@ -4,21 +4,20 @@ using System.Threading.Tasks;
 using System.Web;
 using NUnit.Framework;
 using u2.Core.Contract;
-using u2.Fixture;
 using u2.Test;
 
-namespace u2.Config.Test
+namespace u2.Umbraco.Test
 {
     [TestFixture]
-    public class ContextTest
+    public class UmbracoContextTest
     {
         [Test]
         public void Get_singleton_success()
         {
-            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            UmbracoContext.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
 
-            var first = Context.MapRegistry;
-            var second = Context.MapRegistry;
+            var first = UmbracoContext.MapRegistry;
+            var second = UmbracoContext.MapRegistry;
 
             Assert.AreEqual(first, second);
         }
@@ -50,15 +49,15 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
-            Context.CacheRegistry.Add(GetRoots);
+            UmbracoContext.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            UmbracoContext.CacheRegistry.Add(GetRoots);
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root2", ""),
                 new HttpResponse(null)
             );
-            var first = Context.Site;
-            var second = Context.Site;
+            var first = UmbracoContext.Site;
+            var second = UmbracoContext.Site;
 
             Assert.AreEqual(first, second);
             Assert.AreEqual(first.Id, 2);
@@ -91,20 +90,20 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
-            Context.CacheRegistry.Add(GetRoots);
+            UmbracoContext.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            UmbracoContext.CacheRegistry.Add(GetRoots);
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root1", ""),
                 new HttpResponse(null)
             );
-            var first = Context.Site;
+            var first = UmbracoContext.Site;
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root2", ""),
                 new HttpResponse(null)
             );
-            var second = Context.Site;
+            var second = UmbracoContext.Site;
 
             Assert.AreNotEqual(first, second);
             Assert.AreEqual(first.Id, 1);
@@ -138,18 +137,18 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
-            Context.CacheRegistry.Add(GetRoots);
+            UmbracoContext.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            UmbracoContext.CacheRegistry.Add(GetRoots);
 
-            var cache1 = Context.SiteCaches.Get(root1);
-            var cache2 = Context.SiteCaches.Get(root2);
+            var cache1 = UmbracoContext.SiteCaches.Get(root1);
+            var cache2 = UmbracoContext.SiteCaches.Get(root2);
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root2", ""),
                 new HttpResponse(null)
             );
-            var first = Context.Cache;
-            var second = Context.Cache;
+            var first = UmbracoContext.Cache;
+            var second = UmbracoContext.Cache;
 
             Assert.AreEqual(first, second);
             Assert.AreEqual(cache2, second);
@@ -183,23 +182,23 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
-            Context.CacheRegistry.Add(GetRoots);
+            UmbracoContext.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            UmbracoContext.CacheRegistry.Add(GetRoots);
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root1", ""),
                 new HttpResponse(null)
             );
-            var first = Context.Cache;
+            var first = UmbracoContext.Cache;
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root2", ""),
                 new HttpResponse(null)
             );
-            var second = Context.Cache;
+            var second = UmbracoContext.Cache;
 
-            var cache1 = Context.SiteCaches.Get(root1);
-            var cache2 = Context.SiteCaches.Get(root2);
+            var cache1 = UmbracoContext.SiteCaches.Get(root1);
+            var cache2 = UmbracoContext.SiteCaches.Get(root2);
 
             Assert.AreNotEqual(first, second);
             Assert.AreEqual(first, cache1);
@@ -233,15 +232,15 @@ namespace u2.Config.Test
                     }).ConfigureAwait(false);
             }
 
-            Context.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
-            Context.CacheRegistry.Add(GetRoots);
+            UmbracoContext.Init<TestSite>(new TestCacheConfig(), new TestUmbracoConfig(), new TestMapBuild(), new TestCacheBuild());
+            UmbracoContext.CacheRegistry.Add(GetRoots);
 
             HttpContext.Current = new HttpContext(
                 new HttpRequest("", "http://root", ""),
                 new HttpResponse(null)
             );
-            var first = Context.Site;
-            var second = Context.Site;
+            var first = UmbracoContext.Site;
+            var second = UmbracoContext.Site;
 
             Assert.AreEqual(first, second);
             Assert.AreEqual(first.Id, 1);
